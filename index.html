@@ -192,7 +192,7 @@ footer .kidrow img{height:130px;width:auto}
 .sheet{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center}
 .sheet .in{position:relative;background:var(--paper);width:100%;max-width:620px;max-height:94vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;z-index:1}
 @media(min-width:700px){.sheet{align-items:center}.sheet .in{border-radius:26px}}
-.sheet .closer{position:absolute;top:24px;inset-inline-end:24px;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.88);font-size:17px}
+.sheet .closer{position:sticky;top:0;align-self:flex-end;flex:none;margin:0 8px -54px 0;z-index:3;width:42px;height:42px;border-radius:50%;border:0;background:#fff;color:var(--ink);font-size:18px;font-weight:700;box-shadow:0 4px 14px -4px rgba(0,0,0,.35);cursor:pointer}
 .sheet .hero{flex:none;border-radius:20px;overflow:hidden;background:var(--peach);aspect-ratio:4/5;width:100%;max-width:440px;margin-inline:auto;display:flex;justify-content:center}
 .sheet .hero img{width:100%;height:100%;object-fit:cover;display:block}
 .sheet .hero .art{height:220px}
@@ -553,7 +553,7 @@ let picked={};
 function openSheet(id){
   const it=findItem(id);if(!it)return;
   picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:10});
-  drawSheet(it);$('#sheet').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';
+  drawSheet(it);open('sheet');
 }
 function drawSheet(it){
   const ads=(it.addons||[]).map(findItem).filter(Boolean);
@@ -578,20 +578,24 @@ function renderMenu(){
 }
 
 /* ---------- open/close ---------- */
-function open(id){closeAll(true);$('#'+id).hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';if(id==='cart')renderCart()}
-function closeAll(keep){['menu','cart','sheet'].forEach(i=>$('#'+i).hidden=true);if(!keep){$('#scrim').hidden=true;document.body.style.overflow=''}}
+function hideAll(keep){['menu','cart','sheet'].forEach(i=>$('#'+i).hidden=true);if(!keep){$('#scrim').hidden=true;document.body.style.overflow=''}}
+function open(id){hideAll(true);$('#'+id).hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';if(id==='cart')renderCart();
+  try{if(!(history.state&&history.state.asasOverlay))history.pushState({asasOverlay:1},'')}catch(e){}}
+/* closing an overlay goes back one step, so the phone's back button/gesture also closes it */
+function closeAll(){try{if(history.state&&history.state.asasOverlay){history.back();return}}catch(e){}hideAll()}
+window.addEventListener('popstate',()=>hideAll());
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2200)}
 
 document.addEventListener('click',e=>{
   const t=e.target;const g=s=>t.closest(s);let x;
-  if(g('#scrim')){closeAll();return}
+  if(g('#scrim')||t.id==='sheet'){closeAll();return}
   if(x=g('[data-act]')){const a=x.dataset.act;
     if(a==='menu')return open('menu');
     if(a==='cart')return open('cart');
     if(a==='close')return closeAll();
     if(a==='all'){expanded[x.dataset.k]=!expanded[x.dataset.k];renderRails();x.textContent=expanded[x.dataset.k]?'عرض أقل':'عرض الكل';return}
   }
-  if(x=g('[data-go]')){closeAll();document.getElementById(x.dataset.go).scrollIntoView({behavior:'smooth'});return}
+  if(x=g('[data-go]')){const to=x.dataset.go;closeAll();setTimeout(()=>{hideAll();document.getElementById(to).scrollIntoView({behavior:'smooth'})},80);return}
   if(x=g('[data-fav]')){const id=x.dataset.fav;favs=favs.includes(id)?favs.filter(f=>f!==id):[...favs,id];saveFavs();renderRails();return}
   if(x=g('[data-add]')){const it=findItem(x.dataset.add);if(it.addons&&it.addons.length){openSheet(it.id);return}addLine(it.id,it.price==null?10:1);renderRails();toast('أُضيف إلى السلة');return}
   if(x=g('[data-open]')){openSheet(x.dataset.open);return}
