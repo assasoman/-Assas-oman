@@ -520,7 +520,7 @@ function renderCart(){
     <div class="custf"><label>الاسم<input id="c-name" autocomplete="name" value="${esc(cust.name)}" placeholder="اسم المستلم"></label>
     <label>رقم الهاتف<input id="c-phone" inputmode="tel" autocomplete="tel" dir="ltr" value="${esc(cust.phone)}" placeholder="9xxxxxxx"></label>
     <label>الولاية<input id="c-wil" value="${esc(cust.wilaya)}" placeholder="مثال: السيب"></label>
-    ${hasPack()?`<label class="em">بريد Gmail <small>(يصلك عليه ملف القص بأمان)</small><input id="c-email" type="email" inputmode="email" autocomplete="email" dir="ltr" value="${esc(cust.email)}" placeholder="name@gmail.com"></label>`:''}</div>
+    ${hasPack()?`<label class="em">بريد Gmail <small>(يصلك عليه ملف القص بأمان)</small><input id="c-email" type="email" inputmode="email" autocomplete="email" dir="ltr" value="${esc(cust.email)}" placeholder="name@gmail.com"></label><p class="hint em" style="grid-column:1/-1;margin:-2px 0 0">📩 بعد تأكيد الدفع يصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>، وإن لم تجده فتحقق من مجلد «الرسائل غير المرغوب فيها» (Spam) واضغط «ليس رسالة غير مرغوب فيها».</p>`:''}</div>
     <p class="hint" id="c-err" hidden></p>
     <a class="wabtn" id="sendwa" href="${waMessage()}" target="_blank" rel="noopener"><svg><use href="#wa"/></svg>أرسل الطلب عبر واتساب</a>`;
 }
