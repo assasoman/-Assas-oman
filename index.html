@@ -357,14 +357,14 @@ footer .kidrow img{height:130px;width:auto}
   </section>
 
   <section class="max" id="prints" aria-labelledby="h-prints">
-    <div class="sh"><h2 id="h-prints"><img data-char="boy_prints" alt="">مطبوعات أساس</h2><button class="all" data-act="all" data-k="prints">عرض الكل</button></div>
+    <div class="sh"><h2 id="h-prints"><img data-char="boy_prints" alt="">ملحقات البكج</h2><button class="all" data-act="all" data-k="prints">عرض الكل</button></div>
     <div class="rail" id="rail-prints"></div>
   </section>
 
   <section class="max how" aria-label="طريقة الطلب">
-    <div class="s"><img data-char="step_choose" alt=""><em style="background:var(--pink)">١</em><b>اختر</b><span>وأضف إليه المطبوعات التي تحتاجها</span></div>
+    <div class="s"><img data-char="step_choose" alt=""><em style="background:var(--pink)">١</em><b>اختر</b><span>وأضف إليه الملحقات التي تحتاجها</span></div>
     <div class="s"><img data-char="step_send" alt=""><em style="background:var(--sky)">٢</em><b>أرسل الطلب</b><span>يصلنا طلبك عبر واتساب برسالة واحدة</span></div>
-    <div class="s"><img data-char="step_receive" alt=""><em style="background:var(--leaf)">٣</em><b>استلم</b><span>يصلك الملف عبر واتساب والمطبوعات إلى عنوانك</span></div>
+    <div class="s"><img data-char="step_receive" alt=""><em style="background:var(--leaf)">٣</em><b>استلم</b><span>يصلك الملف على بريدك والملحقات إلى عنوانك</span></div>
   </section>
 </main>
 
@@ -372,7 +372,7 @@ footer .kidrow img{height:130px;width:auto}
   <div class="max">
     <div class="cols">
       <div><h3>متجر أساس</h3><p>مرحبًا بكم في أساس، براند عُماني يقدّم ملفات قص للكاميو ومطبوعات للمناسبات والتوزيعات، بتصاميم عُمانية مبهجة.</p></div>
-      <div><h3>روابط مهمة</h3><div class="lnk"><button data-act="all" data-k="packs">البكجات</button><button data-act="all" data-k="prints">المطبوعات</button><button data-act="cart">سلة المشتريات</button></div></div>
+      <div><h3>روابط مهمة</h3><div class="lnk"><button data-act="all" data-k="packs">البكجات</button><button data-act="all" data-k="prints">ملحقات البكج</button><button data-act="cart">سلة المشتريات</button></div></div>
       <div><h3>تواصل معنا</h3>
         <a class="ct wa-general" target="_blank" rel="noopener"><span class="circ"><svg class="i" style="fill:currentColor;stroke:none"><use href="#wa"/></svg></span><span class="num" id="wanum"></span></a>
         <div class="soc"><a class="circ" href="https://instagram.com/assas.oman" target="_blank" rel="noopener" aria-label="انستقرام"><svg class="i"><use href="#ig"/></svg></a><button class="circ" id="copy" aria-label="نسخ الرقم" style="font-size:12px;font-weight:700">نسخ</button></div>
@@ -502,7 +502,7 @@ function renderHeader(){const t=totals();$('#hcount').textContent=t.n;$('#htotal
 function waMessage(){
   const lines=['السلام عليكم، أودّ الطلب من متجر أساس:',''];
   cart.forEach(l=>{const it=findItem(l.id);lines.push(`• ${it.name} × ${l.q}${it.price!=null?` = ${money(it.price*l.q)} ${CURRENCY}`:' (السعر حسب الكمية)'}`)});
-  const t=totals();lines.push('',`المجموع: ${money(t.sum)} ${CURRENCY}${t.ask?' + المطبوعات حسب الكمية':''}`);
+  const t=totals();lines.push('',`المجموع: ${money(t.sum)} ${CURRENCY}${t.ask?' + الملحقات حسب الكمية':''}`);
   if(cust.name||cust.phone||cust.wilaya)lines.push('',`الاسم: ${cust.name}`,`الهاتف: ${cust.phone}`,`الولاية: ${cust.wilaya}`);
   if(cust.email)lines.push(`البريد: ${cust.email}`);
   if(cust.ref)lines.push('',`رقم الطلب: ${cust.ref}`);
@@ -516,7 +516,7 @@ function renderCart(){
     ${it.price!=null?`<span class="lp num">${money(it.price*l.q)} ${CURRENCY}</span>`:''}<button class="rm" data-rm="${esc(it.id)}">حذف</button></div></div></div>`}).join('');
   const t=totals();
   foot.innerHTML=`<div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>
-    ${t.ask?'<p class="hint">يعتمد سعر المطبوعات على الكمية، وسنؤكد لك المجموع النهائي عبر واتساب.</p>':''}
+    ${t.ask?'<p class="hint">يعتمد سعر الملحقات على الكمية، وسنؤكد لك المجموع النهائي عبر واتساب.</p>':''}
     <div class="custf"><label>الاسم<input id="c-name" autocomplete="name" value="${esc(cust.name)}" placeholder="اسم المستلم"></label>
     <label>رقم الهاتف<input id="c-phone" inputmode="tel" autocomplete="tel" dir="ltr" value="${esc(cust.phone)}" placeholder="9xxxxxxx"></label>
     <label>الولاية<input id="c-wil" value="${esc(cust.wilaya)}" placeholder="مثال: السيب"></label>
@@ -561,7 +561,7 @@ function drawSheet(it){
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="s-title">${esc(it.name)}</h2>${it.price!=null?`<span class="pr num">${money(it.price)} ${CURRENCY}</span>`:'<span class="hint">السعر حسب الكمية</span>'}</div>
     ${it.desc?`<p style="font-size:14.5px;line-height:1.8">${esc(it.desc)}</p>`:it.sub?`<p class="hint">${esc(it.sub)}</p>`:''}
     ${it.includes?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-    ${ads.length?`<div class="addons"><h3><img src="${CHARS.boy_prints}" alt="">أضف المطبوعات مع البكج</h3>
+    ${ads.length?`<div class="addons"><h3><img src="${CHARS.boy_prints}" alt="">أضف ملحقات البكج</h3>
       ${ads.map(a=>`<label class="ad ${picked[a.id].on?'on':''}"><input type="checkbox" id="ad-${esc(a.id)}" data-ad="${esc(a.id)}" ${picked[a.id].on?'checked':''}>
         <span><b>${esc(a.name)}</b><span class="meta">${a.price!=null?money(a.price)+' '+CURRENCY+' / '+a.unit:'السعر حسب الكمية'}</span></span>
         <span class="step"><button type="button" data-adq="+" data-id="${esc(a.id)}" aria-label="زيادة">+</button><input id="adq-${esc(a.id)}" class="num" inputmode="numeric" value="${picked[a.id].q}" data-adqi="${esc(a.id)}" aria-label="الكمية"><button type="button" data-adq="-" data-id="${esc(a.id)}" aria-label="نقص">−</button></span></label>`).join('')}
@@ -572,7 +572,7 @@ function drawSheet(it){
 
 /* ---------- menu ---------- */
 function renderMenu(){
-  $('#menu-list').innerHTML=[['packs','البكجات'],['prints','مطبوعات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('');
+  $('#menu-list').innerHTML=[['packs','البكجات'],['prints','ملحقات البكج'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('');
 }
 
 /* ---------- open/close ---------- */
