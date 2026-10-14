@@ -182,7 +182,8 @@ footer .kidrow img{height:130px;width:auto}
 .wabtn svg{width:22px;height:22px;fill:#fff}
 .custf{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .custf label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted);font-weight:600}
-.custf label:first-child{grid-column:1/-1}
+.custf label:first-child,.custf label.em{grid-column:1/-1}
+.custf label small{font-weight:500;color:var(--muted)}
 .custf input{min-height:44px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
 .custf input:focus{outline:0;border-color:var(--pink)}
 #c-err{color:var(--price);font-weight:600}
@@ -474,16 +475,17 @@ async function loadProducts(){
 }
 
 /* ---------- customer + order capture (Netlify Forms) ---------- */
-let cust={name:'',phone:'',wilaya:'',ref:''};
+const hasPack=()=>cart.some(l=>String(l.id).startsWith('k:'));
+let cust={name:'',phone:'',wilaya:'',email:'',ref:''};
 try{Object.assign(cust,JSON.parse(localStorage.getItem('asas-cust')||'{}'))}catch(e){}
 cust.ref='';
-const saveCust=()=>{try{localStorage.setItem('asas-cust',JSON.stringify({name:cust.name,phone:cust.phone,wilaya:cust.wilaya}))}catch(e){}};
+const saveCust=()=>{try{localStorage.setItem('asas-cust',JSON.stringify({name:cust.name,phone:cust.phone,wilaya:cust.wilaya,email:cust.email}))}catch(e){}};
 const digits=v=>String(v||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g,'');
 function newRef(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let r='';for(let i=0;i<5;i++)r+=a[Math.floor(Math.random()*a.length)];return r}
 function captureOrder(){
   const t=totals();
   const items=cart.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price==null?0:it.price,...(String(l.id).startsWith('k:')?{k:1}:{})}});
-  const body=new URLSearchParams({'form-name':'order',ref:cust.ref,name:cust.name,phone:cust.phone,wilaya:cust.wilaya,total:money(t.sum),ask:t.ask?'1':'0',items:JSON.stringify(items),summary:items.map(i=>i.p+' × '+i.q).join('، ')}).toString();
+  const body=new URLSearchParams({'form-name':'order',ref:cust.ref,name:cust.name,phone:cust.phone,wilaya:cust.wilaya,email:cust.email,total:money(t.sum),ask:t.ask?'1':'0',items:JSON.stringify(items),summary:items.map(i=>i.p+' × '+i.q).join('، ')}).toString();
   try{fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body,keepalive:true}).catch(()=>{})}catch(e){}
 }
 
@@ -502,6 +504,7 @@ function waMessage(){
   cart.forEach(l=>{const it=findItem(l.id);lines.push(`• ${it.name} × ${l.q}${it.price!=null?` = ${money(it.price*l.q)} ${CURRENCY}`:' (السعر حسب الكمية)'}`)});
   const t=totals();lines.push('',`المجموع: ${money(t.sum)} ${CURRENCY}${t.ask?' + المطبوعات حسب الكمية':''}`);
   if(cust.name||cust.phone||cust.wilaya)lines.push('',`الاسم: ${cust.name}`,`الهاتف: ${cust.phone}`,`الولاية: ${cust.wilaya}`);
+  if(cust.email)lines.push(`البريد: ${cust.email}`);
   if(cust.ref)lines.push('',`رقم الطلب: ${cust.ref}`);
   return 'https://wa.me/'+WHATSAPP+'?text='+encodeURIComponent(lines.join('\n'));
 }
@@ -516,7 +519,8 @@ function renderCart(){
     ${t.ask?'<p class="hint">يعتمد سعر المطبوعات على الكمية، وسنؤكد لك المجموع النهائي عبر واتساب.</p>':''}
     <div class="custf"><label>الاسم<input id="c-name" autocomplete="name" value="${esc(cust.name)}" placeholder="اسم المستلم"></label>
     <label>رقم الهاتف<input id="c-phone" inputmode="tel" autocomplete="tel" dir="ltr" value="${esc(cust.phone)}" placeholder="9xxxxxxx"></label>
-    <label>الولاية<input id="c-wil" value="${esc(cust.wilaya)}" placeholder="مثال: السيب"></label></div>
+    <label>الولاية<input id="c-wil" value="${esc(cust.wilaya)}" placeholder="مثال: السيب"></label>
+    ${hasPack()?`<label class="em">البريد الإلكتروني <small>(يصلك عليه ملف القص)</small><input id="c-email" type="email" inputmode="email" autocomplete="email" dir="ltr" value="${esc(cust.email)}" placeholder="name@gmail.com"></label>`:''}</div>
     <p class="hint" id="c-err" hidden></p>
     <a class="wabtn" id="sendwa" href="${waMessage()}" target="_blank" rel="noopener"><svg><use href="#wa"/></svg>أرسل الطلب عبر واتساب</a>`;
 }
@@ -623,10 +627,11 @@ function openWA(url){
 }
 document.addEventListener('click',e=>{if(!IS_MOBILE)return;const a=e.target.closest('a.wa-general');if(!a)return;e.preventDefault();openWA(a.href)});
 $('#q').addEventListener('input',e=>{query=e.target.value.trim();renderRails()});
-document.addEventListener('input',e=>{const id=e.target.id;if(id==='c-name'||id==='c-phone'||id==='c-wil'){cust[id==='c-name'?'name':id==='c-phone'?'phone':'wilaya']=e.target.value.trim();saveCust();const err=$('#c-err');if(err)err.hidden=true}});
+document.addEventListener('input',e=>{const id=e.target.id;if(id==='c-name'||id==='c-phone'||id==='c-wil'||id==='c-email'){cust[{'c-name':'name','c-phone':'phone','c-wil':'wilaya','c-email':'email'}[id]]=e.target.value.trim();saveCust();const err=$('#c-err');if(err)err.hidden=true}});
 document.addEventListener('click',e=>{const a=e.target.closest('#sendwa');if(!a)return;
   const err=$('#c-err');
   if(!cust.name||digits(cust.phone).length<8){e.preventDefault();e.stopPropagation();err.textContent='يُرجى كتابة الاسم ورقم الهاتف لتسجيل طلبك.';err.hidden=false;return}
+  if(hasPack()&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cust.email)){e.preventDefault();e.stopPropagation();err.textContent='يُرجى كتابة بريد إلكتروني صحيح ليصلك عليه ملف القص.';err.hidden=false;const f=$('#c-email');f&&f.focus();return}
   cust.ref=newRef();a.href=waMessage();captureOrder();
   if(IS_MOBILE){e.preventDefault();openWA(a.href)}
   setTimeout(()=>{cust.ref='';const b=$('#sendwa');if(b)b.href=waMessage()},1500);
@@ -650,6 +655,6 @@ renderMenu();renderRails();renderHeader();loadProducts();
 </script>
 
 <form name="order" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
-<input name="bot-field"><input name="ref"><input name="name"><input name="phone"><input name="wilaya"><input name="total"><input name="ask"><textarea name="items"></textarea><textarea name="summary"></textarea>
+<input name="bot-field"><input name="ref"><input name="name"><input name="phone"><input name="wilaya"><input name="email"><input name="total"><input name="ask"><textarea name="items"></textarea><textarea name="summary"></textarea>
 </form>
 </body></html>
