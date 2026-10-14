@@ -317,7 +317,7 @@ footer .kidrow img{height:130px;width:auto}
         <img class="kid l bob" data-char="girl_point" alt="">
         <div class="mid">
           <img class="lg" data-logo alt="">
-          <h1>نبدأ من <em>الأساس</em>..<br>ونصنع الفرق! 🌟</h1>
+          <h1>بكجات <em>للبيع</em></h1>
           <svg class="wavy" viewBox="0 0 110 10" aria-hidden="true"><path d="M2 5c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0 12 6 18 0 12 6 16 0" fill="none" stroke="#FFC93C" stroke-width="2.5" stroke-linecap="round"/></svg>
           <p>ملفات قص للكاميو ومطبوعات لكل مناسبة</p>
           <a class="pill" href="#packs">تسوّق الآن</a>
@@ -634,12 +634,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!w.hidden)close()});
 })();
 
+/* open the WhatsApp app directly on phones; fall back to the web link if it isn't installed */
+const IS_MOBILE=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function openWA(url){
+  let app=url;try{const u=new URL(url);const ph=(u.pathname.match(/\d+/)||[WHATSAPP])[0];const tx=u.searchParams.get('text');app='whatsapp://send?phone='+ph+(tx?'&text='+encodeURIComponent(tx):'')}catch(e){}
+  let left=false;const mark=()=>{left=true};
+  document.addEventListener('visibilitychange',mark,{once:true});window.addEventListener('pagehide',mark,{once:true});window.addEventListener('blur',mark,{once:true});
+  location.href=app;
+  setTimeout(()=>{if(!left&&!document.hidden)location.href=url},1600);
+}
+document.addEventListener('click',e=>{if(!IS_MOBILE)return;const a=e.target.closest('a.wa-general');if(!a)return;e.preventDefault();openWA(a.href)});
 $('#q').addEventListener('input',e=>{query=e.target.value.trim();renderRails()});
 document.addEventListener('input',e=>{const id=e.target.id;if(id==='c-name'||id==='c-phone'||id==='c-wil'){cust[id==='c-name'?'name':id==='c-phone'?'phone':'wilaya']=e.target.value.trim();saveCust();const err=$('#c-err');if(err)err.hidden=true}});
 document.addEventListener('click',e=>{const a=e.target.closest('#sendwa');if(!a)return;
   const err=$('#c-err');
   if(!cust.name||digits(cust.phone).length<8){e.preventDefault();e.stopPropagation();err.textContent='يُرجى كتابة الاسم ورقم الهاتف لتسجيل طلبك.';err.hidden=false;return}
   cust.ref=newRef();a.href=waMessage();captureOrder();
+  if(IS_MOBILE){e.preventDefault();openWA(a.href)}
   setTimeout(()=>{cust.ref='';const b=$('#sendwa');if(b)b.href=waMessage()},1500);
 },true);
 $('#copy').addEventListener('click',()=>{const sel=()=>{const r=document.createRange();r.selectNodeContents($('#wanum'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('تم تحديد الرقم، يمكنك نسخه الآن')};try{navigator.clipboard.writeText('+'+WHATSAPP).then(()=>toast('تم نسخ الرقم'),sel)}catch(err){sel()}});
