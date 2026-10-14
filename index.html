@@ -3,7 +3,7 @@
 <meta name="description" content="بكجات وملفات قص للكاميو ومطبوعات المناسبات من أساس عُمان">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Baloo+Bhaijaan+2:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marhey:wght@500;700&family=Alexandria:wght@400;500;600;700;800&family=Baloo+Bhaijaan+2:wght@700;800&display=swap">
 <style>
 /* Layout: Salla-style storefront on a soft grey ground — search, white header with menu + cart, doodle banners with the Asas kids, product rails with "view all", how-to-order strip, grey footer, floating WhatsApp, cart and menu drawers. */
 :root{
@@ -68,7 +68,12 @@ main{display:flex;flex-direction:column;gap:30px;padding-block:20px 120px}
 .banner .kid.wide{height:96%;max-height:270px}
 .banner .mid{position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:52%}
 .banner .mid img.lg{width:74px;height:74px;border-radius:50%;box-shadow:0 0 0 4px #fff}
-.banner .hl{background:rgba(255,255,255,.82);border-radius:12px;padding:0 .22em;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:0 4px 14px -8px rgba(160,70,110,.35)}
+.banner .hl{background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20200%2060%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M10%2015%20C46%206%20124%209%20192%2012%20C198%2026%20196%2041%20190%2053%20C130%2059%2060%2057%2011%2051%20C5%2039%205%2026%2010%2015Z%22%20fill%3D%22%23FF9EC2%22%20opacity%3D%22.6%22/%3E%3Cpath%20d%3D%22M6%2011%20C42%202%20122%205%20188%207%20C195%2021%20194%2037%20187%2049%20C127%2055%2057%2054%207%2047%20C1%2035%201%2022%206%2011Z%22%20fill%3D%22%23FFE27A%22%20stroke%3D%22%23E9A400%22%20stroke-width%3D%222.2%22%20stroke-linejoin%3D%22round%22%20vector-effect%3D%22non-scaling-stroke%22/%3E%3Cpath%20d%3D%22M18%2017%20C60%2013%20104%2014%20150%2015%22%20stroke%3D%22%23FFF6D1%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%20opacity%3D%22.9%22%20vector-effect%3D%22non-scaling-stroke%22/%3E%3Cpath%20d%3D%22M172%2040%20C176%2036%20180%2032%20182%2026%22%20stroke%3D%22%23FFF6D1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%20vector-effect%3D%22non-scaling-stroke%22/%3E%3C/svg%3E") center/100% 100% no-repeat;padding:.06em .38em .14em;-webkit-box-decoration-break:clone;box-decoration-break:clone;line-height:1.5}
+.banner h1,.banner h2{font-family:"Marhey",var(--font-fun)!important;font-weight:700!important;letter-spacing:0}
+.banner h1{font-size:clamp(20px,4.6vw,40px)!important;line-height:1.55!important}
+.banner h2{font-size:clamp(22px,5vw,42px)!important;line-height:1.5!important}
+.banner .hl em{color:var(--pink)}
+@media(min-width:521px){.banner{min-height:300px}}
 .banner h1,.banner h2{font-family:var(--font-fun);font-weight:800;font-size:clamp(26px,6.8vw,48px);line-height:1.1;color:var(--ink)}
 .banner h1 em,.banner h2 em{font-style:normal;color:var(--pink)}
 .banner p{font-size:13.5px;color:var(--muted)}
@@ -279,7 +284,7 @@ footer .kidrow img{height:130px;width:auto}
         <img class="kid l bob" data-char="girl_point" alt="">
         <div class="mid">
           <img class="lg" data-logo alt="">
-          <h1><span class="hl">بكجات <em>للبيع</em></span></h1>
+          <h1><span class="hl">نبدأ من <em>الأساس</em>..</span><br><span class="hl">ونصنع الفرق! 🌟</span></h1>
           <svg class="wavy" viewBox="0 0 110 10" aria-hidden="true"><path d="M2 5c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0 12 6 18 0 12 6 16 0" fill="none" stroke="#FFC93C" stroke-width="2.5" stroke-linecap="round"/></svg>
           <p>ملفات قص للكاميو ومطبوعات لكل مناسبة</p>
           <a class="pill" href="#packs">تسوّق الآن</a>
