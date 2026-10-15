@@ -543,7 +543,7 @@ function openCheckout(){
       <label>البريد الإلكتروني<input name="email" type="email" inputmode="email" autocomplete="email" dir="ltr" placeholder="name@email.com" required></label>
       ${need?'<label>الولاية<input name="wilaya" autocomplete="address-level2" required></label>':''}
       <p id="ordmsg" class="hint" style="color:var(--price)" hidden></p>
-      ${(()=>{const g=splitCart(cart);if(g.dig.length&&g.phy.length)return `<div class="sum"><span>دفعة الملف الرقمي</span><span class="num">${money(totals(g.dig).sum)} ${CURRENCY}</span></div><div class="sum"><span>دفعة المنتجات المرفقة</span><span class="num">${money(totals(g.phy).sum)} ${CURRENCY}</span></div><p class="hint">يُسجَّل كل منهما كطلب ودفعة منفصلة.</p>`;return `<div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>`})()}
+      <div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>
       <button class="wabtn" type="submit" id="ordgo" style="background:var(--ink)">إرسال الطلب</button>
     </form>`);
 }
@@ -558,11 +558,11 @@ async function submitOrder(form){
   if(form.elements.wilaya&&!f.wilaya)return bad('اكتب الولاية');
   msg.hidden=true;const btn=$('#ordgo');btn.disabled=true;btn.textContent='جارٍ الإرسال…';
   const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap);
-  const parts=[];if(g.dig.length)parts.push({snap:g.dig,tag:'ملف رقمي'});if(g.phy.length)parts.push({snap:g.phy,tag:'منتجات مرفقة'});
+  const parts=[{snap,tag:'الطلب'}];
   parts.forEach((p,n)=>{p.ref=parts.length>1?base+'-'+(n+1):base;p.t=totals(p.snap);
     p.items=p.snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
     p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
-    p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:p.snap===g.phy?f.wilaya:'',email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
+    p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
   let ok=false;if(LIVE)try{
     for(const p of parts){
