@@ -500,10 +500,10 @@ function renderRails(){
 }
 
 /* ---------- product sheet ---------- */
-let picked={},pickedVar=0;
+let picked={},pickedVar=0,packOn=true;
 function openSheet(id){
   const it=findItem(id);if(!it)return;
-  pickedVar=0;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
+  pickedVar=0;packOn=true;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
   drawSheet(it);$('#sheet').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';
 }
 function drawSheet(it){
@@ -515,7 +515,9 @@ function drawSheet(it){
     ${it.desc?`<p style="font-size:14.5px;line-height:1.8">${esc(it.desc)}</p>`:it.sub?`<p class="hint">${esc(it.sub)}</p>`:''}
     ${it.includes?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
     ${it.variants?`<div><b>اختر نوع التصميم</b><div class="vars" style="margin-top:8px">${it.variants.map((v,i)=>`<label class="${i===pickedVar?'on':''}"><input type="radio" name="var" data-var="${i}" ${i===pickedVar?'checked':''}>${esc(v)}</label>`).join('')}</div></div>`:''}
-    ${ads.length?`<div class="addons"><h3>أضف من منتجاتنا</h3>
+    ${ads.length?`<div class="addons"><h3>اختر ما تريد شراءه</h3>
+      <label class="ad ${packOn?'on':''}"><input type="checkbox" data-pk ${packOn?'checked':''}>
+        <span><b>${esc(it.name)} (الملف الرقمي)</b><span class="meta">${money(it.price)} ${CURRENCY}</span></span></label>
       ${ads.map(a=>`<label class="ad ${picked[a.id].on?'on':''}"><input type="checkbox" id="ad-${esc(a.id)}" data-ad="${esc(a.id)}" ${picked[a.id].on?'checked':''}>
         <span><b>${esc(a.name)}</b><span class="meta">${a.price!=null?money(a.price)+' '+CURRENCY+' / '+a.unit:'السعر حسب الكمية'}</span></span>
         <span class="step"><button type="button" data-adq="+" data-id="${esc(a.id)}" aria-label="زيادة">+</button><input id="adq-${esc(a.id)}" class="num" inputmode="numeric" value="${picked[a.id].q}" data-adqi="${esc(a.id)}" aria-label="الكمية"><button type="button" data-adq="-" data-id="${esc(a.id)}" aria-label="نقص">−</button></span>
@@ -610,11 +612,12 @@ document.addEventListener('click',e=>{
   if(x=g('[data-adv]')){e.preventDefault();const [aid,ai]=x.dataset.adv.split('|');picked[aid].v=+ai;picked[aid].on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-adq]')){e.preventDefault();const p=picked[x.dataset.id];p.q=Math.max(1,p.q+(x.dataset.adq==='+'?1:-1));p.on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-var]')){pickedVar=+x.dataset.var;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
-  if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);addLine(_it&&_it.variants?id+'|'+pickedVar:id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
+  if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);const packMode=!!(_it&&_it.addons&&_it.addons.length);if(packMode&&!packOn&&!Object.values(picked).some(v=>v.on)){toast('اختر خيارًا واحدًا على الأقل');return}if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar:id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
   if(x=g('[data-dot]')){clearInterval(auto);slides[+x.dataset.dot].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});return}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
+  if(t.hasAttribute&&t.hasAttribute('data-pk')){packOn=t.checked;t.closest('.ad').classList.toggle('on',t.checked)}
   if(t.dataset.ad){picked[t.dataset.ad].on=t.checked;t.closest('.ad').classList.toggle('on',t.checked)}
   if(t.dataset.adqi){picked[t.dataset.adqi].q=Math.max(1,parseInt(t.value)||1);picked[t.dataset.adqi].on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet))}
   if(t.dataset.qi){const l=cart.find(c=>c.id===t.dataset.qi);l.q=Math.max(1,parseInt(t.value)||1);save();renderHeader();renderCart()}
