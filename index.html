@@ -541,10 +541,11 @@ function openCheckout(){
       <label>البريد الإلكتروني<input name="email" type="email" inputmode="email" autocomplete="email" dir="ltr" placeholder="name@email.com" required></label>
       ${need?'<label>الولاية<input name="wilaya" autocomplete="address-level2" required></label>':''}
       <p id="ordmsg" class="hint" style="color:var(--price)" hidden></p>
-      <div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>
+      ${(()=>{const g=splitCart(cart);if(g.dig.length&&g.phy.length)return `<div class="sum"><span>دفعة الملف الرقمي</span><span class="num">${money(totals(g.dig).sum)} ${CURRENCY}</span></div><div class="sum"><span>دفعة المنتجات المرفقة</span><span class="num">${money(totals(g.phy).sum)} ${CURRENCY}</span></div><p class="hint">يُسجَّل كل منهما كطلب ودفعة منفصلة.</p>`;return `<div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>`})()}
       <button class="wabtn" type="submit" id="ordgo" style="background:var(--ink)">إرسال الطلب</button>
     </form>`);
 }
+const splitCart=list=>({dig:list.filter(l=>isPackItem(findItem(l.id))),phy:list.filter(l=>!isPackItem(findItem(l.id)))});
 function refCode(){return 'A'+Date.now().toString(36).toUpperCase().slice(-5)+Math.floor(Math.random()*90+10)}
 async function submitOrder(form){
   const f=Object.fromEntries(new FormData(form).entries());const msg=$('#ordmsg');const bad=m=>{msg.textContent=m;msg.hidden=false};
@@ -554,19 +555,27 @@ async function submitOrder(form){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email))return bad('اكتب بريدًا إلكترونيًا صحيحًا');
   if(form.elements.wilaya&&!f.wilaya)return bad('اكتب الولاية');
   msg.hidden=true;const btn=$('#ordgo');btn.disabled=true;btn.textContent='جارٍ الإرسال…';
-  const snap=cart.map(l=>({...l})),t=totals(snap),ref=refCode();
-  const items=snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
-  const body=new URLSearchParams({'form-name':'order','bot-field':'',ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:t.sum.toFixed(3),ask:t.ask?'1':'0',items:JSON.stringify(items),summary:snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString();
+  const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap);
+  const parts=[];if(g.dig.length)parts.push({snap:g.dig,tag:'ملف رقمي'});if(g.phy.length)parts.push({snap:g.phy,tag:'منتجات مرفقة'});
+  parts.forEach((p,n)=>{p.ref=parts.length>1?base+'-'+(n+1):base;p.t=totals(p.snap);
+    p.items=p.snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
+    p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
+    p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:p.snap===g.phy?f.wilaya:'',email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
   let ok=false;if(LIVE)try{
-    if(ON_NL){const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});ok=r.ok}
-    else{await fetch('https://asas-oman-store.netlify.app/',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});ok=true}
+    for(const p of parts){
+      if(ON_NL){const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.body});if(!r.ok)throw 0}
+      else await fetch('https://asas-oman-store.netlify.app/',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.body})}
+    ok=true;
   }catch(e){}
-  const wa=waMessage({...f,ref,snap});
+  const multi=parts.length>1;
+  const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
   if(ok){cart=[];save();renderHeader();renderRails();
-    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2><p>رقم الطلب <b class="num" dir="ltr">${ref}</b></p><p class="hint">سنتواصل معك لتأكيد الطلب${items.some(i=>i.k)?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p><a class="wabtn" href="${wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>أرسل تفاصيل الطلب عبر واتساب</a></div>`);
+    const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
+    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p></div>`);
   }else{
-    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p><a class="wabtn" href="${wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>أرسل الطلب عبر واتساب</a></div>`);
+    const blocks=parts.map(p=>waBtn(p,multi?'أرسل '+p.tag+' عبر واتساب':'أرسل الطلب عبر واتساب')).join('');
+    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p>${blocks}</div>`);
   }
 }
 document.addEventListener('submit',e=>{if(e.target.id==='ordform'){e.preventDefault();submitOrder(e.target)}});
