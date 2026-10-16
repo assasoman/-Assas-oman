@@ -596,7 +596,7 @@ function captureOrder(){
   const body=new URLSearchParams({'form-name':'order',ref:cust.ref,name:cust.name,phone:cust.phone,wilaya:cust.wilaya,email:cust.email,total:money(t.total),ask:t.ask?'1':'0',items:JSON.stringify(items),summary:items.map(i=>i.p+' × '+i.q).join('، ')}).toString();
   const url=(SETTINGS['رابط حفظ الطلبات']||'').trim();
   if(/^https:\/\/script\.google\.com\/macros\/s\//.test(url)){const d=dlvOpt();
-    const rec={ref:cust.ref,name:cust.name,phone:cust.phone,wilaya:cust.wilaya,email:cust.email,summary:items.map(i=>i.p+' × '+i.q).join('، '),total:money(t.total)+(t.ask?' + الملحقات حسب الكمية':''),discount:t.disc?money(t.disc):'',coupon:t.disc?couponCode:'',delivery:hasPhysical()&&d?d.name+(d.fee!=null?' ('+money(d.fee)+')':''):''};
+    const rec={ref:cust.ref,name:cust.name,phone:cust.phone,wilaya:cust.wilaya,email:cust.email,summary:items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(t.total)+(t.ask?' + الملحقات حسب الكمية':''),discount:t.disc?money(t.disc):'',coupon:t.disc?couponCode:'',delivery:hasPhysical()&&d?d.name+(d.fee!=null?' ('+money(d.fee)+')':''):''};
     try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec),keepalive:true}).catch(()=>{})}catch(e){}}
   else{try{fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body,keepalive:true}).catch(()=>{})}catch(e){}}
 }
