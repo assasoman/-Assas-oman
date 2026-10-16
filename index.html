@@ -105,6 +105,17 @@ main{display:flex;flex-direction:column;gap:30px;padding-block:20px 120px}
 }
 
 /* section rails */
+#courses,#packs{scroll-margin-top:90px}
+.tiles{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.tile{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:84px;padding:0 26px;border-radius:24px;color:var(--ink);font-family:var(--font);font-weight:800;font-size:24px;text-decoration:none;border:0;width:100%;text-align:start;cursor:pointer;transition:transform .15s}
+.tile:active{transform:scale(.98)}
+.tile.pk{background:#FFB7CF}.tile.cr{background:#FFE08A}
+.tile svg{width:26px;height:26px;flex:none;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.crs{display:grid;gap:12px}
+.crc{background:var(--paper);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.crc b{font-size:18px}.crc .meta{color:var(--muted);font-size:14px}
+.crc a{margin-top:6px;align-self:flex-start}
+.soon{background:var(--paper);border-radius:22px;padding:22px;text-align:center;color:var(--muted);font-weight:700}
 .sh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
 .sh h2{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px}
 .sh h2 img{height:44px;width:auto;margin-block:-10px -4px}
@@ -318,11 +329,20 @@ footer .kidrow img{height:130px;width:auto}
       </article>
     </div>
     <div class="dots" id="dots"></div>
+    <div class="tiles">
+      <a class="tile pk" href="#packs" data-go="packs">البكجات<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></a>
+      <a class="tile cr" href="#courses" data-go="courses">دورات أساس<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></a>
+    </div>
   </section>
 
   <section class="max" id="packs" aria-labelledby="h-packs">
     <div class="sh"><h2 id="h-packs"><img data-char="girl_cut" alt="">أحدث البكجات</h2><button class="all" data-act="all" data-k="packs">عرض الكل</button></div>
     <div class="rail" id="rail-packs"></div>
+  </section>
+
+  <section class="max" id="courses" aria-labelledby="h-courses" style="margin-top:28px;width:100%">
+    <div class="sh"><h2 id="h-courses">دورات أساس</h2></div>
+    <div class="crs" id="crs"><div class="soon">قريبًا… ترقبوا دورات أساس</div></div>
   </section>
 
 
@@ -432,6 +452,15 @@ function imgURL(v,name){v=(v||'').trim();if(!v)return FALLBACK_IMG[name]||'';
   const m=v.match(/\/d\/([\w-]{20,})/)||v.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000':v}
 async function loadSheet(name){const r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name),{cache:'no-store'});
   if(!r.ok)throw new Error(r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error('not shared');return parseCSV(t)}
+async function loadCourses(){
+  try{
+    const rows=(await loadSheet('الدورات')).filter(r=>r['الاسم']&&shown(r));
+    if(!rows.length)return;
+    $('#crs').innerHTML=rows.map(r=>{const pr=num(r['السعر']),link=(r['رابط التسجيل']||'').trim();
+      const href=/^https?:\/\//i.test(link)?link:'https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent('السلام عليكم، أرغب بالتسجيل في دورة: '+r['الاسم']);
+      return `<div class="crc"><b>${esc(r['الاسم'])}</b>${r['الوصف المختصر']?`<span>${esc(r['الوصف المختصر'])}</span>`:''}<span class="meta">${[r['الموعد'],pr!=null&&!isNaN(pr)?money(pr)+' '+CURRENCY:''].filter(Boolean).map(esc).join(' · ')}</span><a class="pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">سجّل الآن</a></div>`}).join('');
+  }catch(e){}
+}
 async function loadProducts(){
   try{
     const [pk,pr]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات')]);
@@ -584,7 +613,7 @@ document.addEventListener('submit',e=>{if(e.target.id==='ordform'){e.preventDefa
 
 /* ---------- menu ---------- */
 function renderMenu(){
-  $('#menu-list').innerHTML=[['packs','البكجات'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('');
+  $('#menu-list').innerHTML=[['packs','البكجات'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('');
 }
 
 /* ---------- open/close ---------- */
@@ -639,7 +668,7 @@ document.querySelectorAll('[data-logo]').forEach(i=>i.src=LOGO);
 document.querySelectorAll('[data-char]').forEach(i=>i.src=CHARS[i.dataset.char]);
 document.querySelectorAll('.wa-general').forEach(a=>a.href='https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent('السلام عليكم، لدي استفسار عن متجر أساس'));
 $('#wanum').textContent='+968 '+WHATSAPP.slice(3,7)+' '+WHATSAPP.slice(7);
-renderMenu();renderRails();renderHeader();loadProducts();
+renderMenu();renderRails();renderHeader();loadProducts();loadCourses();
 
 /* welcome popup (once per session) */
 (()=>{const w=document.getElementById('welcome');let seen=false;try{seen=sessionStorage.getItem('asasWelcome')==='1'}catch(e){}
