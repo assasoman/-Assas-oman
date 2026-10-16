@@ -106,11 +106,17 @@ main{display:flex;flex-direction:column;gap:30px;padding-block:20px 120px}
 
 /* section rails */
 #courses,#packs{scroll-margin-top:90px}
-.tiles{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-.tile{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:84px;padding:0 26px;border-radius:24px;color:var(--ink);font-family:var(--font);font-weight:800;font-size:24px;text-decoration:none;border:0;width:100%;text-align:start;cursor:pointer;transition:transform .15s}
-.tile:active{transform:scale(.98)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.tile{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;min-height:176px;padding:18px 18px 16px;border-radius:30px;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:0 6px 0 rgba(43,34,48,.07)}
+.tile:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(43,34,48,.07)}
 .tile.pk{background:#FFB7CF}.tile.cr{background:#FFE08A}
-.tile svg{width:26px;height:26px;flex:none;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.tile::before{content:'';position:absolute;z-index:-1;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.38);left:-60px;bottom:-70px}
+.tile::after{content:'';position:absolute;z-index:-1;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.3);right:-24px;top:-24px}
+.tile b{display:block;font-size:22px;white-space:nowrap;line-height:1.15;font-weight:800}
+.tile small{display:block;margin-top:5px;font-size:13.5px;font-weight:600;opacity:.72}
+.tile .go{width:40px;height:40px;border-radius:50%;background:var(--ink);display:grid;place-items:center}
+.tile .go svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.tile .kd{position:absolute;left:-4px;bottom:-34px;height:128px;width:auto;z-index:-1;filter:drop-shadow(0 4px 0 rgba(43,34,48,.06))}
 .crs{display:grid;gap:12px}
 .crc{background:var(--paper);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:6px}
 .crc b{font-size:18px}.crc .meta{color:var(--muted);font-size:14px}
@@ -330,8 +336,8 @@ footer .kidrow img{height:130px;width:auto}
     </div>
     <div class="dots" id="dots"></div>
     <div class="tiles">
-      <a class="tile pk" href="#packs" data-go="packs">البكجات<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></a>
-      <a class="tile cr" href="#courses" data-go="courses">دورات أساس<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></a>
+      <a class="tile pk" href="#packs" data-go="packs"><span><b>البكجات</b><small>ملفات قص جاهزة</small></span><i class="go"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></i><img class="kd" data-char="boy_gift" alt=""></a>
+      <a class="tile cr" href="#courses" data-go="courses"><span><b>دورات أساس</b><small>تعلّم معنا</small></span><i class="go"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></i><img class="kd" data-char="girl_point" alt=""></a>
     </div>
   </section>
 
