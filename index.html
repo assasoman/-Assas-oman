@@ -119,6 +119,7 @@ main{display:flex;flex-direction:column;gap:30px;padding-block:20px 120px}
 .tile .kd{position:absolute;left:6px;bottom:-36px;height:136px;width:auto;z-index:-1;filter:drop-shadow(0 4px 0 rgba(43,34,48,.06))}
 .crs{display:grid;gap:12px}
 .crc{background:var(--paper);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.crim{width:100%;border-radius:16px;aspect-ratio:16/10;object-fit:cover;display:block;margin-bottom:4px}
 .crc b{font-size:18px}.crc .meta{color:var(--muted);font-size:14px}
 .crc a{margin-top:6px;align-self:flex-start}
 .soon{background:var(--paper);border-radius:22px;padding:22px;text-align:center;color:var(--muted);font-weight:700}
@@ -464,12 +465,13 @@ async function loadCourses(){
     if(!rows.length)return;
     $('#crs').innerHTML=rows.map(r=>{const pr=num(r['السعر']),link=(r['رابط التسجيل']||'').trim();
       const href=/^https?:\/\//i.test(link)?link:'https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent('السلام عليكم، أرغب بالتسجيل في دورة: '+r['الاسم']);
-      return `<div class="crc"><b>${esc(r['الاسم'])}</b>${r['الوصف المختصر']?`<span>${esc(r['الوصف المختصر'])}</span>`:''}<span class="meta">${[r['الموعد'],pr!=null&&!isNaN(pr)?money(pr)+' '+CURRENCY:''].filter(Boolean).map(esc).join(' · ')}</span><a class="pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">سجّل الآن</a></div>`}).join('');
+      const im=imgURL(r['رابط الصورة'],r['الاسم']);return `<div class="crc">${im?`<img class="crim" src="${esc(im)}" alt="" loading="lazy">`:''}<b>${esc(r['الاسم'])}</b>${r['الوصف المختصر']?`<span>${esc(r['الوصف المختصر'])}</span>`:''}<span class="meta">${[r['الموعد'],pr!=null&&!isNaN(pr)?money(pr)+' '+CURRENCY:''].filter(Boolean).map(esc).join(' · ')}</span><a class="pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">سجّل الآن</a></div>`}).join('');
   }catch(e){}
 }
 async function loadProducts(){
   try{
-    const [pk,pr]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات')]);
+    const [pk,pr,sh]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات'),loadSheet('المنتجات').catch(()=>null)]);
+    if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
       desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addons:splitList(r['المطبوعات المضافة']).map(n=>'p:'+n).filter(id=>prints.some(p=>p.id===id))}));
