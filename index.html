@@ -107,7 +107,7 @@ main{display:flex;flex-direction:column;gap:30px;padding-block:20px 120px}
 /* section rails */
 #courses,#packs{scroll-margin-top:90px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
-.tile{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;min-height:176px;padding:18px 18px 16px;border-radius:30px;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:0 6px 0 rgba(43,34,48,.07)}
+.tile{position:relative;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-start;min-height:176px;padding:18px 18px 16px;border-radius:30px;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .18s,box-shadow .18s;box-shadow:0 6px 0 rgba(43,34,48,.07)}
 .tile:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(43,34,48,.07)}
 .tile.pk{background:#FFB7CF}.tile.cr{background:#FFE08A}
 .tile::before{content:'';position:absolute;z-index:-1;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.38);left:-60px;bottom:-70px}
@@ -336,8 +336,8 @@ footer .kidrow img{height:130px;width:auto}
     </div>
     <div class="dots" id="dots"></div>
     <div class="tiles">
-      <a class="tile pk" href="#packs" data-go="packs"><span><b>البكجات</b><small>ملفات قص جاهزة</small></span><i class="go"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></i><img class="kd" data-char="kid_boy_files" alt=""></a>
-      <a class="tile cr" href="#courses" data-go="courses"><span><b>دورات أساس</b><small>تعلّم معنا</small></span><i class="go"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></i><img class="kd" data-char="girl_point" alt=""></a>
+      <a class="tile pk" href="#packs" data-go="packs"><span><b>البكجات</b><small>ملفات قص جاهزة</small></span><img class="kd" data-char="kid_boy_files" alt=""></a>
+      <a class="tile cr" href="#courses" data-go="courses"><span><b>دورات أساس</b><small>تعلّم معنا</small></span><img class="kd" data-char="girl_point" alt=""></a>
     </div>
   </section>
 
