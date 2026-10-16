@@ -455,9 +455,9 @@ function parseCSV(t){const rows=[];let row=[],f='',q=false;for(let i=0;i<t.lengt
 const splitList=v=>(v||'').split(/[،,\n]/).map(x=>x.trim()).filter(Boolean);
 const num=v=>{v=(v||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d.]/g,'');return v===''?null:parseFloat(v)};
 const shown=r=>(r['ظاهر']||'نعم')!=='لا';
-function imgURL(v,name){v=(v||'').trim();if(!v)return FALLBACK_IMG[name]||'';
+function imgURL(v,name){v=(v||'').trim();if(!v)return FALLBACK_IMG[name]||'';if(/^data:image\//i.test(v))return v;
   const m=v.match(/\/d\/([\w-]{20,})/)||v.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000':v}
-async function loadSheet(name){const r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name),{cache:'no-store'});
+async function loadSheet(name){const r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name)+'&_='+Date.now(),{cache:'no-store'});
   if(!r.ok)throw new Error(r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error('not shared');return parseCSV(t)}
 async function loadCourses(){
   try{
