@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://assas-oman.com/sitemap.xml
