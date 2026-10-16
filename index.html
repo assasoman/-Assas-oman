@@ -458,19 +458,21 @@ const num=v=>{v=(v||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
 const shown=r=>(r['ظاهر']||'نعم')!=='لا';
 function imgURL(v,name){v=(v||'').trim();if(!v)return FALLBACK_IMG[name]||'';if(/^data:image\//i.test(v))return v;
   const m=v.match(/\/d\/([\w-]{20,})/)||v.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000':v}
-async function loadSheet(name){const r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name)+'&_='+Date.now(),{cache:'no-store'});
+async function loadSheet(name){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),12000);let r;try{r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name)+'&_='+Date.now(),{cache:'no-store',signal:ac.signal})}finally{clearTimeout(tm)}
   if(!r.ok)throw new Error(r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error('not shared');return parseCSV(t)}
 async function loadCourses(){
+  dbg('start');
   try{
     const all=await loadSheet('الدورات');const rows=all.filter(r=>r['الاسم']&&shown(r));
     COURSES=rows.map(r=>({id:'k:c:'+encodeURIComponent(r['الاسم'].trim()),name:r['الاسم'].trim(),price:num(r['السعر']),course:1}));
     if(!rows.length){dbg('rows='+all.length+' keys='+Object.keys(all[0]||{}).join('|').slice(0,80));return}
+    dbg('rows='+rows.length);
     $('#crs').innerHTML=rows.map(r=>{const pr=num(r['السعر']),link=(r['رابط التسجيل']||'').trim();
       const href=/^https?:\/\//i.test(link)?link:'https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent('السلام عليكم، أرغب بالتسجيل في دورة: '+r['الاسم']);
       const im=imgURL(r['رابط الصورة'],r['الاسم']);return `<div class="crc">${im?`<img class="crim" src="${esc(im)}" alt="" loading="lazy">`:''}<b>${esc(r['الاسم'])}</b>${r['الوصف المختصر']?`<span>${esc(r['الوصف المختصر'])}</span>`:''}<span class="meta">${[r['الموعد'],pr!=null&&!isNaN(pr)?money(pr)+' '+CURRENCY:''].filter(Boolean).map(esc).join(' · ')}</span>${pr!=null&&!isNaN(pr)&&pr>0?`<button type="button" class="pill" data-add="${esc('k:c:'+encodeURIComponent(r['الاسم'].trim()))}">أضف إلى السلة</button>`:`<a class="pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">سجّل الآن</a>`}</div>`}).join('');cart=cart.filter(l=>findItem(l.id));save();renderHeader();renderRails();
   }catch(e){dbg('err '+(e&&e.message)+' '+(e&&e.stack||'').slice(0,160))}
 }
-function dbg(t){try{const c=document.getElementById('crs');if(c&&c.querySelector('.soon')){const d=document.createElement('div');d.style.cssText='font:11px monospace;color:#999;direction:ltr;margin-top:6px';d.textContent='[debug v4] '+t;c.appendChild(d)}}catch(_){}}
+function dbg(t){try{const c=document.getElementById('crs');if(c&&c.querySelector('.soon')){const d=document.createElement('div');d.style.cssText='font:11px monospace;color:#999;direction:ltr;margin-top:6px';d.textContent='[v5] '+t;c.appendChild(d)}}catch(_){}}
 async function loadProducts(){
   try{
     const [pk,pr,sh]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات'),loadSheet('المنتجات').catch(()=>null)]);
