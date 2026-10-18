@@ -667,14 +667,13 @@ async function submitOrder(form){
     p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
     p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
-  let ok=false;if(LIVE)try{
-    for(const p of parts){
-      if(ON_NL){const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.body});if(!r.ok)throw 0}
-      else await fetch('https://asas-oman-store.netlify.app/',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p.body})}
-    ok=true;
-  }catch(e){}
-  if(LIVE)parts.forEach(p=>{try{fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,
-    body:JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:''})}).catch(()=>{})}catch(e){}});
+  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:''});
+  const sendHook=async p=>{const body=hookBody(p);
+    for(let a=0;a<2;a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),12000);
+      try{await fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(tm);return true}catch(e){clearTimeout(tm)}}
+    try{if(navigator.sendBeacon&&navigator.sendBeacon(ORDERS_HOOK,new Blob([body],{type:'text/plain;charset=utf-8'})))return true}catch(e){}
+    return false};
+  let ok=false;if(LIVE){ok=true;for(const p of parts){if(!(await sendHook(p)))ok=false}}
   const multi=parts.length>1;
   const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
   if(ok){cart=[];save();renderHeader();renderRails();
