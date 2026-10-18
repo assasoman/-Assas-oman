@@ -521,9 +521,9 @@ async function loadProducts(){
     if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
-      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addons:splitList(r['المطبوعات المضافة']).map(n=>'p:'+n).filter(id=>prints.some(p=>p.id===id))}));
+      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return splitList(raw).map(n=>'s:'+n.trim())})()}));
     if(!packs.length)return;
-    PACKS=packs.map(p=>({...p,addons:SHOP.map(x=>x.id)}));PRINTS=prints;cart=cart.filter(l=>findItem(l.id));save();
+    PACKS=packs.map(p=>({...p,addons:p.addons===null?SHOP.map(x=>x.id):p.addons.filter(id=>SHOP.some(x=>x.id===id))}));PRINTS=prints;cart=cart.filter(l=>findItem(l.id));save();
     renderRails();renderHeader();
   }catch(e){/* الجدول غير متاح: نكمل بالبيانات الاحتياطية */}
 }
@@ -597,7 +597,7 @@ function drawSheet(it){
     <div class="hero">${thumb(it)}</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="s-title">${esc(it.name)}</h2>${it.price!=null?`<span class="pr num">${money(it.price)} ${CURRENCY}</span>`:'<span class="hint">السعر حسب الكمية</span>'}</div>
     ${it.desc?`<p style="font-size:14.5px;line-height:1.8">${esc(it.desc)}</p>`:it.sub?`<p class="hint">${esc(it.sub)}</p>`:''}
-    ${it.includes?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+    ${it.includes&&it.includes.length?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
     ${it.variants?`<div><b>اختر نوع التصميم</b><div class="vars" style="margin-top:8px">${it.variants.map((v,i)=>`<label class="${i===pickedVar?'on':''}"><input type="radio" name="var" data-var="${i}" ${i===pickedVar?'checked':''}>${esc(v)}</label>`).join('')}</div></div>`:''}
     ${ads.length?`<div class="addons"><h3>اختر ما تريد شراءه</h3>
       <label class="ad ${packOn?'on':''}"><input type="checkbox" data-pk ${packOn?'checked':''}>
