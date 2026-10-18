@@ -772,7 +772,7 @@ document.addEventListener('click',function(e){var t=e.target.closest&&e.target.c
  if(e.target===lb){hide();e.stopPropagation()}},true);
 document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape'){hide();e.stopPropagation()}},true);
 })();</script>
-<script>(function(){try{var H=location.hostname;if(!H||/claude\.(ai|com)|claudeusercontent|anthropic|localhost/i.test(H))return;if(/bot|crawl|spider|slurp|preview/i.test(navigator.userAgent))return;if(sessionStorage.getItem('asasV'))return;sessionStorage.setItem('asasV','1');fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:JSON.stringify({type:'visit'})})}catch(e){}})();</script>
+<script>(function(){try{var H=location.hostname;if(!H||/claude\.(ai|com)|claudeusercontent|anthropic|localhost/i.test(H))return;if(/bot|crawl|spider|slurp|preview/i.test(navigator.userAgent))return;if(sessionStorage.getItem('asasV'))return;sessionStorage.setItem('asasV','1');fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:JSON.stringify({type:'visit'})}).catch(function(){})}catch(e){}})();</script>
 <script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 
 </body></html>
