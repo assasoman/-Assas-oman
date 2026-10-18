@@ -644,7 +644,7 @@ function openCheckout(){
       <label>الاسم<input name="name" autocomplete="name" required></label>
       <label>رقم الهاتف<input name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
       <label>البريد الإلكتروني<input name="email" type="email" inputmode="email" autocomplete="email" dir="ltr" placeholder="name@email.com" required></label>
-      ${need?'<label>الولاية<input name="wilaya" autocomplete="address-level2" required></label>':''}
+      ${need?'<label>الولاية<input name="wilaya" autocomplete="address-level2" required></label><label>المنطقة<input name="area" autocomplete="address-level3" placeholder="مثال: الموالح الجنوبية" required></label>':''}
       <p id="ordmsg" class="hint" style="color:var(--price)" hidden></p>
       <div class="sum"><span>المجموع</span><span class="num">${money(t.sum)} ${CURRENCY}</span></div>
       <button class="wabtn" type="submit" id="ordgo" style="background:var(--ink)">إرسال الطلب</button>
@@ -659,6 +659,8 @@ async function submitOrder(form){
   if(f.phone.replace(/\D/g,'').length<8)return bad('رقم الهاتف غير صحيح');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email))return bad('اكتب بريدًا إلكترونيًا صحيحًا');
   if(form.elements.wilaya&&!f.wilaya)return bad('اكتب الولاية');
+  f.area=(f.area||'').trim();if(form.elements.area&&!f.area)return bad('اكتب المنطقة');
+  if(f.area)f.wilaya=f.wilaya+' - '+f.area;delete f.area;
   msg.hidden=true;const btn=$('#ordgo');btn.disabled=true;btn.textContent='جارٍ الإرسال…';
   const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap);
   const parts=[{snap,tag:'الطلب'}];
