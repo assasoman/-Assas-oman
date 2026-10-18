@@ -247,6 +247,15 @@ footer .kidrow img{height:130px;width:auto}
 .wabtn svg{width:22px;height:22px;fill:#fff}
 
 /* product sheet */
+.gal{display:flex;gap:8px;overflow-x:auto;padding:6px 0 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.gal::-webkit-scrollbar{display:none}
+.gal button{flex:0 0 auto;padding:0;border:0;background:none;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px -4px rgba(0,0,0,.3)}
+.gal img{display:block;height:120px;width:auto;max-width:200px;object-fit:cover}
+.lbx{position:fixed;inset:0;z-index:80;background:rgba(20,16,24,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+.lbx[hidden]{display:none}.lbx img{max-width:100%;max-height:72vh;border-radius:14px;background:#fff}
+.lbx .row{display:flex;gap:10px;align-items:center}.lbx a,.lbx button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:11px 20px;cursor:pointer;text-decoration:none}
+.lbx a{background:var(--pink,#E84A84);color:#fff}.lbx button{background:rgba(255,255,255,.15);color:#fff}
+.lbx .nv{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;padding:0;font-size:22px}.lbx .nv.p{right:10px}.lbx .nv.n{left:10px}
+.lbx small{color:rgba(255,255,255,.75);font-size:12.5px;text-align:center}
 .sheet{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center}
 .sheet .in{position:relative;background:var(--paper);width:100%;max-width:620px;max-height:94vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;z-index:1}
 @media(min-width:700px){.sheet{align-items:center}.sheet .in{border-radius:26px}}
@@ -422,6 +431,7 @@ footer .kidrow img{height:130px;width:auto}
 
 <div class="welcome" id="welcome" hidden role="dialog" aria-modal="true" aria-label="ترحيب"><div class="box"><button class="wx" id="wx" aria-label="إغلاق">✕</button><div class="top"><img class="wk" data-char="pair_phone" alt=""></div><div class="body"><span class="tag">✦ متجر أساس عُمان ✦</span><h3>أهلًا بكم في <em>أساس</em></h3><p>ملفات قص للكاميو للمناسبات والتوزيعات.</p><button class="go" id="wgo">تسوّق الآن</button></div></div></div>
 <form name="order" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden><input type="hidden" name="form-name" value="order"><input name="bot-field"><input name="ref"><input name="name"><input name="phone"><input name="wilaya"><input type="email" name="email"><input name="total"><input name="ask"><textarea name="items"></textarea><textarea name="summary"></textarea></form>
+<div class="lbx" id="lbx" hidden role="dialog" aria-modal="true"></div>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="s-title"></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -521,7 +531,7 @@ async function loadProducts(){
     if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
-      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return splitList(raw).map(n=>'s:'+n.trim())})()}));
+      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),gallery:String(r['صور العرض']||'').split(/[\s,،]+/).map(x=>x.trim()).filter(x=>/^(https?:\/\/|data:image\/|[\w\-\/]+\.(jpe?g|png|webp)$)/i.test(x)).map(x=>imgURL(x,'')),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return splitList(raw).map(n=>'s:'+n.trim())})()}));
     if(!packs.length)return;
     PACKS=packs.map(p=>({...p,addons:p.addons===null?SHOP.map(x=>x.id):p.addons.filter(id=>SHOP.some(x=>x.id===id))}));PRINTS=prints;cart=cart.filter(l=>findItem(l.id));save();
     renderRails();renderHeader();
@@ -597,6 +607,7 @@ function drawSheet(it){
     <div class="hero">${thumb(it)}</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="s-title">${esc(it.name)}</h2>${it.price!=null?`<span class="pr num">${money(it.price)} ${CURRENCY}</span>`:'<span class="hint">السعر حسب الكمية</span>'}</div>
     ${it.desc?`<p style="font-size:14.5px;line-height:1.8">${esc(it.desc)}</p>`:it.sub?`<p class="hint">${esc(it.sub)}</p>`:''}
+    ${it.gallery&&it.gallery.length?`<div><b>صور البكج</b> <span class="hint" style="font-size:12.5px">· اضغطي على الصورة لتكبيرها وحفظها</span><div class="gal">${it.gallery.map((u,i)=>`<button type="button" data-gal="${i}" aria-label="صورة ${i+1}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div></div>`:''}
     ${it.includes&&it.includes.length?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
     ${it.variants?`<div><b>اختر نوع التصميم</b><div class="vars" style="margin-top:8px">${it.variants.map((v,i)=>`<label class="${i===pickedVar?'on':''}"><input type="radio" name="var" data-var="${i}" ${i===pickedVar?'checked':''}>${esc(v)}</label>`).join('')}</div></div>`:''}
     ${ads.length?`<div class="addons"><h3>اختر ما تريد شراءه</h3>
@@ -736,6 +747,20 @@ document.getElementById('wx').onclick=close;document.getElementById('wgo').oncli
 w.addEventListener('click',e=>{if(e.target===w)close()})})();
 
 </script>
+<script>(function(){
+var cur=null,ix=0,lb=document.getElementById('lbx');
+function fname(i){return ((cur&&cur.name)||'asas').replace(/[\\/:*?"<>|]+/g,' ').trim()+' - '+(i+1)+'.jpg'}
+function draw(){var g=cur.gallery,u=g[ix],many=g.length>1;
+ lb.innerHTML='<img src="'+u.replace(/"/g,'&quot;')+'" alt="">'+(many?'<button class="nv p" data-lb="p" aria-label="السابقة">›</button><button class="nv n" data-lb="n" aria-label="التالية">‹</button>':'')+
+ '<div class="row"><a href="'+u.replace(/"/g,'&quot;')+'" download="'+fname(ix).replace(/"/g,'')+'" target="_blank" rel="noopener">⬇ حفظ الصورة</a><button data-lb="x">إغلاق</button></div>'+
+ '<small>'+(many?(ix+1)+' / '+g.length+' · ':'')+'في الآيفون: اضغطي مطوّلًا على الصورة واختاري «حفظ في الصور»</small>'}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-gal]');
+ if(t){var h=document.getElementById('s-title');cur=(typeof PACKS!=='undefined'&&PACKS.find(function(p){return h&&p.name===h.textContent}))||null;if(!cur||!cur.gallery)return;ix=+t.dataset.gal||0;draw();lb.hidden=false;e.stopPropagation();return}
+ var b=e.target.closest&&e.target.closest('[data-lb]');
+ if(b&&cur){e.stopPropagation();var k=b.dataset.lb,n=cur.gallery.length;if(k==='x'){lb.hidden=true;return}ix=(ix+(k==='n'?1:-1)+n)%n;draw();return}
+ if(e.target===lb){lb.hidden=true;e.stopPropagation()}},true);
+document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape'){lb.hidden=true;e.stopPropagation()}},true);
+})();</script>
 <script>(function(){try{var H=location.hostname;if(!H||/claude\.(ai|com)|claudeusercontent|anthropic|localhost/i.test(H))return;if(/bot|crawl|spider|slurp|preview/i.test(navigator.userAgent))return;if(sessionStorage.getItem('asasV'))return;sessionStorage.setItem('asasV','1');fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:JSON.stringify({type:'visit'})})}catch(e){}})();</script>
 <script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 
