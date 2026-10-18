@@ -1,0 +1,33 @@
+name: sheet-sync
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: sheet-sync
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch sheet tabs
+        run: |
+          ID=1GjNBXdt0_LGylPb4dCG3Tvhpe4719gSLgXn65gWdsv4
+          mkdir -p data
+          fetch() {
+            enc=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$1")
+            if curl -fsSL --max-time 30 "https://docs.google.com/spreadsheets/d/$ID/gviz/tq?tqx=out:csv&headers=1&sheet=$enc" -o /tmp/t.csv && ! head -c 20 /tmp/t.csv | grep -q '<'; then
+              mv /tmp/t.csv "data/$2.csv"
+            fi
+          }
+          fetch "البكجات" packs
+          fetch "المطبوعات" prints
+          fetch "المنتجات" products
+          fetch "الدورات" courses
+      - name: Commit if changed
+        run: |
+          git config user.name "assas-bot"
+          git config user.email "assas-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || (git commit -m "تحديث نسخة الشيت" && git push)

@@ -509,7 +509,9 @@ function isVid(u){return /\.(mp4|mov|webm)(\?|#|$)/i.test(u)}
 function vPoster(u){return u.replace(/\.(mp4|mov|webm)(\?.*)?$/i,'.jpg')}
 function imgURL(v,name){v=(v||'').trim();if(!v)return FALLBACK_IMG[name]||'';if(/^data:image\//i.test(v))return v;
   const m=v.match(/\/d\/([\w-]{20,})/)||v.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000':v}
-async function loadSheet(name){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),12000);let r;try{r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name)+'&_='+Date.now(),{cache:'no-store',signal:ac.signal})}finally{clearTimeout(tm)}
+const SHEET_SNAP={'البكجات':'packs','المطبوعات':'prints','المنتجات':'products','الدورات':'courses'};
+async function loadSheet(name){try{return await loadSheetLive(name)}catch(e){const f=SHEET_SNAP[name];if(!f)throw e;const r=await fetch('data/'+f+'.csv?_='+Date.now(),{cache:'no-store'});if(!r.ok)throw e;const t=await r.text();if(/^\s*</.test(t))throw e;return parseCSV(t)}}
+async function loadSheetLive(name){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),8000);let r;try{r=await fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(name)+'&_='+Date.now(),{cache:'no-store',signal:ac.signal})}finally{clearTimeout(tm)}
   if(!r.ok)throw new Error(r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error('not shared');return parseCSV(t)}
 const COURSE_FALLBACK=[{'الاسم':'دورة الكاميو','الوصف المختصر':'إبدأ من الاساس وشوف الفرق🌟','السعر':'10','الموعد':'','رابط الصورة':'course-post.jpg','رابط التسجيل':'','ظاهر':'نعم'}];
 function drawCourses(rows){
