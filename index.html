@@ -479,9 +479,9 @@ async function loadProducts(){
     if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
-      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addons:splitList(r['المطبوعات المضافة']).map(n=>'p:'+n).filter(id=>prints.some(p=>p.id===id))}));
+      desc:r['الوصف'],includes:splitList(r['يشمل الملف']),addNames:splitList(r['المطبوعات المضافة'])}));
     if(!packs.length)return;
-    PACKS=packs.map(p=>({...p,addons:SHOP.map(x=>x.id)}));PRINTS=prints;cart=cart.filter(l=>findItem(l.id));save();
+    PACKS=packs.map(p=>{const nm=p.addNames,all=nm.some(n=>/^(الكل|all)$/i.test(n));return {...p,addons:SHOP.filter(x=>all||nm.includes(x.name)).map(x=>x.id)}});PRINTS=prints;cart=cart.filter(l=>findItem(l.id));save();
     renderRails();renderHeader();
   }catch(e){/* الجدول غير متاح: نكمل بالبيانات الاحتياطية */}
 }
