@@ -133,14 +133,8 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
   </div>
 
   <section>
-    <h2>🔎 نبحث عن <small>الأفكار المتجددة وغير المكررة</small></h2>
-    <div class="cats">
-      <div class="cat"><i>🎀</i>التوزيعات والهدايا المبتكرة</div>
-      <div class="cat"><i>🌸</i>العطور والبخور والمعطرات</div>
-      <div class="cat"><i>✨</i>منتجات الأكريليك والخشب</div>
-      <div class="cat"><i>🎁</i>المنتجات المطبوعة بتقنية 3D</div>
-      <div class="cat"><i>💡</i>أي فكرة جديدة تناسب المناسبات والمواسم</div>
-    </div>
+    <h2>💡 فكرتك أنتِ <small>بدون قيود على نوع المنتج</small></h2>
+    <div class="terms"><p style="margin:0;line-height:1.9">ما نحدد لكِ نوع المنتج… <b>أنتِ اللي تجين بالفكرة!</b> أي منتج مبتكر وحصري تصنعينه بنفسك ويناسب المناسبات والمواسم، قدّميه لنا ونتشاور فيه سوا 🤍</p></div>
   </section>
 
   <section>
@@ -216,16 +210,6 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
           <option>الشريكة الدائمة (سنوي)</option>
         </select>
       </label>
-      <label>مجال المنتج
-        <select name="cat" required>
-          <option value="">اختاري…</option>
-          <option>التوزيعات والهدايا المبتكرة</option>
-          <option>العطور والبخور والمعطرات</option>
-          <option>منتجات الأكريليك والخشب</option>
-          <option>المنتجات المطبوعة بتقنية 3D</option>
-          <option>فكرة أخرى</option>
-        </select>
-      </label>
       <label>اشرحي فكرتك ومنتجك <small>(ما الذي يميزه؟ ولأي مناسبة؟)</small><textarea name="idea" required></textarea></label>
       <label>سعر الجملة المقترح للقطعة <small>(بالريال)</small><input name="price" inputmode="decimal" dir="ltr" placeholder="مثال: 0.500"></label>
       <p id="msg" hidden></p>
@@ -257,14 +241,13 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
     if(!v('name'))return bad('اكتبي اسمك');
     if(phone.replace(/\D/g,'').length<8)return bad('رقم الهاتف غير صحيح');
     if(!v('pkg'))return bad('اختاري الباقة');
-    if(!v('cat'))return bad('اختاري مجال المنتج');
     if(v('idea').length<10)return bad('اشرحي فكرتك بشكل أوضح');
     msg.hidden=true;
     var lines=['السلام عليكم 🌷','أرغب بالانضمام إلى برنامج شركاء أساس:','',
       'الاسم: '+v('name'),'الهاتف: '+phone];
     if(v('brand'))lines.push('المشروع / الحساب: '+v('brand'));
     if(v('wilaya'))lines.push('الولاية: '+v('wilaya'));
-    lines.push('الباقة: '+v('pkg'),'المجال: '+v('cat'),'','الفكرة:',v('idea'));
+    lines.push('الباقة: '+v('pkg'),'','الفكرة:',v('idea'));
     if(v('price'))lines.push('','سعر الجملة المقترح: '+v('price')+' ر.ع');
     location.href='https://api.whatsapp.com/send?phone='+WA+'&text='+encodeURIComponent(lines.join('\n'));
   });
