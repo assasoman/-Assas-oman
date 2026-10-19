@@ -5,13 +5,13 @@
 <title>عجلة الحظ 🎡 | أساس عُمان</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#E84A84">
-<meta name="description" content="عجلة الحظ من أساس عُمان: كل مناسبة نختار فائزة تاخذ البكج القادم بنصف السعر أو تسترجع نصف سعر بكجها.">
+<meta name="description" content="عجلة الحظ من أساس عُمان: كل شهر نختار فائزة تاخذ البكج القادم بنصف السعر أو تسترجع نصف سعر بكجها.">
 <link rel="canonical" href="https://assas-oman.com/lucky.html">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:title" content="عجلة الحظ 🎡 كل مناسبة… فائزة جديدة!">
-<meta property="og:description" content="اشتري بكج المناسبة وادخلي السحب تلقائيًا، والفائزة تاخذ البكج القادم بنصف السعر أو تسترجع نصف سعر بكجها 🎁">
+<meta property="og:title" content="عجلة الحظ 🎡 كل شهر… فائزة جديدة!">
+<meta property="og:description" content="كل عملية شراء من أساس خلال الشهر تدخلك السحب تلقائيًا، والفائزة تاخذ البكج القادم بنصف السعر أو تسترجع نصف سعر بكجها 🎁">
 <meta property="og:url" content="https://assas-oman.com/lucky.html">
 <meta property="og:image" content="https://assas-oman.com/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -167,6 +167,12 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
 .shop{display:inline-block;margin-top:14px;background:var(--ink);color:#fff;text-decoration:none;font-weight:800;border-radius:99px;padding:10px 24px}
 .rules{font-size:13.5px;color:#5A5462;background:#fff;border-radius:20px;padding:12px 18px 12px 12px;border:1px solid var(--line)}
 .rules li{margin:4px 0}
+details.ents{margin-top:16px;text-align:start}
+details.ents summary{cursor:pointer;font-weight:800;text-align:center;color:var(--pink);list-style:none}
+details.ents summary::-webkit-details-marker{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
+.chips span{background:#FFF0F5;border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700}
+.chips span small{color:var(--muted);font-weight:600;margin-inline-start:4px}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(34,32,43,.55);display:grid;place-items:center;padding:16px}
 .modal[hidden]{display:none}
 .mcard{background:#fff;border-radius:28px;padding:26px 20px 22px;text-align:center;max-width:360px;width:100%;animation:popin .5s cubic-bezier(.2,1.4,.4,1)}
@@ -191,10 +197,10 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
   <div class="hero">
     <span class="spark" style="top:16px;right:18px">✦</span><span class="spark" style="top:60px;left:22px;color:#7CC6EE">✦</span>
     <span class="tag">🎡 جديد · عجلة الحظ</span>
-    <h1>كل مناسبة…<br><em>فائزة جديدة!</em></h1>
-    <p>اشتري بكج المناسبة من الموقع، ورقم طلبك يدخل العجلة تلقائيًا 💗 بعد كل مناسبة نلف العجلة ونعلن فائزة وحدة تختار جائزتها:</p>
+    <h1>كل شهر…<br><em>فائزة جديدة!</em></h1>
+    <p>كل عملية شراء من أساس خلال الشهر تدخلك العجلة تلقائيًا 💗 وفي بداية كل شهر نلف العجلة ونعلن فائزة وحدة تختار جائزتها:</p>
     <div class="prizes">
-      <div class="prize"><i>🎁</i><b>البكج القادم بنصف السعر</b><span>خصم 50% على بكج المناسبة الجاية</span></div>
+      <div class="prize"><i>🎁</i><b>البكج القادم بنصف السعر</b><span>خصم 50% على البكج اللي بعده</span></div>
       <div class="or">أو</div>
       <div class="prize"><i>💸</i><b>استرجاع نصف سعر بكجك</b><span>نرجّع لك نص قيمة البكج اللي اشتريتيه</span></div>
     </div>
@@ -211,15 +217,16 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
       </div>
       <div><span class="status" id="status">السحب بعد انتهاء المناسبة 🎡</span></div>
       <button class="spin" id="spin" hidden>لفّي العجلة 🎡</button>
+      <details class="ents"><summary>📋 شوفي قائمة المشاركات (تأكدي إن اسمك موجود)</summary><div class="chips" id="chips"></div></details>
     </div>
   </section>
 
   <section>
     <h2>✨ كيف تشاركين؟</h2>
     <div class="steps3">
-      <div><em>١</em><p style="margin:0"><b>اشتري بكج المناسبة</b><span>من موقع أساس</span></p></div>
-      <div><em>٢</em><p style="margin:0"><b>تدخلين السحب تلقائيًا</b><span>كل طلب يعطيك فرصة في العجلة</span></p></div>
-      <div><em>٣</em><p style="margin:0"><b>نعلن الفائزة</b><span>هنا وعلى حساباتنا بعد كل مناسبة</span></p></div>
+      <div><em>١</em><p style="margin:0"><b>اشتري من أساس</b><span>من الموقع أو الواتساب</span></p></div>
+      <div><em>٢</em><p style="margin:0"><b>تدخلين سحب الشهر تلقائيًا</b><span>كل طلب يعطيك فرصة في العجلة</span></p></div>
+      <div><em>٣</em><p style="margin:0"><b>نعلن الفائزة</b><span>هنا وعلى حساباتنا بداية كل شهر</span></p></div>
     </div>
   </section>
 
@@ -230,11 +237,11 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
 
   <section>
     <ul class="rules">
-      <li>يدخل السحب كل طلب لبكج المناسبة الحالية من الموقع، وكل طلب = فرصة وحدة.</li>
+      <li>يدخل سحب الشهر كل طلب تم خلال الشهر من أساس (الموقع أو الواتساب)، وكل طلب = فرصة وحدة.</li>
       <li>تظهر الأسماء مختصرة مع آخر أرقام الطلب، حفاظًا على خصوصيتكم.</li>
       <li>نتواصل مع الفائزة على الواتساب، وتختار جائزتها: البكج القادم بنصف السعر أو استرجاع نصف سعر بكجها.</li>
     </ul>
-    <div style="text-align:center"><a class="shop" href="./#packs">تسوّقي بكج المناسبة ←</a></div>
+    <div style="text-align:center"><a class="shop" href="./">تسوّقي من أساس ←</a></div>
   </section>
 </main>
 
@@ -258,7 +265,7 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
 (function(){
   var COLORS=['#FFC2D8','#BFE6FA','#FFE08A','#CDE8B5','#E2D3F5','#FFD4B8'];
   var svg=document.getElementById('wsvg'),spinBtn=document.getElementById('spin'),data=null,rot=0,busy=false;
-  function tail(r){r=String(r||'');return r?'\u2066#…'+r.slice(-4)+'\u2069':''}
+  function tail(r){r=String(r||'');return r?'\u2066#'+(r.length>4?'…'+r.slice(-4):r)+'\u2069':''}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function pt(r,a){a=a*Math.PI/180;return[200+r*Math.sin(a),200-r*Math.cos(a)]}
   function draw(list){
@@ -290,6 +297,7 @@ footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--
     document.getElementById('cnt').textContent=list.length+' مشاركة';
     if(c.note)document.getElementById('status').textContent=c.note;
     draw(list);
+    document.getElementById('chips').innerHTML=list.map(function(e){return '<span>'+esc(e.n)+'<small>'+esc(tail(e.r))+'</small></span>'}).join('');
     var w=data.winners||[],box=document.getElementById('wins');
     box.innerHTML=w.length?w.map(function(x){return '<div class="win"><span class="tro">🏆</span><div><b>'+esc(x.n)+'</b><span>فائزة سحب '+esc(x.occasion)+' · طلب '+esc(tail(x.r))+(x.date?' · '+esc(x.date):'')+'</span></div></div>'}).join(''):'<div class="empty">أول فائزة في عجلة أساس… <b>ممكن تكونين أنتِ!</b> 💗</div>';
     if(location.hash==='#spin'&&list.length)spinBtn.hidden=false;
