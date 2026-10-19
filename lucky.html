@@ -174,6 +174,15 @@ details.ents summary::-webkit-details-marker{display:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;justify-content:center}
 .chips span{background:#FFF0F5;border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700}
 .chips span small{color:var(--muted);font-weight:600;margin-inline-start:4px}
+.lv{background:#FFE3E3!important;color:#C0123A;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.55}}
+.wban{margin:0 auto 14px;max-width:420px;background:#FFF3D1;border-radius:20px;padding:10px 14px;font-weight:800;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:center}
+.wban[hidden]{display:none}
+.wban b{color:var(--pink);font-size:19px}
+.wban button{border:0;background:var(--ink);color:#fff;font:inherit;font-size:14px;font-weight:800;border-radius:99px;padding:5px 14px;cursor:pointer}
+.cd{position:absolute;inset:0;z-index:4;border-radius:50%;background:rgba(34,32,43,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800}
+.cd b{font-size:80px;line-height:1;color:var(--sun)}
+.cd[hidden]{display:none}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(34,32,43,.55);display:grid;place-items:center;padding:16px}
 .modal[hidden]{display:none}
 .mcard{background:#fff;border-radius:28px;padding:26px 20px 22px;text-align:center;max-width:360px;width:100%;animation:popin .5s cubic-bezier(.2,1.4,.4,1)}
@@ -212,11 +221,13 @@ details.ents summary::-webkit-details-marker{display:none}
   <section>
     <div class="wheelbox">
       <h2>🎡 سحب <span id="occ">المناسبة</span></h2>
-      <div class="wmeta"><span>كل طلب = فرصة</span></div>
+      <div class="wmeta"><span class="lv" id="live" hidden>🔴 سحب مباشر</span><span>كل طلب = فرصة</span></div>
+      <div class="wban" id="wbanner" hidden>🏆 فائزة السحب: <b id="wbn"></b><button id="replay" type="button">شوفي لحظة السحب 🎡</button></div>
       <div class="wheel">
         <svg class="pin" viewBox="0 0 38 46"><path d="M19 46 3 18A16 16 0 1 1 35 18Z" fill="#22202B"/><circle cx="19" cy="16" r="7" fill="#FFC93C"/></svg>
         <svg class="w idle" id="wsvg" viewBox="0 0 400 400"></svg>
         <div class="hub"><img src="img/logo.webp" alt=""></div>
+        <div class="cd" id="cd" hidden><span>السحب المباشر يبدأ بعد</span><b id="cdn">5</b></div>
       </div>
       <div><span class="status" id="status">السحب بعد انتهاء المناسبة 🎡</span></div>
       <button class="spin" id="spin" hidden>لفّي العجلة 🎡</button>
@@ -292,13 +303,49 @@ details.ents summary::-webkit-details-marker{display:none}
     if(num.length===8)num='968'+num;
     document.getElementById('wwa').href='https://api.whatsapp.com/send?'+(num?'phone='+num+'&':'')+'text='+encodeURIComponent(msg);document.getElementById('modal').hidden=false;confetti()}
   document.getElementById('mclose').onclick=function(){document.getElementById('modal').hidden=true};
-  spinBtn.onclick=function(){
-    var list=(data&&data.current&&data.current.entries)||[];if(busy||!list.length)return;busy=true;spinBtn.disabled=true;
-    var n=list.length,seg=360/n,u=new Uint32Array(1);crypto.getRandomValues(u);var idx=u[0]%n;
-    var jitter=(Math.random()-.5)*seg*.6,target=360-(idx*seg+seg/2)+jitter;
+  var HOOK='https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec',KEY='',TEST=false,MONTH='',off=0,shown=null,pollT=null,timers=[];
+  var live=document.getElementById('live'),cd=document.getElementById('cd'),wb=document.getElementById('wbanner');
+  function idxRot(idx,n){var seg=360/n;return ((360-(idx*seg+seg/2))%360+360)%360}
+  function spinTo(idx,n,ms){
     svg.classList.remove('idle');svg.style.transition='none';svg.style.transform='rotate('+(rot%360)+'deg)';svg.getBoundingClientRect();
-    svg.style.transition='';rot=(rot-rot%360)+360*7+((target%360)+360)%360;svg.style.transform='rotate('+rot+'deg)';
-    setTimeout(function(){busy=false;spinBtn.disabled=false;show(list[idx])},6700);
+    rot=(rot-rot%360)+360*7+idxRot(idx,n);
+    svg.style.transition=ms?'transform '+ms+'ms cubic-bezier(.12,.75,.08,1)':'none';svg.style.transform='rotate('+rot+'deg)';
+  }
+  function entryOf(d){var list=data.current.entries||[],e=list[d.idx];return (e&&e.n===d.name)?e:{n:d.name,r:''}}
+  function banner(d){wb.hidden=false;document.getElementById('wbn').textContent=d.name;if(!TEST)document.getElementById('status').textContent='✅ تم السحب، مبروك للفائزة 🎉';live.hidden=true;}
+  function play(d,delay){
+    timers.forEach(clearTimeout);timers=[];
+    var n=d.n||(data.current.entries||[]).length;
+    if(delay>0){
+      cd.hidden=false;
+      var tick=function(){var left=Math.ceil((d.start-(Date.now()+off))/1000);if(left>0){document.getElementById('cdn').textContent=left;timers.push(setTimeout(tick,250))}};tick();
+    }
+    timers.push(setTimeout(function(){cd.hidden=true;spinTo(d.idx,n,6500);
+      timers.push(setTimeout(function(){banner(d);show(entryOf(d))},6700));},Math.max(delay,0)));
+  }
+  function handle(d){
+    if(!d||(shown&&shown.start===d.start))return;shown=d;
+    var now=Date.now()+off;
+    if(now<d.start+6500)play(d,d.start-now);
+    else{spinTo(d.idx,d.n,0);banner(d);}
+    if(!TEST){spinBtn.hidden=true;}
+  }
+  function poll(){
+    fetch(HOOK+'?draw='+encodeURIComponent(MONTH)+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){
+      off=(j.now||Date.now())-Date.now();handle(j.draw);
+    }).catch(function(){}).then(function(){
+      var fast=KEY||(data.current.status==='live');
+      if(fast&&!document.hidden)pollT=setTimeout(poll,KEY?1500:3000);
+    });
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&(KEY||data.current.status==='live')){clearTimeout(pollT);poll()}});
+  document.getElementById('replay').onclick=function(){if(!shown)return;var d=shown;spinTo(0,d.n,0);setTimeout(function(){spinTo(d.idx,d.n,6500);setTimeout(function(){show(entryOf(d))},6700)},60)};
+  spinBtn.onclick=function(){
+    var list=data.current.entries||[];if(busy||!list.length||!KEY)return;busy=true;spinBtn.disabled=true;spinBtn.textContent='جاري بدء السحب…';
+    fetch(HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type:'spin',key:KEY,month:MONTH,names:list.map(function(e){return e.n})})})
+      .catch(function(){}).then(function(){clearTimeout(pollT);poll();
+        setTimeout(function(){busy=false;spinBtn.disabled=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(!shown||(shown.month!==MONTH))alert('ما وصلني رد السحب. تأكدي إن كود Apps Script محدّث ومنشور (New version).')},12000);
+      });
   };
   var PH=null;
   function b64(x){var s=atob(x),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
@@ -316,8 +363,11 @@ details.ents summary::-webkit-details-marker{display:none}
     draw(list);
     var w=data.winners||[],box=document.getElementById('wins');
     box.innerHTML=w.length?w.map(function(x){return '<div class="win"><span class="tro">🏆</span><div><b>'+esc(x.n)+'</b><span>فائزة سحب '+esc(x.occasion)+' · طلب '+esc(tail(x.r))+(x.date?' · '+esc(x.date):'')+'</span></div></div>'}).join(''):'<div class="empty">أول فائزة في عجلة أساس… <b>ممكن تكونين أنتِ!</b> 💗</div>';
-    var hm=/^#spin(?:=(.+))?$/.exec(location.hash);
-    if(hm&&list.length){spinBtn.hidden=false;if(hm[1]&&c.enc)unlock(decodeURIComponent(hm[1]),c.enc);}
+    var hm=/^#spin=([^&]+)(&test)?$/.exec(location.hash);
+    MONTH=c.month||'';
+    if(hm&&list.length){KEY=decodeURIComponent(hm[1]);TEST=!!hm[2];if(TEST)MONTH='TEST';spinBtn.hidden=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(c.enc)unlock(KEY,c.enc);}
+    if(c.status==='live'||KEY)live.hidden=false;
+    poll();
   }
   fetch('data/draw.json?t='+Date.now()).then(function(r){return r.json()}).then(function(j){data=j;render()}).catch(function(){data={current:{entries:[]},winners:[]};render()});
 })();
