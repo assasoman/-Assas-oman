@@ -590,14 +590,22 @@ function card(it){
   </article>`;
 }
 let query='',expanded={};
+const normAr=t=>String(t||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').trim();
+const qMatch=txt=>{if(!query)return true;const t=normAr(txt);return normAr(query).split(' ').filter(Boolean).every(w=>t.includes(w)||(w.startsWith('ال')&&t.includes(w.slice(2))))};
 function renderRails(){
-  const m=it=>!query||(it.name+' '+(it.sub||'')).includes(query);
+  const m=it=>qMatch(it.name+' '+(it.sub||'')+' '+(it.desc||'')+' '+(it.tag||''));
+  let total=0;
   [['packs',PACKS]].forEach(([k,list])=>{
-    const L=list.filter(m),el=$('#rail-'+k);
+    const L=list.filter(m),el=$('#rail-'+k);total+=L.length;
     el.classList.toggle('grid',!!expanded[k]||!!query);
     el.innerHTML=L.length?L.map(card).join(''):'<p style="color:var(--muted)">لا توجد نتائج.</p>';
     el.closest('section').hidden=!!query&&!L.length;
   });
+  const crs=$('#crs');if(crs){let n=0;crs.querySelectorAll('.crc').forEach(c=>{const ok=qMatch(c.textContent);c.hidden=!ok;if(ok)n++});total+=n;const sec=crs.closest('section');if(sec)sec.hidden=!!query&&!n}
+  const top=document.querySelector('main>section[aria-label="العروض"]'),how=document.querySelector('main>section.how');
+  if(top)top.hidden=!!query;if(how)how.hidden=!!query;
+  let nr=$('#noresults');if(!nr){nr=document.createElement('p');nr.id='noresults';nr.className='max';nr.style.cssText='text-align:center;color:var(--muted);padding:28px 0';const pk=$('#packs');pk.parentNode.insertBefore(nr,pk)}
+  nr.hidden=!(query&&!total);nr.textContent='لا توجد نتائج لـ «'+query+'». جرّبي كلمة أخرى مثل: الزراعة، المرأة، الكاميو';
 }
 
 /* ---------- product sheet ---------- */
@@ -734,6 +742,7 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
 $('#q').addEventListener('input',e=>{query=e.target.value.trim();renderRails()});
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();e.target.blur();const t=document.querySelector('#packs:not([hidden]),#courses:not([hidden])');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})}});
 $('#copy').addEventListener('click',()=>{const sel=()=>{const r=document.createRange();r.selectNodeContents($('#wanum'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('تعذّر النسخ، يمكنك نسخ الرقم يدويًا')};try{navigator.clipboard.writeText('+'+WHATSAPP).then(()=>toast('تم نسخ الرقم'),sel)}catch(err){sel()}});
 
 /* banners */
