@@ -2,8 +2,8 @@
  "current": {
   "occasion": "يوم المرأة العُمانية",
   "month": "2026-10",
-  "status": "live",
-  "note": "🔴 السحب المباشر اليوم الساعة 12:00 ظهرًا… خلّكم فاتحين الصفحة!",
+  "status": "done",
+  "note": "✅ تم السحب، مبروك للفائزة 🎉",
   "entries": [
    {
     "n": "⁦9230••••⁩",
@@ -554,9 +554,23 @@
    "s": "nwRwOfa0GOAAixRIo11X1g==",
    "i": "mSZnu0DbIJuHCYCF",
    "c": "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"
+  },
+  "result": {
+   "month": "2026-10",
+   "n": 136,
+   "idx": 8,
+   "name": "⁦9916••••⁩",
+   "start": 1792483644929
   }
  },
- "winners": [],
+ "winners": [
+  {
+   "n": "⁦9916••••⁩",
+   "r": "10",
+   "occasion": "يوم المرأة العُمانية",
+   "date": "20/10/2026"
+  }
+ ],
  "next": {
   "occasion": "يوم الزراعة",
   "entries": [

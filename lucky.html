@@ -369,6 +369,7 @@ details.ents summary::-webkit-details-marker{display:none}
     MONTH=c.month||'';
     if(hm&&list.length){KEY=decodeURIComponent(hm[1]);TEST=!!hm[2];if(TEST)MONTH='TEST';spinBtn.hidden=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(c.enc)unlock(KEY,c.enc);}
     if(c.status==='live'||KEY)live.hidden=false;
+    if(c.result){handle(c.result);}
     poll();
   }
   fetch('data/draw.json?t='+Date.now()).then(function(r){return r.json()}).then(function(j){data=j;render()}).catch(function(){data={current:{entries:[]},winners:[]};render()});
