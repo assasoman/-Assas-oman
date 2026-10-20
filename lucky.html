@@ -335,16 +335,18 @@ details.ents summary::-webkit-details-marker{display:none}
       off=(j.now||Date.now())-Date.now();handle(j.draw);
     }).catch(function(){}).then(function(){
       var fast=KEY||(data.current.status==='live');
-      if(fast&&!document.hidden)pollT=setTimeout(poll,KEY?1500:3000);
+      if(fast&&!document.hidden)pollT=setTimeout(poll,KEY?2000:(8000+Math.random()*4000));
     });
   }
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&(KEY||data.current.status==='live')){clearTimeout(pollT);poll()}});
   document.getElementById('replay').onclick=function(){if(!shown)return;var d=shown;spinTo(0,d.n,0);setTimeout(function(){spinTo(d.idx,d.n,6500);setTimeout(function(){show(entryOf(d))},6700)},60)};
   spinBtn.onclick=function(){
     var list=data.current.entries||[];if(busy||!list.length||!KEY)return;busy=true;spinBtn.disabled=true;spinBtn.textContent='جاري بدء السحب…';
-    fetch(HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type:'spin',key:KEY,month:MONTH,names:list.map(function(e){return e.n})})})
-      .catch(function(){}).then(function(){clearTimeout(pollT);poll();
-        setTimeout(function(){busy=false;spinBtn.disabled=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(!shown||(shown.month!==MONTH))alert('ما وصلني رد السحب. تأكدي إن كود Apps Script محدّث ومنشور (New version).')},12000);
+    var body=JSON.stringify({type:'spin',key:KEY,month:MONTH,names:list.map(function(e){return e.n})});
+    var send=function(){return fetch(HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:body}).catch(function(){})};
+    [0,3000,6000].forEach(function(t){setTimeout(function(){if(!shown||shown.month!==MONTH)send()},t)});
+    Promise.resolve().then(function(){clearTimeout(pollT);poll();
+        setTimeout(function(){busy=false;spinBtn.disabled=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(!shown||(shown.month!==MONTH))alert('ما وصلني رد السحب. انتظري دقيقة وجربي مرة ثانية.')},15000);
       });
   };
   var PH=null;
