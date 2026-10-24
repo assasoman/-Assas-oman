@@ -193,6 +193,7 @@ details.ents summary::-webkit-details-marker{display:none}
 .mcard .rf{color:var(--muted);font-weight:700}
 .mcard p{margin:10px 0 0;font-weight:600}
 .wabtn{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;background:#25C063;color:#fff;text-decoration:none;font-weight:800;border-radius:99px;padding:11px 18px;box-shadow:0 8px 18px -8px rgba(37,192,99,.8)}
+.wabtn[hidden]{display:none}
 .wabtn svg{width:22px;height:22px;fill:#fff}
 .mcard button{margin-top:10px;border:0;background:var(--ink);color:#fff;font:inherit;font-weight:800;border-radius:99px;padding:9px 26px}
 .cf{position:fixed;top:-20px;width:10px;height:14px;z-index:60;border-radius:2px;pointer-events:none;animation:fall linear forwards}
@@ -301,6 +302,7 @@ details.ents summary::-webkit-details-marker{display:none}
     var msg='مبروك 🎉🎡\n\nفزتِ في عجلة الحظ من أساس عُمان'+(occ?' (سحب '+occ+')':'')+'\nرقم طلبك: '+String(e.r)+'\n\n🎁 جائزتك تختارينها:\n• البكج القادم بنصف السعر\n• أو استرجاع نصف سعر البكج السابق\n\nردّي علينا باختيارك 💗\nشكرًا لثقتك في أساس 🌷';
     var num=PH&&PH[String(e.r)]?String(PH[String(e.r)]).replace(/\D/g,''):'';
     if(num.length===8)num='968'+num;
+    document.getElementById('wwa').hidden=!KEY;
     document.getElementById('wwa').href='https://api.whatsapp.com/send?'+(num?'phone='+num+'&':'')+'text='+encodeURIComponent(msg);document.getElementById('modal').hidden=false;confetti()}
   document.getElementById('mclose').onclick=function(){document.getElementById('modal').hidden=true};
   var HOOK='https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec',KEY='',TEST=false,MONTH='',off=0,shown=null,pollT=null,timers=[];
