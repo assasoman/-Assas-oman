@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>طلباتي | أساس عُمان</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#E84A84">
+<meta name="robots" content="noindex">
+<meta name="description" content="حمّلي ملفك من أساس عُمان برقم الطلب ورقم الهاتف.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --ground:#FFF8F4;--paper:#fff;--ink:#22202B;--muted:#7B7785;--line:#E7E5EC;
+  --pink:#E84A84;--pink-soft:#FFE3EC;--sun:#FFC93C;--sky:#7CC6EE;--sky-soft:#E3F3FC;--leaf:#8CC152;--leaf-soft:#ECF6E1;--wa:#25C063;--price:#B3263B;
+  --font:'Baloo Bhaijaan 2','Alexandria',Tahoma,system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7}
+img{max-width:100%;display:block}
+a{color:inherit}
+.max{max-width:860px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:10;background:#fff;box-shadow:0 6px 18px -14px rgba(0,0,0,.25)}
+header.top .max{display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{width:44px;height:44px;border-radius:50%;box-shadow:0 0 0 3px #fff,0 2px 8px rgba(0,0,0,.12)}
+.brand b{font-size:22px;font-weight:800;color:var(--pink)}
+.back{font-size:14px;font-weight:700;text-decoration:none;border:2px solid var(--line);border-radius:99px;padding:6px 14px;background:#fff}
+
+.hero{position:relative;overflow:hidden;border-radius:28px;margin:18px 0 0;padding:26px 22px 0;background:repeating-linear-gradient(135deg,#FFF0F5 0 20px,#FFE1EB 20px 40px);text-align:center}
+.hero .tag{display:inline-block;background:var(--ink);color:#fff;font-weight:700;font-size:13px;border-radius:99px;padding:4px 14px}
+.hero h1{font-size:clamp(26px,6.6vw,44px);line-height:1.25;margin:12px 0 6px;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--pink)}
+.hero p{margin:0 auto;max-width:560px;color:#4A4552;font-weight:600}
+.hero .cta{display:inline-flex;align-items:center;gap:8px;margin:16px 0 4px;background:var(--pink);color:#fff;text-decoration:none;font-weight:800;font-size:17px;border-radius:99px;padding:11px 26px;box-shadow:0 10px 22px -10px rgba(232,74,132,.8)}
+.hero .kids{width:min(320px,80%);margin:10px auto 0}
+.spark{position:absolute;color:var(--sun);font-size:22px}
+
+section{margin-top:34px}
+h2{font-size:24px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+h2 small{font-size:14px;color:var(--muted);font-weight:600}
+.intro{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,.04);border:1px solid var(--line);font-weight:600}
+.proof{margin:16px 0 0;background:#fff;border:2px solid #FFE1EB;border-radius:24px;padding:16px 14px 14px;text-align:center;box-shadow:0 10px 24px -16px rgba(232,74,132,.45)}
+.proof h3{margin:0 0 12px;font-size:16px;font-weight:800}
+.proof h3 em{font-style:normal;color:var(--pink)}
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pstats div{border-radius:16px;padding:10px 4px;display:flex;flex-direction:column;gap:2px}
+.pstats div:nth-child(1){background:#FFE3EC}.pstats div:nth-child(2){background:#E3F3FC}.pstats div:nth-child(3){background:#FFF3D1}
+.pstats b{font-size:clamp(22px,6vw,30px);font-weight:800;line-height:1.1;color:var(--ink)}
+.pstats span{font-size:12.5px;font-weight:700;color:#5A5462}
+.proof p{margin:12px 0 0;font-size:14px;font-weight:700;color:#4A4552}
+.proof p b{color:var(--pink)}
+.intro b{color:var(--pink)}
+
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.cat{background:#fff;border-radius:20px;padding:14px;border:2px solid var(--line);display:flex;flex-direction:column;align-items:flex-start;gap:4px;font-weight:700}
+.cat i{font-style:normal;font-size:26px}
+.cat:nth-child(1){border-color:#FFC2D8}.cat:nth-child(2){border-color:#BFE6FA}.cat:nth-child(3){border-color:#FFE08A}.cat:nth-child(4){border-color:#CDE8B5}.cat:nth-child(5){border-color:#E2D3F5}
+
+.bens{display:grid;gap:10px}
+@media(min-width:640px){.bens{grid-template-columns:1fr 1fr}}
+.ben{display:flex;gap:12px;align-items:flex-start;background:#fff;border-radius:20px;padding:14px 16px;border:1px solid var(--line)}
+.ben .ic{flex:0 0 40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--pink-soft)}
+.ben:nth-child(2) .ic{background:var(--sky-soft)}.ben:nth-child(3) .ic{background:#FFF3CC}.ben:nth-child(4) .ic{background:var(--leaf-soft)}.ben:nth-child(5) .ic{background:#F1E8FB}
+.ben b{display:block;font-size:16px}
+.ben span{color:var(--muted);font-size:14px;font-weight:600}
+
+.steps{counter-reset:s;display:grid;gap:10px}
+.step{position:relative;background:#fff;border-radius:20px;padding:14px 16px 14px 16px;padding-inline-start:64px;border:1px solid var(--line);font-weight:600}
+.step::before{counter-increment:s;content:counter(s);position:absolute;inset-inline-start:14px;top:14px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--pink);color:#fff;font-weight:800;font-size:18px}
+.step:nth-child(2)::before{background:var(--sky)}.step:nth-child(3)::before{background:var(--sun);color:var(--ink)}.step:nth-child(4)::before{background:var(--leaf)}
+.step b{display:block;font-size:16px}
+
+.pkgs{display:grid;gap:12px}
+@media(min-width:640px){.pkgs{grid-template-columns:1fr 1fr}}
+.pkg{position:relative;background:#fff;border-radius:24px;padding:18px;border:2px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.pkg h3{margin:0;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+.pkg .occ{color:var(--muted);font-weight:700;font-size:14px}
+.pkg .pr{display:flex;align-items:baseline;gap:8px}
+.pkg .pr b{font-size:34px;line-height:1;font-weight:800;color:var(--price)}
+.pkg .pr span{font-weight:700;color:var(--muted)}
+.pkg .pr s{color:#B9B4C0;font-weight:700}
+.pkg ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-weight:600;font-size:14.5px}
+.pkg li::before{content:'✓ ';color:var(--leaf);font-weight:800}
+.pkg .pick{margin-top:auto;border:0;border-radius:99px;padding:9px 16px;font:inherit;font-weight:800;cursor:pointer;background:var(--ink);color:#fff}
+.pkg.p1{border-color:#CDE8B5}.pkg.p2{border-color:#FFC2D8}.pkg.p3{border-color:#BFE6FA}.pkg.p4{border-color:#FFD66B;background:linear-gradient(160deg,#FFFBEA,#fff 60%)}
+.pkg .best{position:absolute;top:-12px;inset-inline-start:16px;background:var(--pink);color:#fff;font-size:12.5px;font-weight:800;border-radius:99px;padding:3px 12px}
+.terms{background:#fff;border-radius:22px;padding:16px 18px;border:1px solid var(--line)}
+.terms ul{margin:0;padding-inline-start:20px;display:grid;gap:6px;font-weight:600;font-size:14.5px}
+.fee{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,#FFF6DA,#FFE3EC);border-radius:24px;padding:18px 20px;border:2px dashed #F7B9CC}
+.fee .amt{background:#fff;border-radius:18px;padding:8px 18px;text-align:center;box-shadow:0 8px 16px -10px rgba(160,100,0,.5)}
+.fee .amt b{display:block;font-size:34px;line-height:1.1;color:var(--price);font-weight:800}
+.fee .amt span{font-size:13px;color:var(--muted);font-weight:700}
+.fee .txt{flex:1 1 220px;font-weight:600}
+.fee .txt b{color:var(--ink)}
+.chk{display:flex;gap:8px;margin-top:6px;font-size:14.5px}
+
+.form{background:#fff;border-radius:24px;padding:18px;border:1px solid var(--line);box-shadow:0 14px 30px -20px rgba(70,20,50,.3);display:grid;gap:12px}
+.form label{display:grid;gap:4px;font-weight:700;font-size:14.5px}
+.form label small{color:var(--muted);font-weight:600}
+.form input,.form select,.form textarea{font:inherit;font-weight:600;font-size:16px;color:var(--ink);background:#FBFAFC;border:2px solid var(--line);border-radius:14px;padding:10px 12px;width:100%;min-width:0}
+.form textarea{min-height:110px;resize:vertical}
+.form input:focus,.form select:focus,.form textarea:focus{outline:0;border-color:var(--pink)}
+.row2{display:grid;gap:12px}
+@media(min-width:560px){.row2{grid-template-columns:1fr 1fr}}
+.send{display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:var(--wa);color:#fff;font:inherit;font-weight:800;font-size:17px;border-radius:99px;padding:12px 20px;cursor:pointer}
+.send svg{width:22px;height:22px;fill:#fff}
+#msg{color:var(--price);font-weight:700;margin:0}
+.note{font-size:13px;color:var(--muted);text-align:center;margin:14px auto 0;max-width:560px}
+
+footer{margin-top:40px;padding:26px 0 34px;background:#F3F1F5;text-align:center}
+footer .slogan{font-size:20px;font-weight:800}
+footer .slogan em{font-style:normal;color:var(--pink)}
+footer img{width:200px;margin:10px auto 0}
+footer .made{font-size:13px;color:var(--muted);margin-top:8px}
+footer a.store{display:inline-block;margin-top:10px;font-weight:800;color:var(--pink);text-decoration:none}
+
+.hero{padding-bottom:24px}
+.hero .tag{background:var(--pink)}
+.box{background:#fff;border-radius:24px;padding:20px 18px;margin-top:18px;box-shadow:0 14px 34px -22px rgba(120,40,80,.5);border:2px solid #FFE1EB}
+.box label{display:flex;flex-direction:column;gap:6px;font-weight:800;font-size:15px;margin-bottom:14px}
+.box input{font:inherit;font-size:18px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:#FFFBFD;text-align:left;direction:ltr;letter-spacing:1px}
+.box input:focus{outline:0;border-color:var(--pink)}
+.box small{font-weight:600;color:var(--muted);font-size:12.5px}
+.go{width:100%;border:0;background:var(--pink);color:#fff;font:inherit;font-weight:800;font-size:18px;border-radius:99px;padding:13px;cursor:pointer;box-shadow:0 10px 22px -10px rgba(232,74,132,.9)}
+.go[disabled]{opacity:.6}
+.msg{margin-top:14px;border-radius:16px;padding:12px 14px;font-weight:700;line-height:1.8;font-size:14.5px}
+.msg.err{background:#FFE3E3;color:#9B1C2E}
+.msg.info{background:#FFF3D1;color:#5A4410}
+.res{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.item{background:#ECF6E1;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.item b{font-size:17px}
+.dl{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ink);color:#fff;text-decoration:none;font-weight:800;border-radius:99px;padding:12px;font-size:16px}
+.item small{color:#4A5A3A;font-weight:700;font-size:13px}
+.warn{background:#FFF0F4;border:2px solid #F7B9CC;border-radius:16px;padding:12px 14px;font-size:13.5px;line-height:1.9;color:#8A1F45;font-weight:600}
+.steps{margin:0;padding-inline-start:20px;line-height:2;font-weight:600;color:#4A4552}
+</style>
+</head>
+<body>
+<header class="top"><div class="max">
+  <a class="brand" href="./"><img src="img/logo.webp" alt="أساس عُمان"><b>أساس</b></a>
+  <a class="back" href="./">← المتجر</a>
+</div></header>
+<main class="max">
+  <div class="hero">
+    <span class="tag">📥 طلباتي</span>
+    <h1>حمّلي ملفك<br><em>بخطوة وحدة!</em></h1>
+    <p>ما لقيتي إيميل الملف؟ اكتبي رقم طلبك ورقم هاتفك، ويطلع لك زر التحميل على طول 💗</p>
+  </div>
+  <form class="box" id="f" novalidate>
+    <label>رقم الطلب <small>موجود في رسالة تأكيد الطلب، مثل: AX479Q37</small><input name="ref" autocomplete="off" autocapitalize="characters" placeholder="AX479Q37" required></label>
+    <label>رقم الهاتف <small>نفس الرقم اللي كتبتيه وقت الطلب</small><input name="phone" type="tel" inputmode="tel" placeholder="9xxxxxxx" required></label>
+    <button class="go" id="go">عرض ملفاتي</button>
+    <div id="out"></div>
+  </form>
+  <section>
+    <ul class="steps">
+      <li>الملف يطلع بعد ما نتأكد من الدفع ونؤكد طلبك.</li>
+      <li>تقدرين تحمّلين كل ملف <b>مرتين</b> من هذي الصفحة، فاحفظيه على جهازك بعد التحميل.</li>
+      <li>يوصلك الملف بعد على إيميلك، وإذا ما لقيتيه شيكي <b>البريد غير الهام (Spam)</b>.</li>
+      <li>تحتاجين مساعدة؟ تواصلي معنا على واتساب <a href="https://wa.me/96892079057" dir="ltr">+968 9207 9057</a></li>
+    </ul>
+  </section>
+</main>
+<footer><div class="max"><div class="made">ASSAS OMAN | أساس عُمان</div></div></footer>
+<script>
+(function(){
+  var HOOK='https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec',f=document.getElementById('f'),out=document.getElementById('out'),go=document.getElementById('go');
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var toEn=function(s){return String(s||'').replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d)}).replace(/[۰-۹]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)})};
+  var ERR={input:'اكتبي رقم الطلب ورقم الهاتف كاملين (8 أرقام).',notfound:'ما لقينا طلب مؤكد بهذي البيانات. تأكدي من رقم الطلب والهاتف، أو انتظري لين نأكد طلبك بعد الدفع.',used:'تم استخدام هذا الرمز مرتين. إذا تحتاجين الملف مرة ثانية تواصلي معنا على الواتساب.',locked:'محاولات كثيرة غلط. جربي بعد ساعة، أو تواصلي معنا على الواتساب.'};
+  var p=new URLSearchParams(location.search);if(p.get('ref'))f.ref.value=p.get('ref');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var ref=toEn(f.ref.value).trim().toUpperCase().replace(/\s+/g,''),phone=toEn(f.phone.value).replace(/\D/g,'').slice(-8);
+    if(!ref||phone.length<8){out.innerHTML='<div class="msg err">'+ERR.input+'</div>';return}
+    go.disabled=true;go.textContent='جاري البحث…';out.innerHTML='';
+    fetch(HOOK+'?dl=1&ref='+encodeURIComponent(ref)+'&phone='+phone+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.ok){out.innerHTML='<div class="msg err">'+(ERR[j&&j.error]||ERR.notfound)+'</div>';return}
+      out.innerHTML='<div class="res">'+j.items.map(function(it){
+        return '<div class="item"><b>'+esc(it.pack)+'</b><a class="dl" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+(it.folder?'📂 فتح الدورة':'⬇️ تحميل الملف')+'</a><small>'+(it.left>0?'باقي لك محاولة وحدة بعد هذي.':'هذي آخر محاولة، احفظي الملف على جهازك الحين.')+(it.folder?'':' افتحي الملف ببرنامج Silhouette Studio.')+'</small></div>'}).join('')+
+        '<div class="warn">⚠️ تنبيه: الملف خاص فقط بالشخص الذي دفع قيمته، ويُمنع نشره أو مشاركته مع أي شخص آخر، ولا أُحلّل ولا أسمح بمشاركته.</div></div>';
+    }).catch(function(){out.innerHTML='<div class="msg err">صار خطأ في الاتصال. جربي مرة ثانية بعد شوي.</div>'}).then(function(){go.disabled=false;go.textContent='عرض ملفاتي'});
+  });
+})();
+</script>
+</body>
+</html>
