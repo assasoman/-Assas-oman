@@ -981,7 +981,7 @@ document.addEventListener('click',e=>{
   if(x=g('[data-adq]')){e.preventDefault();const p=picked[x.dataset.id];p.q=Math.max(1,p.q+(x.dataset.adq==='+'?1:-1));p.on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-var]')){pickedVar=+x.dataset.var;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);const packMode=!!(_it&&_it.addons&&_it.addons.length);if(packMode&&!packOn&&!Object.values(picked).some(v=>v.on)){toast('اختر خيارًا واحدًا على الأقل');return}if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar:id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
-  if(x=g('[data-dot]')){clearInterval(auto);slides[+x.dataset.dot].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});return}
+  if(x=g('[data-dot]')){clearInterval(auto);slideTo(slides[+x.dataset.dot]);return}
 });
 document.addEventListener('change',e=>{
   const t=e.target;
@@ -1000,7 +1000,8 @@ const bn=$('#banners'),slides=[...bn.children];
 $('#dots').innerHTML=slides.map((_,i)=>`<button aria-label="بنر ${i+1}" data-dot="${i}" class="${i?'':'on'}"></button>`).join('');
 const cur=()=>Math.round(Math.abs(bn.scrollLeft)/(bn.clientWidth+12));
 bn.addEventListener('scroll',()=>requestAnimationFrame(()=>document.querySelectorAll('[data-dot]').forEach((d,k)=>d.classList.toggle('on',k===cur()))),{passive:true});
-let auto=setInterval(()=>{if(!document.hidden)slides[(cur()+1)%slides.length].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'})},5500);
+function slideTo(el){const c=el.parentElement,a=el.getBoundingClientRect(),b=c.getBoundingClientRect();c.scrollBy({left:(a.left+a.width/2)-(b.left+b.width/2),behavior:'smooth'})}
+let auto=setInterval(()=>{if(document.hidden)return;const r=$('#banners').getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;slideTo(slides[(cur()+1)%slides.length])},5500);
 bn.addEventListener('pointerdown',()=>clearInterval(auto),{once:true});
 
 /* boot */
