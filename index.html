@@ -74,6 +74,33 @@
 .b3kid{display:none}
 @media(min-width:760px){.b3kid{display:block;position:absolute;z-index:1;bottom:0;inset-inline-end:260px;height:92%;max-height:280px;width:auto;filter:drop-shadow(0 6px 10px rgba(120,60,40,.18))}.b3post{inset-inline-end:40px}}
 @keyframes thxin{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.banner.b7{background:linear-gradient(135deg,#F3E8FF 0%,#FFE4F1 55%,#E3F3FF 100%);justify-content:flex-start;align-items:center;min-height:270px;padding:20px 22px}
+.banner.b7::before{content:'';position:absolute;inset-inline-end:-60px;bottom:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fff 0 55%,rgba(255,255,255,0) 72%);opacity:.9}
+.b7txt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:9px;max-width:60%}
+.b7tag{background:linear-gradient(90deg,#8B5CF6,#E84A84);color:#fff;font-weight:700;font-size:12.5px;border-radius:99px;padding:4px 12px;white-space:nowrap}
+.banner.b7 h2{font-family:var(--font-fun);font-weight:800;font-size:clamp(23px,6vw,46px);line-height:1.18;color:var(--ink);margin:0;text-shadow:0 2px 0 #fff}
+.banner.b7 h2 em{font-style:normal;background:linear-gradient(90deg,#7C3AED,#E84A84);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.b7chips{display:flex;flex-wrap:wrap;gap:6px}
+.b7chips span{background:#fff;border-radius:99px;padding:4px 10px;font-size:12.5px;font-weight:700;color:#4B3A68;box-shadow:0 2px 6px rgba(124,58,237,.14)}
+.banner.b7 .pill{text-decoration:none}
+.b7art{position:absolute;inset-inline-end:1%;bottom:0;height:100%;width:44%;z-index:1;pointer-events:none}
+.b7art .drop{animation:b7drop 2.6s ease-in infinite}
+.b7art .drop:nth-of-type(2){animation-delay:.9s}.b7art .drop:nth-of-type(3){animation-delay:1.7s}
+@keyframes b7drop{0%{transform:translateY(-30px);opacity:0}15%{opacity:1}70%{transform:translateY(38px);opacity:1}100%{transform:translateY(38px) scale(1.6,.3);opacity:0}}
+.b7art .shine{animation:b7sh 3s ease-in-out infinite}@keyframes b7sh{0%,100%{opacity:.25}50%{opacity:1}}
+#uv .uvbox{background:linear-gradient(135deg,#F7F0FF,#FFF0F6);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px}
+#uv .uvintro{margin:0;line-height:1.9;font-size:15px;color:var(--ink)}
+#uv .uvf{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:760px){#uv .uvf{grid-template-columns:repeat(4,1fr)}}
+#uv .uvf div{background:#fff;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 10px rgba(124,58,237,.08)}
+#uv .uvf b{font-size:15px}#uv .uvf i{font-style:normal;font-size:26px}#uv .uvf span{font-size:12.5px;color:var(--muted);line-height:1.6}
+#uv .uvon{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13.5px;font-weight:700}
+#uv .uvon span{background:#fff;border-radius:99px;padding:4px 11px;font-weight:600;font-size:13px}
+#uv .uvrow{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch}
+#uv #uv-prod{flex:0 0 auto;width:min(230px,48%)}
+#uv .uvcta{flex:1 1 200px;background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center}
+#uv .uvcta p{margin:0;font-size:14px;line-height:1.8}
+#uv .uvwa{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:14px;padding:12px;font-weight:700;text-decoration:none}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -452,6 +479,27 @@ footer .kidrow img{height:130px;width:auto}
           <a class="pill" href="#school" data-go="school">تصفّحي القسم</a>
         </div>
       </article>
+      <article class="banner b7">
+        <i class="spk" style="left:52%;top:14%;width:12px;height:12px"></i><i class="spk" style="left:8%;top:70%;animation-delay:.9s;width:10px;height:10px"></i>
+        <svg class="b7art" viewBox="0 0 200 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+          <ellipse cx="100" cy="226" rx="70" ry="9" fill="#C4B5FD" opacity=".35"/>
+          <path d="M44 110h112l-12 104a12 12 0 0 1-12 10H68a12 12 0 0 1-12-10z" fill="#fff" stroke="#E7DDF7" stroke-width="3"/>
+          <path d="M156 128c22 0 26 34 2 40" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/><path d="M156 128c22 0 26 34 2 40" fill="none" stroke="#E7DDF7" stroke-width="3" stroke-linecap="round"/>
+          <g transform="translate(100 166)"><circle r="30" fill="#FFE1EB"/><path d="M0 12c-16-10-22-18-22-26 0-8 7-12 12-12 5 0 9 3 10 7 1-4 5-7 10-7 5 0 12 4 12 12 0 8-6 16-22 26z" fill="#E84A84"/><path d="M-12-14c3-2 6-2 8 0" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/></g>
+          <path class="shine" d="M64 124l8 80" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".6"/>
+          <path class="drop" d="M80 40c5 8 8 12 8 16a8 8 0 0 1-16 0c0-4 3-8 8-16z" fill="#7CC6EE"/>
+          <path class="drop" d="M118 26c4 7 7 10 7 14a7 7 0 0 1-14 0c0-4 3-7 7-14z" fill="#93C5FD"/>
+          <path class="drop" d="M140 52c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z" fill="#7CC6EE"/>
+          <g transform="translate(36 70)"><path d="M0-22l18 7v12c0 12-8 20-18 25-10-5-18-13-18-25v-12z" fill="#8B5CF6"/><path d="M-7 0l5 5 9-10" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <path d="M172 92l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#FFC93C"/>
+        </svg>
+        <div class="b7txt">
+          <span class="b7tag">🎨 جديد · طباعة UV</span>
+          <h2>ستيكرات <em>UV</em><br>تدوم وتلمع ✨</h2>
+          <div class="b7chips"><span>🛡️ غير قابلة للخدش</span><span>💧 ضد الماء</span></div>
+          <a class="pill" href="#uv" data-go="uv">اطلبيها الآن</a>
+        </div>
+      </article>
       <article class="banner b6">
         <svg class="cf6" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <rect x="40" y="30" width="10" height="6" rx="1.5" fill="#E84A84" transform="rotate(25 45 33)"/><rect x="350" y="40" width="10" height="6" rx="1.5" fill="#7CC6EE" transform="rotate(-30 355 43)"/>
@@ -501,6 +549,25 @@ footer .kidrow img{height:130px;width:auto}
     <div class="sh"><h2 id="h-school">✏️ قسم المدرسة</h2></div>
     <div class="schips" id="schips"></div>
     <div class="rail grid" id="rail-school"></div>
+  </section>
+
+  <section class="max" id="uv" aria-labelledby="h-uv" style="margin-top:28px;width:100%">
+    <div class="sh"><h2 id="h-uv">🎨 طباعة UV</h2></div>
+    <div class="uvbox">
+      <p class="uvintro">ستيكرات مطبوعة بتقنية <b>UV</b>، تلصقينها على أي سطح صلب وتعطي شكل مطبوع ولامع كأنه من المصنع.</p>
+      <div class="uvf">
+        <div><i>🛡️</i><b>غير قابلة للخدش</b><span>الطباعة ثابتة وما تتقشر مع الاستخدام</span></div>
+        <div><i>💧</i><b>ضد الماء</b><span>تنغسل عادي وتبقى مثل ما هي</span></div>
+        <div><i>🌈</i><b>ألوان زاهية</b><span>طباعة بارزة ولامعة وواضحة</span></div>
+        <div><i>✂️</i><b>بدون خلفية</b><span>تنلصق مباشرة وتطلع كأنها مطبوعة على القطعة</span></div>
+      </div>
+      <div class="uvon">تنلصق على: <span>☕ الفناجين</span><span>🥤 الأكواب</span><span>🫙 الزجاج</span><span>🎁 العلب</span><span>📱 الجوالات</span><span>📓 الدفاتر</span></div>
+      <div class="uvrow">
+        <div id="uv-prod"></div>
+        <div class="uvcta"><p>تبين تصميم خاص لمناسبتك أو باسمك؟ أرسلي لنا الفكرة ونصممها لك.</p>
+          <a class="uvwa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?phone=96892079057&text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%A8%D9%8A%20%D8%B7%D8%A8%D8%A7%D8%B9%D8%A9%20UV%20%D8%A8%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%AE%D8%A7%D8%B5"><svg style="width:20px;height:20px;fill:currentColor"><use href="#wa"/></svg>اطلبي تصميم خاص</a></div>
+      </div>
+    </div>
   </section>
 
   <section class="max" id="courses" aria-labelledby="h-courses" style="margin-top:28px;width:100%">
@@ -707,6 +774,7 @@ let query='',expanded={},schCat='الكل';
 const normAr=t=>String(t||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').trim();
 const qMatch=txt=>{if(!query)return true;const t=normAr(txt);return normAr(query).split(' ').filter(Boolean).every(w=>t.includes(w)||(w.startsWith('ال')&&t.includes(w.slice(2))))};
 function renderRails(){
+  try{setTimeout(drawUV,0)}catch(e){}
   const m=it=>qMatch(it.name+' '+(it.sub||'')+' '+(it.desc||'')+' '+(it.tag||''));
   let total=0;
   const isSch=p=>/مدرس/.test(p.section||'');
@@ -731,6 +799,7 @@ function renderRails(){
 
 /* ---------- product sheet ---------- */
 let picked={},pickedVar=0,packOn=true;
+function drawUV(){const e=$('#uv-prod');if(!e)return;const it=SHOP.find(x=>/UV/i.test(x.name));e.innerHTML=it?card(it):'';e.hidden=!it}
 function openSheet(id){
   const it=findItem(id);if(!it)return;
   pickedVar=0;packOn=true;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
@@ -821,7 +890,7 @@ document.addEventListener('submit',e=>{if(e.target.id==='ordform'){e.preventDefa
 
 /* ---------- menu ---------- */
 function renderMenu(){
-  $('#menu-list').innerHTML=[['packs','البكجات'],['school','قسم المدرسة'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="partners.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">شركاء أساس ✨<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
+  $('#menu-list').innerHTML=[['packs','البكجات'],['school','قسم المدرسة'],['uv','طباعة UV'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="partners.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">شركاء أساس ✨<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
 }
 
 /* ---------- open/close ---------- */
