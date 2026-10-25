@@ -74,20 +74,6 @@
 .b3kid{display:none}
 @media(min-width:760px){.b3kid{display:block;position:absolute;z-index:1;bottom:0;inset-inline-end:260px;height:92%;max-height:280px;width:auto;filter:drop-shadow(0 6px 10px rgba(120,60,40,.18))}.b3post{inset-inline-end:40px}}
 @keyframes thxin{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
-.banner.b7{background:linear-gradient(135deg,#F3E8FF 0%,#FFE4F1 55%,#E3F3FF 100%);justify-content:flex-start;align-items:center;min-height:270px;padding:20px 22px}
-.banner.b7::before{content:'';position:absolute;inset-inline-end:-60px;bottom:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fff 0 55%,rgba(255,255,255,0) 72%);opacity:.9}
-.b7txt{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:9px;max-width:60%}
-.b7tag{background:linear-gradient(90deg,#8B5CF6,#E84A84);color:#fff;font-weight:700;font-size:12.5px;border-radius:99px;padding:4px 12px;white-space:nowrap}
-.banner.b7 h2{font-family:var(--font-fun);font-weight:800;font-size:clamp(23px,6vw,46px);line-height:1.18;color:var(--ink);margin:0;text-shadow:0 2px 0 #fff}
-.banner.b7 h2 em{font-style:normal;background:linear-gradient(90deg,#7C3AED,#E84A84);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
-.b7chips{display:flex;flex-wrap:wrap;gap:6px}
-.b7chips span{background:#fff;border-radius:99px;padding:4px 10px;font-size:12.5px;font-weight:700;color:#4B3A68;box-shadow:0 2px 6px rgba(124,58,237,.14)}
-.banner.b7 .pill{text-decoration:none}
-.b7art{position:absolute;inset-inline-end:1%;bottom:0;height:100%;width:44%;z-index:1;pointer-events:none}
-.b7art .drop{animation:b7drop 2.6s ease-in infinite}
-.b7art .drop:nth-of-type(2){animation-delay:.9s}.b7art .drop:nth-of-type(3){animation-delay:1.7s}
-@keyframes b7drop{0%{transform:translateY(-30px);opacity:0}15%{opacity:1}70%{transform:translateY(38px);opacity:1}100%{transform:translateY(38px) scale(1.6,.3);opacity:0}}
-.b7art .shine{animation:b7sh 3s ease-in-out infinite}@keyframes b7sh{0%,100%{opacity:.25}50%{opacity:1}}
 #uv .uvbox{background:linear-gradient(135deg,#F7F0FF,#FFF0F6);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:14px}
 #uv .uvintro{margin:0;line-height:1.9;font-size:15px;color:var(--ink)}
 #uv .uvf{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -101,6 +87,10 @@
 #uv .uvcta{flex:1 1 200px;background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center}
 #uv .uvcta p{margin:0;font-size:14px;line-height:1.8}
 #uv .uvwa{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#fff;border-radius:14px;padding:12px;font-weight:700;text-decoration:none}
+.banner.b7 .uvb{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#E84A84,#B57BFF);color:#fff;font-family:var(--font-fun);font-weight:800;font-size:24px;box-shadow:0 0 0 4px #fff,0 6px 14px rgba(232,74,132,.3)}
+.banner.b7 h2{font-size:clamp(24px,6vw,46px)}
+.banner.b7 .uvsub{background:#fff;border-radius:99px;padding:5px 14px;font-weight:800;font-size:clamp(11.5px,3vw,17px);color:var(--ink);white-space:nowrap;box-shadow:0 2px 0 #FFC2D6}
+@media(max-width:560px){.banner.b7 .uvb{width:48px;height:48px;font-size:18px}.banner.b7 h2{font-size:24px}.banner.b7 .mid{max-width:60%}}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -479,24 +469,16 @@ footer .kidrow img{height:130px;width:auto}
           <a class="pill" href="#school" data-go="school">تصفّحي القسم</a>
         </div>
       </article>
-      <article class="banner b7">
-        <i class="spk" style="left:52%;top:14%;width:12px;height:12px"></i><i class="spk" style="left:8%;top:70%;animation-delay:.9s;width:10px;height:10px"></i>
-        <svg class="b7art" viewBox="0 0 200 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-          <ellipse cx="100" cy="226" rx="70" ry="9" fill="#C4B5FD" opacity=".35"/>
-          <path d="M44 110h112l-12 104a12 12 0 0 1-12 10H68a12 12 0 0 1-12-10z" fill="#fff" stroke="#E7DDF7" stroke-width="3"/>
-          <path d="M156 128c22 0 26 34 2 40" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/><path d="M156 128c22 0 26 34 2 40" fill="none" stroke="#E7DDF7" stroke-width="3" stroke-linecap="round"/>
-          <g transform="translate(100 166)"><circle r="30" fill="#FFE1EB"/><path d="M0 12c-16-10-22-18-22-26 0-8 7-12 12-12 5 0 9 3 10 7 1-4 5-7 10-7 5 0 12 4 12 12 0 8-6 16-22 26z" fill="#E84A84"/><path d="M-12-14c3-2 6-2 8 0" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/></g>
-          <path class="shine" d="M64 124l8 80" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".6"/>
-          <path class="drop" d="M80 40c5 8 8 12 8 16a8 8 0 0 1-16 0c0-4 3-8 8-16z" fill="#7CC6EE"/>
-          <path class="drop" d="M118 26c4 7 7 10 7 14a7 7 0 0 1-14 0c0-4 3-7 7-14z" fill="#93C5FD"/>
-          <path class="drop" d="M140 52c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z" fill="#7CC6EE"/>
-          <g transform="translate(36 70)"><path d="M0-22l18 7v12c0 12-8 20-18 25-10-5-18-13-18-25v-12z" fill="#8B5CF6"/><path d="M-7 0l5 5 9-10" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
-          <path d="M172 92l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="#FFC93C"/>
-        </svg>
-        <div class="b7txt">
-          <span class="b7tag">🎨 جديد · طباعة UV</span>
-          <h2>ستيكرات <em>UV</em><br>تدوم وتلمع ✨</h2>
-          <div class="b7chips"><span>🛡️ غير قابلة للخدش</span><span>💧 ضد الماء</span></div>
+      <article class="banner b1 b7"><i class="spk" style="left:12%;top:20%;animation-delay:0s;width:14px;height:14px"></i><i class="spk" style="left:40%;top:12%;animation-delay:0.8s;width:10px;height:10px"></i><i class="spk" style="left:62%;top:24%;animation-delay:1.5s;width:16px;height:16px"></i><i class="spk" style="left:88%;top:16%;animation-delay:0.4s;width:12px;height:12px"></i><i class="spk" style="left:48%;top:70%;animation-delay:1.9s;width:10px;height:10px"></i><i class="spk" style="left:92%;top:58%;animation-delay:1.1s;width:14px;height:14px"></i>
+        <svg class="doodles" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle cx="46" cy="40" r="56" fill="#BFE6FA" opacity=".6"/><circle cx="360" cy="52" r="42" fill="#FFE08A" opacity=".65"/><circle cx="380" cy="190" r="50" fill="#D7EEB8" opacity=".65"/><circle cx="46" cy="40" r="38" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="3 7" opacity=".9"/><circle cx="360" cy="52" r="28" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="3 7" opacity=".9"/><path d="M150.0 30.0L152.7 37.3L160.0 40.0L152.7 42.7L150.0 50.0L147.3 42.7L140.0 40.0L147.3 37.3Z" fill="#FFC93C"/><path d="M262.0 20.0L264.1 25.9L270.0 28.0L264.1 30.1L262.0 36.0L259.9 30.1L254.0 28.0L259.9 25.9Z" fill="#E84A84"/><path d="M104.0 144.0L105.6 148.4L110.0 150.0L105.6 151.6L104.0 156.0L102.4 151.6L98.0 150.0L102.4 148.4Z" fill="#7CC6EE"/><path d="M300.0 143.0L301.9 148.1L307.0 150.0L301.9 151.9L300.0 157.0L298.1 151.9L293.0 150.0L298.1 148.1Z" fill="#FFC93C"/><path transform="translate(70 124) scale(0.7)" d="M0 8c-6-9-20-4-15 7 3 6 15 13 15 13s12-7 15-13c5-11-9-16-15-7z" fill="#F2558A"/><path transform="translate(326 106) scale(0.8)" d="M0 8c-6-9-20-4-15 7 3 6 15 13 15 13s12-7 15-13c5-11-9-16-15-7z" fill="#F26B5B"/><path transform="translate(212 142) scale(0.45)" d="M0 8c-6-9-20-4-15 7 3 6 15 13 15 13s12-7 15-13c5-11-9-16-15-7z" fill="#E84A84"/><g fill="none" stroke-linecap="round" stroke-width="2.6"><path d="M12 170c5-6 10 6 15 0s10 6 15 0" stroke="#8CC152"/><path d="M178 14c4-5 8 5 12 0s8 5 12 0" stroke="#7CC6EE"/></g><g><circle cx="132" cy="96" r="3" fill="#E84A84"/><circle cx="276" cy="82" r="3" fill="#7CC6EE"/><circle cx="230" cy="52" r="2.6" fill="#8CC152"/><rect x="190" y="150" width="9" height="3.6" rx="1.8" fill="#FF9F2E" transform="rotate(25 190 150)"/><rect x="104" y="40" width="9" height="3.6" rx="1.8" fill="#8CC152" transform="rotate(-30 104 40)"/></g><circle cx="8" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="36" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="64" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="92" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="120" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="148" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="176" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="204" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="232" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="260" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="288" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="316" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="344" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="372" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="400" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="428" cy="232" r="17" fill="#FFB7CF" opacity=".8"/><circle cx="-6" cy="236" r="17" fill="#fff"/><circle cx="22" cy="236" r="17" fill="#fff"/><circle cx="50" cy="236" r="17" fill="#fff"/><circle cx="78" cy="236" r="17" fill="#fff"/><circle cx="106" cy="236" r="17" fill="#fff"/><circle cx="134" cy="236" r="17" fill="#fff"/><circle cx="162" cy="236" r="17" fill="#fff"/><circle cx="190" cy="236" r="17" fill="#fff"/><circle cx="218" cy="236" r="17" fill="#fff"/><circle cx="246" cy="236" r="17" fill="#fff"/><circle cx="274" cy="236" r="17" fill="#fff"/><circle cx="302" cy="236" r="17" fill="#fff"/><circle cx="330" cy="236" r="17" fill="#fff"/><circle cx="358" cy="236" r="17" fill="#fff"/><circle cx="386" cy="236" r="17" fill="#fff"/><circle cx="414" cy="236" r="17" fill="#fff"/></svg>
+        
+        <img class="kid r bob" style="animation-delay:-1.7s" data-char="boy_prints" alt="">
+        <img class="kid l bob" data-char="girl_point" alt="">
+        <div class="mid">
+          <span class="uvb">UV</span>
+          <h2>طباعة <em>UV</em> ✨</h2>
+          <span class="uvsub">غير قابلة للخدش 🛡️ وضد الماء 💧</span>
+          <svg class="wavy" viewBox="0 0 110 10" aria-hidden="true"><path d="M2 5c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0 12 6 18 0 12 6 16 0" fill="none" stroke="#FFC93C" stroke-width="2.5" stroke-linecap="round"/></svg>
           <a class="pill" href="#uv" data-go="uv">اطلبيها الآن</a>
         </div>
       </article>
