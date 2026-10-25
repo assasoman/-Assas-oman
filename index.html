@@ -873,6 +873,9 @@ async function submitOrder(form){
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
   const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]).map((l,i)=>{const u=UVF[l.id];return {name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_'),mime:u.mime,b64:u.b64}})});
   const sendHook=async p=>{const body=hookBody(p);
+    if(body.length>200000)return new Promise(res=>{const x=new XMLHttpRequest();let up=false;x.open('POST',ORDERS_HOOK);x.setRequestHeader('Content-Type','text/plain;charset=utf-8');x.timeout=300000;
+      x.upload.onprogress=e=>{if(e.lengthComputable){const pc=Math.round(e.loaded/e.total*100);btn.textContent='جارٍ رفع التصميم… '+pc+'%';if(pc>=100){up=true;btn.textContent='لحظات… نحفظ تصميمك'}}};
+      x.upload.onload=()=>{up=true};x.onload=()=>res(true);x.onerror=()=>res(up);x.ontimeout=()=>res(up);x.send(body)});
     for(let a=0;a<(body.length>200000?1:2);a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),body.length>200000?300000:12000);
       try{await fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(tm);return true}catch(e){clearTimeout(tm)}}
     try{if(body.length<60000&&navigator.sendBeacon&&navigator.sendBeacon(ORDERS_HOOK,new Blob([body],{type:'text/plain;charset=utf-8'})))return true}catch(e){}
@@ -906,10 +909,19 @@ document.addEventListener('click',e=>{const t=e.target;let x;
   if(x=t.closest('[data-uvq]')){const i=$('#uvqty');i.value=Math.max(1,(parseInt(i.value)||1)+(x.dataset.uvq==='+'?1:-1));uvTotal();return}
   if(t.closest('[data-act="uvadd"]')){if(!uvSel.file){uvMsg('ارفعي صورة التصميم أول');return}
     const tot=Object.values(UVF).reduce((a,u)=>a+u.b64.length,0)+uvSel.b64.length;if(tot>47*1024*1024){uvMsg('مجموع الملفات كبير، أرسلي هذا الطلب أول وبعدين أضيفي الباقي بطلب ثاني');return}
-    const q=uvTotal(),id='u:'+Date.now().toString(36);UVF[id]={size:uvSel.size,fname:uvSel.file.name,url:uvSel.url,b64:uvSel.b64,mime:uvSel.mime};
-    cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة ✓');
-    uvSel={size:uvSel.size,file:null,url:'',b64:'',mime:''};$('#uvfile').value='';$('#uvprev').hidden=true;$('#uvdtxt').textContent='📤 اضغطي هنا واختاري صورة التصميم (PNG)';$('#uvqty').value=1;uvTotal();return}
+    const q=uvTotal(),id='u:'+Date.now().toString(36),sel=uvSel;const ab=t.closest('[data-act="uvadd"]');ab.disabled=true;
+    uvFit(sel).then(r=>{UVF[id]={size:sel.size,fname:sel.file.name,url:r.url,b64:r.b64,mime:r.mime};
+    cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة ✓');ab.disabled=false;
+    uvSel={size:sel.size,file:null,url:'',b64:'',mime:''};$('#uvfile').value='';$('#uvprev').hidden=true;$('#uvdtxt').textContent='📤 اضغطي هنا واختاري صورة التصميم (PNG)';$('#uvqty').value=1;uvTotal()});return}
 },true);
+/* يصغّر الصورة لدقة الطباعة (300dpi) إذا كانت أكبر من اللازم، عشان يصير الرفع أسرع */
+function uvFit(sel){const MAX={A4:[2480,3508],A3:[3508,4961]}[sel.size];
+  return new Promise(res=>{const keep=()=>res({url:sel.url,b64:sel.b64,mime:sel.mime});const im=new Image();
+    im.onload=()=>{try{const w=im.naturalWidth,h=im.naturalHeight,[a,b]=MAX,lo=Math.min(a,b),hi=Math.max(a,b);
+      const k=Math.min(1,(w>=h?hi:lo)/w,(w>=h?lo:hi)/h);if(k>0.92||sel.b64.length<3e6)return keep();
+      const c=document.createElement('canvas');c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      const png=/png/.test(sel.mime);c.toBlob(bl=>{if(!bl||bl.size*1.37>=sel.b64.length)return keep();const r=new FileReader();r.onload=()=>{const d=String(r.result);res({url:d,b64:d.slice(d.indexOf(',')+1),mime:png?'image/png':'image/jpeg'})};r.readAsDataURL(bl)},png?'image/png':'image/jpeg',0.95)}catch(e){keep()}};
+    im.onerror=keep;im.src=sel.url})}
 
 /* ---------- menu ---------- */
 function renderMenu(){
