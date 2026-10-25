@@ -73,6 +73,7 @@
 .crim{aspect-ratio:4/5!important;object-fit:cover}
 .b3kid{display:none}
 @media(min-width:760px){.b3kid{display:block;position:absolute;z-index:1;bottom:0;inset-inline-end:260px;height:92%;max-height:280px;width:auto;filter:drop-shadow(0 6px 10px rgba(120,60,40,.18))}.b3post{inset-inline-end:40px}}
+@keyframes thxin{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -761,6 +762,7 @@ function drawSheet(it){
 
 /* ---------- checkout (Netlify Forms: form "order") ---------- */
 const isPackItem=it=>String(it.id).startsWith('k:');
+function thanksPop(){const d=document.createElement('div');d.id='thxpop';d.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(40,20,30,.55);display:flex;align-items:center;justify-content:center;padding:20px';d.innerHTML=`<div style="background:#fff;border-radius:22px;max-width:360px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:thxin .3s ease"><div style="font-size:50px;line-height:1">💗</div><h2 style="margin:10px 0 6px;color:#E0457B">شكرًا لشرائك!</h2><p style="font-size:15px;line-height:1.9;margin:0 0 10px">يوصلك الملف على بريدك الإلكتروني بعد تأكيد الدفع من <b dir="ltr">assasoman7@gmail.com</b></p><div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.8">📩 إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام</b> أو <b>غير المرغوب فيه (Spam / Junk)</b></div><button type="button" style="margin-top:16px;width:100%;border:0;border-radius:14px;padding:13px;font:inherit;font-weight:700;font-size:16px;background:#E0457B;color:#fff">حسنًا، فهمت</button></div>`;d.querySelector('button').onclick=()=>d.remove();d.onclick=e=>{if(e.target===d)d.remove()};document.body.appendChild(d)}
 function showSheet(html){$('#sheet').innerHTML=`<div class="in"><button class="closer" data-act="close" aria-label="إغلاق">✕</button>${html}</div>`;$('#sheet').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';sheetHist()}
 function openCheckout(){
   if(!cart.length)return;
@@ -809,6 +811,7 @@ async function submitOrder(form){
   if(ok){cart=[];save();renderHeader();renderRails();
     const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
     showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
+    if(g.dig.length)setTimeout(thanksPop,350);
   }else{
     const blocks=parts.map(p=>waBtn(p,multi?'أرسل '+p.tag+' عبر واتساب':'أرسل الطلب عبر واتساب')).join('');
     showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p>${blocks}</div>`);
