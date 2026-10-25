@@ -873,7 +873,7 @@ async function submitOrder(form){
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
   const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]).map((l,i)=>{const u=UVF[l.id];return {name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_'),mime:u.mime,b64:u.b64}})});
   const sendHook=async p=>{const body=hookBody(p);
-    for(let a=0;a<2;a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),body.length>200000?120000:12000);
+    for(let a=0;a<(body.length>200000?1:2);a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),body.length>200000?300000:12000);
       try{await fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(tm);return true}catch(e){clearTimeout(tm)}}
     try{if(body.length<60000&&navigator.sendBeacon&&navigator.sendBeacon(ORDERS_HOOK,new Blob([body],{type:'text/plain;charset=utf-8'})))return true}catch(e){}
     return false};
@@ -897,7 +897,7 @@ function uvTotal(){const q=Math.max(1,parseInt($('#uvqty').value)||1);$('#uvtot'
 function uvMsg(m){const e=$('#uvmsg');e.textContent=m||'';e.hidden=!m;e.style.color='var(--price)'}
 document.addEventListener('change',e=>{if(e.target.id!=='uvfile')return;const f=e.target.files&&e.target.files[0];if(!f)return;
   if(!/^image\/(png|jpeg)$/.test(f.type)&&!/\.(png|jpe?g)$/i.test(f.name)){uvMsg('اختاري صورة PNG أو JPG');return}
-  if(f.size>15*1024*1024){uvMsg('حجم الصورة كبير (أكثر من 15MB)، صغّريها شوي وارفعيها من جديد');return}
+  if(f.size>35*1024*1024){uvMsg('حجم الصورة أكبر من 35MB. أرسليها لنا على الواتساب بعد ما تكملين الطلب');return}
   const r=new FileReader();r.onload=()=>{const d=String(r.result);uvSel.file=f;uvSel.url=d;uvSel.mime=f.type||'image/png';uvSel.b64=d.slice(d.indexOf(',')+1);
     const p=$('#uvprev');p.src=d;p.hidden=false;$('#uvdtxt').textContent='✅ '+f.name+' · اضغطي للتغيير';uvMsg('')};r.readAsDataURL(f)});
 document.addEventListener('input',e=>{if(e.target.id==='uvqty')uvTotal()});
@@ -905,7 +905,7 @@ document.addEventListener('click',e=>{const t=e.target;let x;
   if(x=t.closest('[data-uvsz]')){uvSel.size=x.dataset.uvsz;document.querySelectorAll('[data-uvsz]').forEach(b=>b.classList.toggle('on',b===x));uvTotal();return}
   if(x=t.closest('[data-uvq]')){const i=$('#uvqty');i.value=Math.max(1,(parseInt(i.value)||1)+(x.dataset.uvq==='+'?1:-1));uvTotal();return}
   if(t.closest('[data-act="uvadd"]')){if(!uvSel.file){uvMsg('ارفعي صورة التصميم أول');return}
-    const tot=Object.values(UVF).reduce((a,u)=>a+u.b64.length,0)+uvSel.b64.length;if(tot>24*1024*1024){uvMsg('مجموع الملفات كبير، أرسلي هذا الطلب أول وبعدين أضيفي الباقي');return}
+    const tot=Object.values(UVF).reduce((a,u)=>a+u.b64.length,0)+uvSel.b64.length;if(tot>47*1024*1024){uvMsg('مجموع الملفات كبير، أرسلي هذا الطلب أول وبعدين أضيفي الباقي بطلب ثاني');return}
     const q=uvTotal(),id='u:'+Date.now().toString(36);UVF[id]={size:uvSel.size,fname:uvSel.file.name,url:uvSel.url,b64:uvSel.b64,mime:uvSel.mime};
     cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة ✓');
     uvSel={size:uvSel.size,file:null,url:'',b64:'',mime:''};$('#uvfile').value='';$('#uvprev').hidden=true;$('#uvdtxt').textContent='📤 اضغطي هنا واختاري صورة التصميم (PNG)';$('#uvqty').value=1;uvTotal();return}
