@@ -91,6 +91,16 @@
 .banner.b7 h2{font-size:clamp(24px,6vw,46px)}
 .banner.b7 .uvsub{font-family:var(--font-fun);background:#fff;border-radius:99px;padding:5px 14px;font-weight:800;font-size:clamp(11.5px,3vw,17px);color:var(--ink);white-space:nowrap;box-shadow:0 2px 0 #FFC2D6}
 @media(max-width:560px){.banner.b7 .uvb{width:48px;height:48px;font-size:18px}.banner.b7 h2{font-size:24px}.banner.b7 .mid{max-width:60%}}
+#uv .uvup{background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+#uv .uvup h3{margin:0;font-size:17px}
+#uv .uvdrop{border:2.5px dashed #F7A6BF;border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;cursor:pointer;text-align:center;font-weight:700;color:#8A5070;background:repeating-conic-gradient(#fff 0 25%,#FFF4F8 0 50%) 0 0/18px 18px}
+#uv .uvdrop img{max-width:100%;max-height:220px;border-radius:10px}
+#uv .uvsz{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#uv .uvsz button{border:2px solid #EEE6F0;background:#fff;border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;cursor:pointer}
+#uv .uvsz button b{font-size:20px}#uv .uvsz button span{color:var(--muted);font-size:13px}
+#uv .uvsz button.on{border-color:var(--pink);background:#FFF0F6}#uv .uvsz button.on span{color:var(--pink);font-weight:700}
+#uv .uvq{display:flex;align-items:center;justify-content:space-between;font-weight:700}
+#uv .uvadd{justify-content:center;padding:12px 18px;font-size:16px}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -544,6 +554,18 @@ footer .kidrow img{height:130px;width:auto}
         <div><i>✂️</i><b>بدون خلفية</b><span>تنلصق مباشرة وتطلع كأنها مطبوعة على القطعة</span></div>
       </div>
       <div class="uvon">تنلصق على: <span>☕ الفناجين</span><span>🥤 الأكواب</span><span>🫙 الزجاج</span><span>🎁 العلب</span><span>📱 الجوالات</span><span>📓 الدفاتر</span></div>
+      <div class="uvup" id="uvup">
+        <h3>ارفعي تصميمك واطبعيه 🖨️</h3>
+        <label class="uvdrop" id="uvdrop"><input type="file" id="uvfile" accept="image/png,image/jpeg,.png,.jpg,.jpeg" hidden><span id="uvdtxt">📤 اضغطي هنا واختاري صورة التصميم (PNG)</span><img id="uvprev" alt="" hidden></label>
+        <div class="uvsz" role="radiogroup" aria-label="المقاس">
+          <button type="button" class="on" data-uvsz="A4"><b>A4</b><span class="num">2.5 ر.ع</span></button>
+          <button type="button" data-uvsz="A3"><b>A3</b><span class="num">3.5 ر.ع</span></button>
+        </div>
+        <div class="uvq"><span>عدد الأوراق</span><span class="step"><button type="button" data-uvq="+" aria-label="زيادة">+</button><input id="uvqty" class="num" inputmode="numeric" value="1" aria-label="عدد الأوراق"><button type="button" data-uvq="-" aria-label="نقص">−</button></span></div>
+        <p class="hint" id="uvmsg" hidden></p>
+        <button type="button" class="pill uvadd" data-act="uvadd">أضيفي للسلة · <span class="num" id="uvtot">2.5</span> ر.ع</button>
+        <p class="hint" style="margin:0">💡 الأفضل PNG بخلفية شفافة ودقة عالية. نتواصل معك قبل الطباعة إذا احتاج التصميم تعديل.</p>
+      </div>
       <div class="uvrow">
         <div class="uvcta"><p>تبين تصميم خاص لمناسبتك أو باسمك؟ أرسلي لنا الفكرة ونصممها لك.</p>
           <a class="uvwa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?phone=96892079057&text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%A8%D9%8A%20%D8%B7%D8%A8%D8%A7%D8%B9%D8%A9%20UV%20%D8%A8%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%AE%D8%A7%D8%B5"><svg style="width:20px;height:20px;fill:currentColor"><use href="#wa"/></svg>اطلبي تصميم خاص</a></div>
@@ -650,7 +672,9 @@ const ART={
   cup:`<div class="art" style="background:var(--sky-soft)"><svg viewBox="0 0 100 100"><path d="M22 34h56l-6 40a10 10 0 0 1-10 8H38a10 10 0 0 1-10-8z" fill="#fff" stroke="#3F6B8A" stroke-width="3"/><path d="M14 86h72" stroke="#3F6B8A" stroke-width="3" stroke-linecap="round"/><path d="M42 50c4-8 12-8 16 0-4 8-12 8-16 0Z" fill="#E84A84"/><path d="M40 22c4-6-4-8 0-14M52 22c4-6-4-8 0-14M64 22c4-6-4-8 0-14" stroke="#F49AB6" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>`,
   uv:`<div class="art" style="background:var(--leaf-soft)"><svg viewBox="0 0 100 100"><rect x="18" y="16" width="64" height="70" rx="8" fill="#fff" stroke="#5E8F2E" stroke-width="3"/><circle cx="38" cy="38" r="10" fill="#FFC93C"/><path d="M58 30l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z" fill="#E84A84"/><rect x="28" y="56" width="44" height="18" rx="9" fill="#7CC6EE"/><path d="M82 70l-12 16" stroke="#5E8F2E" stroke-width="3"/><path d="M70 86c4-6 8-10 12-16" fill="#ECF6E1" stroke="#5E8F2E" stroke-width="3"/></svg></div>`
 };
-const findItem=id=>{let it=PACKS.find(p=>p.id===id)||PRINTS.find(p=>p.id===id)||SHOP.find(p=>p.id===id)||COURSES.find(p=>p.id===id);if(it)return it;
+const UVF={},UVP={A4:2.5,A3:3.5};
+const findItem=id=>{if(String(id).startsWith('u:')){const u=UVF[id];return u?{id,name:'طباعة UV '+u.size+' ('+u.fname+')',price:UVP[u.size],unit:'ورقة',image:u.url,uv:1}:undefined}
+  let it=PACKS.find(p=>p.id===id)||PRINTS.find(p=>p.id===id)||SHOP.find(p=>p.id===id)||COURSES.find(p=>p.id===id);if(it)return it;
   if(String(id).startsWith('k:c:')){let n='';try{n=decodeURIComponent(String(id).slice(4))}catch(e){n=String(id).slice(4)}return {id,name:n,price:0,course:1}}
   const [b,i]=String(id).split('|');const base=SHOP.find(p=>p.id===b);
   if(base&&base.variants&&base.variants[+i]!=null)return Object.assign({},base,{id,name:base.name+' - '+base.variants[+i],variants:null,baseId:b});return it};
@@ -840,32 +864,52 @@ async function submitOrder(form){
   f.area=(f.area||'').trim();if(form.elements.area&&!f.area)return bad('اكتب المنطقة');
   if(f.area)f.wilaya=f.wilaya+' - '+f.area;delete f.area;
   msg.hidden=true;const btn=$('#ordgo');btn.disabled=true;btn.textContent='جارٍ الإرسال…';
-  const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap);
+  const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap),hasUV=snap.some(l=>UVF[l.id]);if(hasUV)btn.textContent='جارٍ رفع التصميم… لا تقفلين الصفحة';
   const parts=[{snap,tag:'الطلب'}];
   parts.forEach((p,n)=>{p.ref=parts.length>1?base+'-'+(n+1):base;p.t=totals(p.snap);
     p.items=p.snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
     p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
     p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
-  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:''});
+  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]).map((l,i)=>{const u=UVF[l.id];return {name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_'),mime:u.mime,b64:u.b64}})});
   const sendHook=async p=>{const body=hookBody(p);
-    for(let a=0;a<2;a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),12000);
+    for(let a=0;a<2;a++){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),body.length>200000?120000:12000);
       try{await fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body,signal:ac.signal});clearTimeout(tm);return true}catch(e){clearTimeout(tm)}}
-    try{if(navigator.sendBeacon&&navigator.sendBeacon(ORDERS_HOOK,new Blob([body],{type:'text/plain;charset=utf-8'})))return true}catch(e){}
+    try{if(body.length<60000&&navigator.sendBeacon&&navigator.sendBeacon(ORDERS_HOOK,new Blob([body],{type:'text/plain;charset=utf-8'})))return true}catch(e){}
     return false};
   let ok=false;if(LIVE){ok=true;for(const p of parts){if(!(await sendHook(p)))ok=false}}
   const multi=parts.length>1;
   const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
   if(ok){cart=[];save();renderHeader();renderRails();
     const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
-    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
+    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}${hasUV?'<p class="hint" style="color:#2E7D5B;font-weight:700">🎨 وصلنا تصميمك، وبنتواصل معك قبل الطباعة.</p>':''}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
     if(g.dig.length)setTimeout(thanksPop,350);
   }else{
     const blocks=parts.map(p=>waBtn(p,multi?'أرسل '+p.tag+' عبر واتساب':'أرسل الطلب عبر واتساب')).join('');
-    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p>${blocks}</div>`);
+    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p>${hasUV?'<p class="hint" style="font-weight:700">🎨 أرسلي صورة التصميم كمان في نفس محادثة الواتساب.</p>':''}${blocks}</div>`);
   }
 }
 document.addEventListener('submit',e=>{if(e.target.id==='ordform'){e.preventDefault();submitOrder(e.target)}});
+
+/* ---------- UV upload ---------- */
+let uvSel={size:'A4',file:null,url:'',b64:'',mime:''};
+function uvTotal(){const q=Math.max(1,parseInt($('#uvqty').value)||1);$('#uvtot').textContent=money(UVP[uvSel.size]*q);return q}
+function uvMsg(m){const e=$('#uvmsg');e.textContent=m||'';e.hidden=!m;e.style.color='var(--price)'}
+document.addEventListener('change',e=>{if(e.target.id!=='uvfile')return;const f=e.target.files&&e.target.files[0];if(!f)return;
+  if(!/^image\/(png|jpeg)$/.test(f.type)&&!/\.(png|jpe?g)$/i.test(f.name)){uvMsg('اختاري صورة PNG أو JPG');return}
+  if(f.size>15*1024*1024){uvMsg('حجم الصورة كبير (أكثر من 15MB)، صغّريها شوي وارفعيها من جديد');return}
+  const r=new FileReader();r.onload=()=>{const d=String(r.result);uvSel.file=f;uvSel.url=d;uvSel.mime=f.type||'image/png';uvSel.b64=d.slice(d.indexOf(',')+1);
+    const p=$('#uvprev');p.src=d;p.hidden=false;$('#uvdtxt').textContent='✅ '+f.name+' · اضغطي للتغيير';uvMsg('')};r.readAsDataURL(f)});
+document.addEventListener('input',e=>{if(e.target.id==='uvqty')uvTotal()});
+document.addEventListener('click',e=>{const t=e.target;let x;
+  if(x=t.closest('[data-uvsz]')){uvSel.size=x.dataset.uvsz;document.querySelectorAll('[data-uvsz]').forEach(b=>b.classList.toggle('on',b===x));uvTotal();return}
+  if(x=t.closest('[data-uvq]')){const i=$('#uvqty');i.value=Math.max(1,(parseInt(i.value)||1)+(x.dataset.uvq==='+'?1:-1));uvTotal();return}
+  if(t.closest('[data-act="uvadd"]')){if(!uvSel.file){uvMsg('ارفعي صورة التصميم أول');return}
+    const tot=Object.values(UVF).reduce((a,u)=>a+u.b64.length,0)+uvSel.b64.length;if(tot>24*1024*1024){uvMsg('مجموع الملفات كبير، أرسلي هذا الطلب أول وبعدين أضيفي الباقي');return}
+    const q=uvTotal(),id='u:'+Date.now().toString(36);UVF[id]={size:uvSel.size,fname:uvSel.file.name,url:uvSel.url,b64:uvSel.b64,mime:uvSel.mime};
+    cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة ✓');
+    uvSel={size:uvSel.size,file:null,url:'',b64:'',mime:''};$('#uvfile').value='';$('#uvprev').hidden=true;$('#uvdtxt').textContent='📤 اضغطي هنا واختاري صورة التصميم (PNG)';$('#uvqty').value=1;uvTotal();return}
+},true);
 
 /* ---------- menu ---------- */
 function renderMenu(){
