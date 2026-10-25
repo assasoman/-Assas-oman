@@ -512,7 +512,7 @@ footer .kidrow img{height:130px;width:auto}
   <section class="max how" aria-label="طريقة الطلب">
     <div class="s"><img data-char="step_choose" alt=""><em style="background:var(--pink)">١</em><b>اختر</b><span>من البكجات المتاحة</span></div>
     <div class="s"><img data-char="step_send" alt=""><em style="background:var(--sky)">٢</em><b>أرسل الطلب</b><span>اكتب اسمك ورقمك وبريدك وأرسل الطلب</span></div>
-    <div class="s"><img data-char="step_receive" alt=""><em style="background:var(--leaf)">٣</em><b>استلم</b><span>يصلك الملف على بريدك الإلكتروني</span></div>
+    <div class="s"><img data-char="step_receive" alt=""><em style="background:var(--leaf)">٣</em><b>استلم</b><span>يصلك الملف على بريدك الإلكتروني (شيكي البريد غير الهام إذا ما وصل)</span></div>
   </section>
 </main>
 
@@ -767,7 +767,7 @@ function openCheckout(){
   const need=cart.some(l=>!isPackItem(findItem(l.id)));const t=totals();
   closeAll(true);
   showSheet(`<h2>بيانات الطلب</h2>
-    <p class="hint">أدخل بياناتك لإتمام الطلب. ${cart.some(l=>isPackItem(findItem(l.id)))?'يصلك الملف على بريدك الإلكتروني بعد تأكيد الدفع.':''}</p>
+    <p class="hint">أدخل بياناتك لإتمام الطلب. ${cart.some(l=>isPackItem(findItem(l.id)))?'يصلك الملف على بريدك الإلكتروني بعد تأكيد الدفع (وإذا ما لقيتيه شيكي البريد غير الهام Spam).':''}</p>
     <form id="ordform" class="ordf" novalidate>
       <label>الاسم<input name="name" autocomplete="name" required></label>
       <label>رقم الهاتف<input name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
@@ -808,7 +808,7 @@ async function submitOrder(form){
   const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
   if(ok){cart=[];save();renderHeader();renderRails();
     const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
-    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p></div>`);
+    showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
   }else{
     const blocks=parts.map(p=>waBtn(p,multi?'أرسل '+p.tag+' عبر واتساب':'أرسل الطلب عبر واتساب')).join('');
     showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:46px">${LIVE?'⚠️':'📲'}</div><h2>${LIVE?'تعذّر حفظ الطلب':'أرسل طلبك عبر واتساب'}</h2><p class="hint">${LIVE?'لم يصل الطلب إلينا. أرسله لنا عبر واتساب ونكمله معك.':'اضغط الزر لإرسال تفاصيل طلبك إلينا عبر واتساب.'}</p>${blocks}</div>`);
