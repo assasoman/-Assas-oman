@@ -545,7 +545,6 @@ footer .kidrow img{height:130px;width:auto}
       </div>
       <div class="uvon">تنلصق على: <span>☕ الفناجين</span><span>🥤 الأكواب</span><span>🫙 الزجاج</span><span>🎁 العلب</span><span>📱 الجوالات</span><span>📓 الدفاتر</span></div>
       <div class="uvrow">
-        <div id="uv-prod"></div>
         <div class="uvcta"><p>تبين تصميم خاص لمناسبتك أو باسمك؟ أرسلي لنا الفكرة ونصممها لك.</p>
           <a class="uvwa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?phone=96892079057&text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%A8%D9%8A%20%D8%B7%D8%A8%D8%A7%D8%B9%D8%A9%20UV%20%D8%A8%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%AE%D8%A7%D8%B5"><svg style="width:20px;height:20px;fill:currentColor"><use href="#wa"/></svg>اطلبي تصميم خاص</a></div>
       </div>
@@ -756,7 +755,6 @@ let query='',expanded={},schCat='الكل';
 const normAr=t=>String(t||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').trim();
 const qMatch=txt=>{if(!query)return true;const t=normAr(txt);return normAr(query).split(' ').filter(Boolean).every(w=>t.includes(w)||(w.startsWith('ال')&&t.includes(w.slice(2))))};
 function renderRails(){
-  try{setTimeout(drawUV,0)}catch(e){}
   const m=it=>qMatch(it.name+' '+(it.sub||'')+' '+(it.desc||'')+' '+(it.tag||''));
   let total=0;
   const isSch=p=>/مدرس/.test(p.section||'');
@@ -781,7 +779,6 @@ function renderRails(){
 
 /* ---------- product sheet ---------- */
 let picked={},pickedVar=0,packOn=true;
-function drawUV(){const e=$('#uv-prod');if(!e)return;const it=SHOP.find(x=>/UV/i.test(x.name));e.innerHTML=it?card(it):'';e.hidden=!it}
 function openSheet(id){
   const it=findItem(id);if(!it)return;
   pickedVar=0;packOn=true;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
