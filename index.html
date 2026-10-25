@@ -101,6 +101,9 @@
 #uv .uvsz button.on{border-color:var(--pink);background:#FFF0F6}#uv .uvsz button.on span{color:var(--pink);font-weight:700}
 #uv .uvq{display:flex;align-items:center;justify-content:space-between;font-weight:700}
 #uv .uvadd{justify-content:center;padding:12px 18px;font-size:16px}
+#uv .uvit{background:#FFF7FA;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;margin-bottom:8px}
+#uv .uvbar{height:8px;border-radius:99px;background:#F3E4EC;overflow:hidden}#uv .uvbar i{display:block;height:100%;background:linear-gradient(90deg,#E84A84,#B57BFF);transition:width .3s}
+#uv .uvit button{border:0;background:var(--ink);color:#fff;border-radius:99px;padding:3px 10px;font:inherit;font-size:12.5px}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -563,6 +566,7 @@ footer .kidrow img{height:130px;width:auto}
         </div>
         <div class="uvq"><span>عدد الأوراق</span><span class="step"><button type="button" data-uvq="+" aria-label="زيادة">+</button><input id="uvqty" class="num" inputmode="numeric" value="1" aria-label="عدد الأوراق"><button type="button" data-uvq="-" aria-label="نقص">−</button></span></div>
         <p class="hint" id="uvmsg" hidden></p>
+        <div id="uvlist"></div>
         <button type="button" class="pill uvadd" data-act="uvadd">أضيفي للسلة · <span class="num" id="uvtot">2.5</span> ر.ع</button>
         <p class="hint" style="margin:0">💡 الأفضل PNG بخلفية شفافة ودقة عالية. نتواصل معك قبل الطباعة إذا احتاج التصميم تعديل.</p>
       </div>
@@ -672,8 +676,9 @@ const ART={
   cup:`<div class="art" style="background:var(--sky-soft)"><svg viewBox="0 0 100 100"><path d="M22 34h56l-6 40a10 10 0 0 1-10 8H38a10 10 0 0 1-10-8z" fill="#fff" stroke="#3F6B8A" stroke-width="3"/><path d="M14 86h72" stroke="#3F6B8A" stroke-width="3" stroke-linecap="round"/><path d="M42 50c4-8 12-8 16 0-4 8-12 8-16 0Z" fill="#E84A84"/><path d="M40 22c4-6-4-8 0-14M52 22c4-6-4-8 0-14M64 22c4-6-4-8 0-14" stroke="#F49AB6" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>`,
   uv:`<div class="art" style="background:var(--leaf-soft)"><svg viewBox="0 0 100 100"><rect x="18" y="16" width="64" height="70" rx="8" fill="#fff" stroke="#5E8F2E" stroke-width="3"/><circle cx="38" cy="38" r="10" fill="#FFC93C"/><path d="M58 30l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z" fill="#E84A84"/><rect x="28" y="56" width="44" height="18" rx="9" fill="#7CC6EE"/><path d="M82 70l-12 16" stroke="#5E8F2E" stroke-width="3"/><path d="M70 86c4-6 8-10 12-16" fill="#ECF6E1" stroke="#5E8F2E" stroke-width="3"/></svg></div>`
 };
-const UVF={},UVP={A4:2.5,A3:3.5};
-const findItem=id=>{if(String(id).startsWith('u:')){const u=UVF[id];return u?{id,name:'طباعة UV '+u.size+' ('+u.fname+')',price:UVP[u.size],unit:'ورقة',image:u.url,uv:1}:undefined}
+const UVP={A4:2.5,A3:3.5};let UVF={};try{UVF=JSON.parse(localStorage.getItem('asas-uvf')||'{}')||{}}catch(e){UVF={}}
+const saveUVF=()=>{try{const o={};Object.keys(UVF).forEach(k=>{const u=UVF[k];if(u.fid)o[k]={size:u.size,fname:u.fname,fid:u.fid,st:'ok'}});localStorage.setItem('asas-uvf',JSON.stringify(o))}catch(e){}};
+const findItem=id=>{if(String(id).startsWith('u:')){const u=UVF[id];return u?{id,name:'طباعة UV '+u.size+' ('+u.fname+')',price:UVP[u.size],unit:'ورقة',image:u.url,emoji:'🎨',uv:1}:undefined}
   let it=PACKS.find(p=>p.id===id)||PRINTS.find(p=>p.id===id)||SHOP.find(p=>p.id===id)||COURSES.find(p=>p.id===id);if(it)return it;
   if(String(id).startsWith('k:c:')){let n='';try{n=decodeURIComponent(String(id).slice(4))}catch(e){n=String(id).slice(4)}return {id,name:n,price:0,course:1}}
   const [b,i]=String(id).split('|');const base=SHOP.find(p=>p.id===b);
@@ -740,7 +745,7 @@ let favs=[];try{favs=JSON.parse(localStorage.getItem('asas-favs')||'[]')}catch(e
 const saveFavs=()=>{try{localStorage.setItem('asas-favs',JSON.stringify(favs))}catch(e){}};
 function addLine(id,qty=1){const l=cart.find(x=>x.id===id);if(l)l.q+=qty;else cart.push({id,q:qty});save();renderHeader()}
 function totals(list){let sum=0,ask=false,n=0;(list||cart).forEach(l=>{const it=findItem(l.id);n+=l.q;if(it.price==null)ask=true;else sum+=it.price*l.q});return{sum,ask,n}}
-function renderHeader(){const t=totals();$('#hcount').textContent=t.n;$('#htotal').innerHTML=`${money(t.sum)} <small>${CURRENCY}</small>`}
+function renderHeader(){const t=totals();$('#hcount').textContent=t.n;$('#htotal').innerHTML=`${money(t.sum)} <small>${CURRENCY}</small>`;try{uvList()}catch(e){}}
 function waMessage(c){
   const lines=['السلام عليكم، أرغب بالطلب من متجر أساس:',''];
   if(c&&c.ref)lines.push('رقم الطلب: '+c.ref);
@@ -864,14 +869,19 @@ async function submitOrder(form){
   f.area=(f.area||'').trim();if(form.elements.area&&!f.area)return bad('اكتب المنطقة');
   if(f.area)f.wilaya=f.wilaya+' - '+f.area;delete f.area;
   msg.hidden=true;const btn=$('#ordgo');btn.disabled=true;btn.textContent='جارٍ الإرسال…';
-  const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap),hasUV=snap.some(l=>UVF[l.id]);if(hasUV)btn.textContent='جارٍ رفع التصميم… لا تقفلين الصفحة';
+  const uvl=cart.filter(l=>UVF[l.id]).map(l=>UVF[l.id]);
+  if(uvl.some(u=>u.st==='err')){btn.disabled=false;btn.textContent='إرسال الطلب';return bad('تعذّر رفع أحد التصاميم. احذفيه من السلة وارفعيه من جديد من تبويب طباعة UV')}
+  if(uvl.some(u=>u.st==='up')){const tk=setInterval(()=>{const up=uvl.filter(u=>u.st==='up');btn.textContent='ننتظر رفع التصميم… '+Math.round(up.reduce((a,u)=>a+(u.pc||0),0)/Math.max(1,up.length))+'% لا تقفلين الصفحة'},500);
+    await Promise.all(uvl.map(u=>u.p).filter(Boolean));clearInterval(tk);
+    if(uvl.some(u=>u.st!=='ok')){btn.disabled=false;btn.textContent='إرسال الطلب';return bad('تعذّر رفع التصميم. تأكدي من النت وحاولي مرة ثانية')}}
+  const snap=cart.map(l=>({...l})),base=refCode(),g=splitCart(snap),hasUV=snap.some(l=>UVF[l.id]);
   const parts=[{snap,tag:'الطلب'}];
   parts.forEach((p,n)=>{p.ref=parts.length>1?base+'-'+(n+1):base;p.t=totals(p.snap);
     p.items=p.snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
     p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
     p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
-  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]).map((l,i)=>{const u=UVF[l.id];return {name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_'),mime:u.mime,b64:u.b64}})});
+  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]&&UVF[l.id].fid).map((l,i)=>{const u=UVF[l.id];return {fid:u.fid,name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_')}})});
   const sendHook=async p=>{const body=hookBody(p);
     if(body.length>200000)return new Promise(res=>{const x=new XMLHttpRequest();let up=false;x.open('POST',ORDERS_HOOK);x.setRequestHeader('Content-Type','text/plain;charset=utf-8');x.timeout=300000;
       x.upload.onprogress=e=>{if(e.lengthComputable){const pc=Math.round(e.loaded/e.total*100);btn.textContent='جارٍ رفع التصميم… '+pc+'%';if(pc>=100){up=true;btn.textContent='لحظات… نحفظ تصميمك'}}};
@@ -883,7 +893,7 @@ async function submitOrder(form){
   let ok=false;if(LIVE){ok=true;for(const p of parts){if(!(await sendHook(p)))ok=false}}
   const multi=parts.length>1;
   const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
-  if(ok){cart=[];save();renderHeader();renderRails();
+  if(ok){cart=[];save();if(hasUV){UVF={};saveUVF();uvList()}renderHeader();renderRails();
     const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
     showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}${hasUV?'<p class="hint" style="color:#2E7D5B;font-weight:700">🎨 وصلنا تصميمك، وبنتواصل معك قبل الطباعة.</p>':''}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
     if(g.dig.length)setTimeout(thanksPop,350);
@@ -898,20 +908,32 @@ document.addEventListener('submit',e=>{if(e.target.id==='ordform'){e.preventDefa
 let uvSel={size:'A4',file:null,url:'',b64:'',mime:''};
 function uvTotal(){const q=Math.max(1,parseInt($('#uvqty').value)||1);$('#uvtot').textContent=money(UVP[uvSel.size]*q);return q}
 function uvMsg(m){const e=$('#uvmsg');e.textContent=m||'';e.hidden=!m;e.style.color='var(--price)'}
+const uvPost=o=>fetch(ORDERS_HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(r=>r.json());
+function uvList(){const el=$('#uvlist');if(!el)return;const ids=cart.map(l=>l.id).filter(id=>UVF[id]);
+  el.innerHTML=ids.map(id=>{const u=UVF[id],st=u.st||'ok';return `<div class="uvit"><b>🎨 ${esc(u.fname)} · ${u.size}</b>${st==='up'?`<div class="uvbar"><i style="width:${u.pc||0}%"></i></div><span>جارٍ رفع التصميم… ${u.pc||0}% (تقدرين تكملين التسوق)</span>`:st==='err'?`<span style="color:var(--price)">تعذّر الرفع. <button type="button" data-uvretry="${esc(id)}">إعادة المحاولة</button></span>`:'<span style="color:#2E7D5B">✓ تم رفع التصميم وانضاف للسلة</span>'}</div>`}).join('')}
+async function uvUpload(id){const u=UVF[id];u.st='up';u.pc=0;uvList();
+  const b=u.b64,CH=1500000,n=Math.max(1,Math.ceil(b.length/CH)),key=id.slice(2)+Math.random().toString(36).slice(2,6);
+  try{for(let i=0;i<n;i++){let ok=false;
+      for(let a=0;a<4&&!ok;a++){try{const r=await uvPost({type:'uvchunk',id:key,i,data:b.slice(i*CH,(i+1)*CH)});ok=!!(r&&r.ok)}catch(e){await new Promise(z=>setTimeout(z,1500*(a+1)))}}
+      if(!ok)throw new Error('chunk');u.pc=Math.round((i+1)/n*95);uvList()}
+    let r=null;for(let a=0;a<3&&!(r&&r.ok);a++){try{r=await uvPost({type:'uvcommit',id:key,n,mime:u.mime,name:key+'-'+u.size+'-'+u.fname})}catch(e){await new Promise(z=>setTimeout(z,2000))}}
+    if(!(r&&r.ok&&r.fid))throw new Error('commit');
+    u.fid=r.fid;u.st='ok';u.pc=100;delete u.b64;saveUVF();uvList();return true}
+  catch(e){u.st='err';uvList();return false}}
 document.addEventListener('change',e=>{if(e.target.id!=='uvfile')return;const f=e.target.files&&e.target.files[0];if(!f)return;
   if(!/^image\/(png|jpeg)$/.test(f.type)&&!/\.(png|jpe?g)$/i.test(f.name)){uvMsg('اختاري صورة PNG أو JPG');return}
-  if(f.size>35*1024*1024){uvMsg('حجم الصورة أكبر من 35MB. أرسليها لنا على الواتساب بعد ما تكملين الطلب');return}
+  if(f.size>40*1024*1024){uvMsg('حجم الصورة أكبر من 40MB. أرسليها لنا على الواتساب بعد ما تكملين الطلب');return}
   const r=new FileReader();r.onload=()=>{const d=String(r.result);uvSel.file=f;uvSel.url=d;uvSel.mime=f.type||'image/png';uvSel.b64=d.slice(d.indexOf(',')+1);
     const p=$('#uvprev');p.src=d;p.hidden=false;$('#uvdtxt').textContent='✅ '+f.name+' · اضغطي للتغيير';uvMsg('')};r.readAsDataURL(f)});
 document.addEventListener('input',e=>{if(e.target.id==='uvqty')uvTotal()});
 document.addEventListener('click',e=>{const t=e.target;let x;
   if(x=t.closest('[data-uvsz]')){uvSel.size=x.dataset.uvsz;document.querySelectorAll('[data-uvsz]').forEach(b=>b.classList.toggle('on',b===x));uvTotal();return}
   if(x=t.closest('[data-uvq]')){const i=$('#uvqty');i.value=Math.max(1,(parseInt(i.value)||1)+(x.dataset.uvq==='+'?1:-1));uvTotal();return}
+  if(x=t.closest('[data-uvretry]')){const id=x.dataset.uvretry;if(UVF[id]&&UVF[id].b64)UVF[id].p=uvUpload(id);return}
   if(t.closest('[data-act="uvadd"]')){if(!uvSel.file){uvMsg('ارفعي صورة التصميم أول');return}
-    const tot=Object.values(UVF).reduce((a,u)=>a+u.b64.length,0)+uvSel.b64.length;if(tot>47*1024*1024){uvMsg('مجموع الملفات كبير، أرسلي هذا الطلب أول وبعدين أضيفي الباقي بطلب ثاني');return}
     const q=uvTotal(),id='u:'+Date.now().toString(36),sel=uvSel;const ab=t.closest('[data-act="uvadd"]');ab.disabled=true;
-    uvFit(sel).then(r=>{UVF[id]={size:sel.size,fname:sel.file.name,url:r.url,b64:r.b64,mime:r.mime};
-    cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة ✓');ab.disabled=false;
+    uvFit(sel).then(r=>{UVF[id]={size:sel.size,fname:sel.file.name,url:r.url,b64:r.b64,mime:r.mime,st:'up',pc:0};
+    cart.push({id,q});save();renderHeader();toast('انضاف تصميمك للسلة، وجارٍ رفعه ✓');ab.disabled=false;UVF[id].p=uvUpload(id);
     uvSel={size:sel.size,file:null,url:'',b64:'',mime:''};$('#uvfile').value='';$('#uvprev').hidden=true;$('#uvdtxt').textContent='📤 اضغطي هنا واختاري صورة التصميم (PNG)';$('#uvqty').value=1;uvTotal()});return}
 },true);
 /* يصغّر الصورة لدقة الطباعة (300dpi) إذا كانت أكبر من اللازم، عشان يصير الرفع أسرع */
