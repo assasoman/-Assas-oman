@@ -25,6 +25,13 @@ jobs:
           fetch "المطبوعات" prints
           fetch "المنتجات" products
           fetch "الدورات" courses
+      - name: Fetch live draw result (fallback for lucky page)
+        run: |
+          HOOK="https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec"
+          M=$(python3 -c "import json;print(json.load(open('data/draw.json'))['current'].get('month',''))" 2>/dev/null || true)
+          if [ -n "$M" ] && curl -fsSL --max-time 30 "$HOOK?draw=$M" -o /tmp/d.json; then
+            python3 -c "import json,sys;j=json.load(open('/tmp/d.json'));d=j.get('draw');(d and json.dump(d,open('data/drawlive.json','w')))" || true
+          fi
       - name: Commit if changed
         run: |
           git config user.name "assas-bot"

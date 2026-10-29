@@ -183,6 +183,9 @@ details.ents summary::-webkit-details-marker{display:none}
 .cd{position:absolute;inset:0;z-index:4;border-radius:50%;background:rgba(34,32,43,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800}
 .cd b{font-size:80px;line-height:1;color:var(--sun)}
 .cd[hidden]{display:none}
+.tcd{display:flex;gap:8px;justify-content:center;margin:0 0 16px;direction:rtl}.tcd[hidden]{display:none}
+.tcd div{background:#22202B;color:#fff;border-radius:16px;min-width:66px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;box-shadow:0 6px 14px rgba(34,32,43,.18)}
+.tcd b{font-size:30px;line-height:1.1;color:var(--sun);font-variant-numeric:tabular-nums}.tcd span{font-size:12px;font-weight:700}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(34,32,43,.55);display:grid;place-items:center;padding:16px}
 .modal[hidden]{display:none}
 .mcard{background:#fff;border-radius:28px;padding:26px 20px 22px;text-align:center;max-width:360px;width:100%;animation:popin .5s cubic-bezier(.2,1.4,.4,1)}
@@ -223,6 +226,7 @@ details.ents summary::-webkit-details-marker{display:none}
     <div class="wheelbox">
       <h2>🎡 سحب <span id="occ">المناسبة</span></h2>
       <div class="wmeta"><span class="lv" id="live" hidden>🔴 سحب مباشر</span><span>كل طلب = فرصة</span></div>
+      <div class="tcd" id="tcd" hidden><div><b id="cdD">0</b><span>يوم</span></div><div><b id="cdH">0</b><span>ساعة</span></div><div><b id="cdM">0</b><span>دقيقة</span></div><div><b id="cdS">0</b><span>ثانية</span></div></div>
       <div class="wban" id="wbanner" hidden>🏆 فائزة السحب: <b id="wbn"></b><button id="replay" type="button">شوفي لحظة السحب 🎡</button></div>
       <div class="wheel">
         <svg class="pin" viewBox="0 0 38 46"><path d="M19 46 3 18A16 16 0 1 1 35 18Z" fill="#22202B"/><circle cx="19" cy="16" r="7" fill="#FFC93C"/></svg>
@@ -332,24 +336,48 @@ details.ents summary::-webkit-details-marker{display:none}
     else{spinTo(d.idx,d.n,0);banner(d);}
     if(!TEST){spinBtn.hidden=true;}
   }
-  function poll(){
-    fetch(HOOK+'?draw='+encodeURIComponent(MONTH)+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){
-      off=(j.now||Date.now())-Date.now();handle(j.draw);
-    }).catch(function(){}).then(function(){
-      var fast=KEY||(data.current.status==='live');
-      if(fast&&!document.hidden)pollT=setTimeout(poll,KEY?2000:(8000+Math.random()*4000));
+  var tries=0,schedT=null;
+  function getDraw(cb){fetch(HOOK+'?draw='+encodeURIComponent(MONTH)+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){off=(j.now||Date.now())-Date.now();cb(j)}).catch(function(){cb(null)})}
+  function fallback(cb){fetch('data/drawlive.json?t='+Date.now()).then(function(r){return r.json()}).then(function(j){cb(j&&j.month===MONTH?j:null)}).catch(function(){cb(null)})}
+  function fetchResult(){
+    if(shown&&shown.month===MONTH)return;
+    getDraw(function(j){
+      if(j&&j.draw){handle(j.draw);return}
+      tries++;
+      var again=function(){var S=data.current.start||0;if(Date.now()+off<S+20*60000)schedT=setTimeout(fetchResult,2500+Math.random()*3500)};
+      if(!j&&tries%3===0)fallback(function(f){if(f)handle(f);else again()});else again();
     });
   }
-  document.addEventListener('visibilitychange',function(){if(!document.hidden&&(KEY||data.current.status==='live')){clearTimeout(pollT);poll()}});
-  document.getElementById('replay').onclick=function(){if(!shown)return;var d=shown;spinTo(0,d.n,0);setTimeout(function(){spinTo(d.idx,d.n,6500);setTimeout(function(){show(entryOf(d))},6700)},60)};
+  function tickCD(){var S=data.current.start,left=S-(Date.now()+off),t=document.getElementById('tcd');
+    if(left<=0||shown){t.hidden=true;return}
+    t.hidden=false;var x=Math.floor(left/1000);
+    document.getElementById('cdD').textContent=Math.floor(x/86400);document.getElementById('cdH').textContent=Math.floor(x%86400/3600);
+    document.getElementById('cdM').textContent=Math.floor(x%3600/60);document.getElementById('cdS').textContent=x%60;
+    setTimeout(tickCD,1000-((Date.now()+off)%1000)+5)}
+  function schedule(){
+    var S=data.current.start;if(!S)return;tickCD();
+    var now=Date.now()+off;
+    if(now>=S-45000)fetchResult();else schedT=setTimeout(fetchResult,(S-40000+Math.random()*20000)-now);
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&data&&data.current.status==='scheduled'&&!shown){var S=data.current.start;if(Date.now()+off>=S-45000){clearTimeout(schedT);fetchResult()}}});
+  function poll(){getDraw(function(j){if(j&&j.draw)handle(j.draw);if(KEY&&!document.hidden&&!(shown&&shown.month===MONTH))pollT=setTimeout(poll,2000)})}
+  function armedUI(){busy=true;spinBtn.disabled=true;spinBtn.textContent='✅ السحب جاهز، بيصير تلقائيًا الساعة ٤:٠٠';var st=document.getElementById('status');st.textContent='✅ تم تجهيز السحب. بيلف تلقائيًا الساعة ٤ وكل الزبونات يشوفنه مع بعض'}
+  function arm(){
+    var list=data.current.entries||[];
+    var digits=list.map(function(e){return String(e.n).replace(/[^0-9]/g,'')}).join(',');
+    spinBtn.disabled=true;spinBtn.textContent='جاري التجهيز…';
+    fetch(HOOK+'?arm='+encodeURIComponent(MONTH)+'&key='+encodeURIComponent(KEY)+'&start='+data.current.start+'&d='+digits+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){
+      if(j&&j.ok&&j.n===list.length)armedUI();else{spinBtn.disabled=false;spinBtn.textContent='جهّزي السحب التلقائي 🎡';alert('ما زبط التجهيز ('+(j&&j.error||'')+'). جربي مرة ثانية.')}
+    }).catch(function(){spinBtn.disabled=false;spinBtn.textContent='جهّزي السحب التلقائي 🎡';alert('ما وصلني رد. تأكدي من النت وجربي مرة ثانية.')});
+  }
   spinBtn.onclick=function(){
-    var list=data.current.entries||[];if(busy||!list.length||!KEY)return;busy=true;spinBtn.disabled=true;spinBtn.textContent='جاري بدء السحب…';
+    var list=data.current.entries||[];if(busy||!list.length||!KEY)return;
+    if(!TEST){arm();return}
+    busy=true;spinBtn.disabled=true;spinBtn.textContent='جاري بدء السحب…';
     var body=JSON.stringify({type:'spin',key:KEY,month:MONTH,names:list.map(function(e){return e.n})});
     var send=function(){return fetch(HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:body}).catch(function(){})};
-    [0,3000,6000].forEach(function(t){setTimeout(function(){if(!shown||shown.month!==MONTH)send()},t)});
-    Promise.resolve().then(function(){clearTimeout(pollT);poll();
-        setTimeout(function(){busy=false;spinBtn.disabled=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(!shown||(shown.month!==MONTH))alert('ما وصلني رد السحب. انتظري دقيقة وجربي مرة ثانية.')},15000);
-      });
+    send();clearTimeout(pollT);setTimeout(poll,1500);
+    setTimeout(function(){busy=false;spinBtn.disabled=false;spinBtn.textContent='لفّة تجربة 🎡'},15000);
   };
   var PH=null;
   function b64(x){var s=atob(x),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
@@ -369,10 +397,12 @@ details.ents summary::-webkit-details-marker{display:none}
     box.innerHTML=w.length?w.map(function(x){return '<div class="win"><span class="tro">🏆</span><div><b>'+esc(x.n)+'</b><span>فائزة سحب '+esc(x.occasion)+' · طلب '+esc(tail(x.r))+(x.date?' · '+esc(x.date):'')+'</span></div></div>'}).join(''):'<div class="empty">أول فائزة في عجلة أساس… <b>ممكن تكونين أنتِ!</b> 💗</div>';
     var hm=/^#spin=([^&]+)(&test)?$/.exec(location.hash);
     MONTH=c.month||'';
-    if(hm&&list.length){KEY=decodeURIComponent(hm[1]);TEST=!!hm[2];if(TEST)MONTH='TEST';spinBtn.hidden=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'ابدئي السحب المباشر 🎡';if(c.enc)unlock(KEY,c.enc);}
-    if(c.status==='live'||KEY)live.hidden=false;
+    if(hm&&list.length){KEY=decodeURIComponent(hm[1]);TEST=!!hm[2];if(TEST)MONTH='TEST';spinBtn.hidden=false;spinBtn.textContent=TEST?'لفّة تجربة 🎡':'جهّزي السحب التلقائي 🎡';if(c.enc)unlock(KEY,c.enc);
+      if(!TEST&&!c.result)getDraw(function(j){if(j&&j.armed)armedUI();if(j&&j.draw)handle(j.draw)});}
+    if(c.status==='live'||c.status==='scheduled'||KEY)live.hidden=false;
     if(c.result){handle(c.result);}
-    poll();
+    else if(c.status==='scheduled'&&!TEST)schedule();
+    if(TEST)poll();
   }
   fetch('data/draw.json?t='+Date.now()).then(function(r){return r.json()}).then(function(j){data=j;render()}).catch(function(){data={current:{entries:[]},winners:[]};render()});
 })();
