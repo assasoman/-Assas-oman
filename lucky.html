@@ -333,11 +333,19 @@ details.ents summary::-webkit-details-marker{display:none}
     if(!d||(shown&&shown.start===d.start))return;shown=d;
     var now=Date.now()+off;
     if(now<d.start+6500)play(d,d.start-now);
+    else if(!KEY&&now<d.start+15*60000)play(d,0);
     else{spinTo(d.idx,d.n,0);banner(d);}
     if(!TEST){spinBtn.hidden=true;}
   }
   var tries=0,schedT=null;
-  function getDraw(cb){fetch(HOOK+'?draw='+encodeURIComponent(MONTH)+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){off=(j.now||Date.now())-Date.now();cb(j)}).catch(function(){cb(null)})}
+  var jpN=0;
+  function jsonp(url,ms){return new Promise(function(res,rej){var name='__asas'+(++jpN)+'_'+Date.now(),sc=document.createElement('script'),done=false;
+    var fin=function(ok,v){if(done)return;done=true;clearTimeout(tm);try{delete window[name]}catch(e){window[name]=undefined}sc.remove();ok?res(v):rej(v)};
+    window[name]=function(j){fin(true,j)};sc.onerror=function(){fin(false,'net')};var tm=setTimeout(function(){fin(false,'timeout')},ms||9000);
+    sc.src=url+(url.indexOf('?')<0?'?':'&')+'cb='+name;document.head.appendChild(sc)})}
+  function api(q){var url=HOOK+'?'+q+'&t='+Date.now();
+    return jsonp(url).catch(function(){return fetch(url).then(function(r){return r.json()})})}
+  function getDraw(cb){api('draw='+encodeURIComponent(MONTH)).then(function(j){off=(j.now||Date.now())-Date.now();cb(j)}).catch(function(){cb(null)})}
   function fallback(cb){fetch('data/drawlive.json?t='+Date.now()).then(function(r){return r.json()}).then(function(j){cb(j&&j.month===MONTH?j:null)}).catch(function(){cb(null)})}
   function fetchResult(){
     if(shown&&shown.month===MONTH)return;
@@ -366,7 +374,7 @@ details.ents summary::-webkit-details-marker{display:none}
     var list=data.current.entries||[];
     var digits=list.map(function(e){return String(e.n).replace(/[^0-9]/g,'')}).join(',');
     spinBtn.disabled=true;spinBtn.textContent='جاري التجهيز…';
-    fetch(HOOK+'?arm='+encodeURIComponent(MONTH)+'&key='+encodeURIComponent(KEY)+'&start='+data.current.start+'&d='+digits+'&t='+Date.now()).then(function(r){return r.json()}).then(function(j){
+    api('arm='+encodeURIComponent(MONTH)+'&key='+encodeURIComponent(KEY)+'&start='+data.current.start+'&d='+digits).then(function(j){
       if(j&&j.ok&&j.n===list.length)armedUI();else{spinBtn.disabled=false;spinBtn.textContent='جهّزي السحب التلقائي 🎡';alert('ما زبط التجهيز ('+(j&&j.error||'')+'). جربي مرة ثانية.')}
     }).catch(function(){spinBtn.disabled=false;spinBtn.textContent='جهّزي السحب التلقائي 🎡';alert('ما وصلني رد. تأكدي من النت وجربي مرة ثانية.')});
   }
