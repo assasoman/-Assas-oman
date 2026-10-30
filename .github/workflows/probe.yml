@@ -1,7 +1,13 @@
 name: probe
 on: workflow_dispatch
+permissions:
+  contents: write
 jobs:
   p:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -sSL --max-time 30 "https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec?draw=tree2026&cb=test" | head -c 400
+      - uses: actions/checkout@v4
+      - run: |
+          curl -sSL --max-time 30 "https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec?draw=tree2026&cb=test" | head -c 400 > probe.txt
+          git config user.name assas-bot; git config user.email assas-bot@users.noreply.github.com
+          git add probe.txt; git commit -m probe; git push
