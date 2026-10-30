@@ -1,0 +1,7 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -sSL --max-time 30 "https://script.google.com/macros/s/AKfycbzoQVxVxe-81hchtJ9D3gNWjfFAs66ZQ9cQgniQDbLOp4SIhS-5_eA7IORef6xYxJw1cw/exec?draw=tree2026&cb=test" | head -c 400
