@@ -1,5 +1,0 @@
-t({"now":1793447495927,"draw":null,"armed":{"start":1793448000000,"n":78}})
-      1 AKfycbyRaK36iO3v2H
-      1 function jsonp
-      8 tcd
-{"current":{"occasion":"يوم الشجرة","month":"tree2026","status":"scheduled","start":1793448000000,"note":"ال�
