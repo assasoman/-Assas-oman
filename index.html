@@ -104,6 +104,12 @@
 #uv .uvit{background:#FFF7FA;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;margin-bottom:8px}
 #uv .uvbar{height:8px;border-radius:99px;background:#F3E4EC;overflow:hidden}#uv .uvbar i{display:block;height:100%;background:linear-gradient(90deg,#E84A84,#B57BFF);transition:width .3s}
 #uv .uvit button{border:0;background:var(--ink);color:#fff;border-radius:99px;padding:3px 10px;font:inherit;font-size:12.5px}
+.adsub{margin:-6px 0 14px;color:var(--muted);font-size:14px}
+.adgrp{margin-bottom:22px}.adgrp:last-child{margin-bottom:0}
+.adhd{display:flex;align-items:center;gap:10px;margin-bottom:10px;background:var(--paper);border-radius:16px;padding:8px 10px}
+.adhd img{width:46px;height:46px;border-radius:12px;object-fit:cover;flex:0 0 auto}
+.adhd b{font-size:15.5px;display:block}.adhd span{font-size:12.5px;color:var(--muted)}
+.adhd button{margin-inline-start:auto;border:0;background:var(--ink);color:#fff;border-radius:99px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
 </style></head><body>
 
 <meta name="description" content="بكجات وملفات قص للكاميو للمناسبات من أساس عُمان">
@@ -540,6 +546,12 @@ footer .kidrow img{height:130px;width:auto}
     <div class="rail" id="rail-packs"></div>
   </section>
 
+  <section class="max" id="addons" aria-labelledby="h-addons" style="margin-top:28px;width:100%" hidden>
+    <div class="sh"><h2 id="h-addons">🧩 ملحقات البكجات</h2></div>
+    <p class="adsub">مطبوعات ومنتجات جاهزة تكمّل بكجك، تقدرين تطلبينها مع البكج أو بروحها</p>
+    <div id="addons-list"></div>
+  </section>
+
   <section class="max" id="school" aria-labelledby="h-school" style="margin-top:28px;width:100%">
     <div class="sh"><h2 id="h-school">✏️ قسم المدرسة</h2></div>
     <div class="schips" id="schips"></div>
@@ -722,7 +734,7 @@ function dbg(t){return;try{const c=document.getElementById('crs');if(c&&c.queryS
 async function loadProducts(){
   try{
     const [pk,pr,sh]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات'),loadSheet('المنتجات').catch(()=>null)]);
-    if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
+    if(sh){const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم'])||undefined,emoji:(SHOP.find(x=>x.name===r['الاسم'])||{}).emoji||'🎁',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
       desc:r['الوصف'],section:String(r['القسم']||'').trim(),cat:String(r['التصنيف']||'').trim(),includes:splitList(r['يشمل الملف']),galTitle:String(r['عنوان الصور']||'').trim(),galFolder:(String(r['صور العرض']||'').match(/https?:\/\/drive\.google\.com\/[^\s,،]+/)||[''])[0],gallery:String(r['صور العرض']||'').split(/[\s,،]+/).map(x=>x.trim()).filter(x=>!/drive\.google\.com\/(drive\/|open\?)/.test(x)).filter(x=>/^(https?:\/\/|data:image\/|[\w\-\/]+\.(jpe?g|png|webp|mp4|mov|webm)$)/i.test(x)).map(x=>imgURL(x,'')),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return splitList(raw).map(n=>'s:'+n.trim())})()}));
@@ -779,7 +791,15 @@ function card(it){
 let query='',expanded={},schCat='الكل';
 const normAr=t=>String(t||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').trim();
 const qMatch=txt=>{if(!query)return true;const t=normAr(txt);return normAr(query).split(' ').filter(Boolean).every(w=>t.includes(w)||(w.startsWith('ال')&&t.includes(w.slice(2))))};
+function drawAddons(){const box=$('#addons-list');if(!box)return;
+  const groups=PACKS.filter(p=>p.addons&&p.addons.length&&!/مدرس/.test(p.section||'')).map(p=>({p,items:p.addons.map(id=>SHOP.find(x=>x.id===id)).filter(Boolean)})).filter(g=>g.items.length);
+  const used=new Set();groups.forEach(g=>g.items.forEach(i=>used.add(i.id)));
+  const other=SHOP.filter(x=>!used.has(x.id)&&!/UV/i.test(x.name));
+  let h=groups.map(g=>`<div class="adgrp"><div class="adhd">${g.p.image?`<img src="${esc(g.p.image)}" alt="">`:''}<div><b>ملحقات ${esc(String(g.p.name).trim())}</b><span>${g.items.length} منتج</span></div><button data-open="${esc(g.p.id)}">شوفي البكج</button></div><div class="rail">${g.items.map(card).join('')}</div></div>`).join('');
+  if(other.length)h+=`<div class="adgrp"><div class="adhd"><div><b>منتجات أخرى</b><span>${other.length} منتج</span></div></div><div class="rail">${other.map(card).join('')}</div></div>`;
+  box.innerHTML=h;box.closest('section').hidden=!h||!!query}
 function renderRails(){
+  try{setTimeout(drawAddons,0)}catch(e){}
   const m=it=>qMatch(it.name+' '+(it.sub||'')+' '+(it.desc||'')+' '+(it.tag||''));
   let total=0;
   const isSch=p=>/مدرس/.test(p.section||'');
@@ -943,7 +963,7 @@ function uvFit(sel){const MAX={A4:[2480,3508],A3:[3508,4961]}[sel.size];
 
 /* ---------- menu ---------- */
 function renderMenu(){
-  $('#menu-list').innerHTML=[['packs','البكجات'],['school','قسم المدرسة'],['uv','طباعة UV'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="partners.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">شركاء أساس ✨<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
+  $('#menu-list').innerHTML=[['packs','البكجات'],['addons','ملحقات البكجات'],['school','قسم المدرسة'],['uv','طباعة UV'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="partners.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">شركاء أساس ✨<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
 }
 
 /* ---------- open/close ---------- */
