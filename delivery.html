@@ -151,6 +151,10 @@ label.f textarea{min-height:76px;resize:vertical}
 .go{border:0;border-radius:18px;padding:14px;font:inherit;font-weight:800;font-size:18px;background:var(--wa);color:#fff;cursor:pointer;width:100%}
 .go:disabled{opacity:.6}
 .err{color:var(--price);font-weight:800;margin:0}
+.saved[hidden]{display:none}.saved{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#F2FAFF;border:1.5px solid #BFE0F4;border-radius:16px;padding:10px 12px}
+.saved div{display:flex;flex-direction:column;font-size:13px;color:var(--muted);font-weight:600}.saved b{font-size:15px;color:var(--ink)}
+.saved button{flex:none;font:inherit;font-weight:800;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;cursor:pointer}
+details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:800;font-size:14px;color:var(--pink)}details.more textarea{margin-top:8px;font:inherit;border:2px solid var(--line);border-radius:14px;padding:10px 12px;width:100%;min-height:70px}details.more .terms{margin-top:8px}
 .stop{border:1.5px dashed var(--line);border-radius:16px;padding:10px 12px;margin-bottom:10px;background:#fff}
 .sthd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:14px}
 .stop .rm{font:inherit;font-size:12.5px;font-weight:700;color:#C0392B;background:none;border:0;cursor:pointer}
@@ -185,6 +189,8 @@ label.f textarea{min-height:76px;resize:vertical}
   <form class="del" id="dform" novalidate>
   <div class="box">
     <h2><i style="background:var(--sky)">١</i>من وين نستلم؟</h2>
+    <div class="saved" id="saved" hidden><div><b id="svName"></b><span id="svAddr"></span></div><button type="button" id="svEdit">تعديل ✏️</button></div>
+    <div id="pfields">
     <div class="grid2">
       <label class="f">الاسم<input name="pName" autocomplete="name" required></label>
       <label class="f">رقم الهاتف<input name="pPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
@@ -194,6 +200,8 @@ label.f textarea{min-height:76px;resize:vertical}
     <label class="f" style="margin-top:10px">رابط الموقع
       <div class="loc"><input name="pLoc" dir="ltr" placeholder="الصقي رابط خرائط قوقل أو اضغطي الزر"><button type="button" class="gps" data-gps="p">📍 موقعي الحالي</button></div>
       <span class="hint">اضغطي «موقعي الحالي» إذا كنتي في نفس المكان، أو الصقي رابط الموقع من الواتساب أو خرائط قوقل</span></label>
+    <p class="hint" style="margin:8px 0 0">💾 نحفظ بياناتك على جهازك، المرة الجاية ما تحتاجين تكتبينها.</p>
+    </div>
   </div>
   <div class="box">
     <h2><i style="background:var(--pink)">٢</i>وين نوصّل؟</h2>
@@ -212,44 +220,28 @@ label.f textarea{min-height:76px;resize:vertical}
   </div>
 
   <div class="box">
-    <h2><i style="background:var(--sun);color:var(--ink)">٣</i>تفاصيل الغرض</h2>
-    <label class="f">إيش الغرض؟<input name="thing" placeholder="مثال: كرتون هدايا، ملابس، أوراق…" required></label>
-    <div class="f" style="margin-top:10px;font-weight:700;font-size:14px">الحجم</div>
-    <div class="seg" style="margin-top:6px">
-      <label><input type="radio" name="size" value="صغير" checked><span>صغير<br><small style="font-weight:600">يدخل في كيس</small></span></label>
-      <label><input type="radio" name="size" value="متوسط"><span>متوسط<br><small style="font-weight:600">كرتون صغير</small></span></label>
-      <label><input type="radio" name="size" value="كبير"><span>كبير<br><small style="font-weight:600">يحتاج سيارة</small></span></label>
-    </div>
+    <h2><i style="background:var(--sun);color:var(--ink)">٣</i>الغرض والموعد</h2>
+    <label class="f">إيش الغرض؟<input name="thing" placeholder="مثال: هدايا، ملابس، كيك…" required></label>
     <label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-weight:700;font-size:14px"><input type="checkbox" name="fragile"> قابل للكسر، تعامل بحذر</label>
-  </div>
-
-  <div class="box">
-    <h2><i style="background:var(--leaf)">٤</i>الموعد والدفع</h2>
-    <div class="f" style="font-weight:700;font-size:14px">متى؟</div>
-    <div class="seg" style="margin-top:6px">
+    <div class="seg" style="margin-top:12px">
       <label><input type="radio" name="day" value="اليوم" checked><span>اليوم</span></label>
       <label><input type="radio" name="day" value="بكره"><span>بكره</span></label>
     </div>
-    <div class="bank">
-      <b>💳 الدفع تحويل بنكي فقط</b>
-      <div class="brow"><span>رقم الحساب · بنك مسقط · FATMA ALWAHIBI<b dir="ltr">0334020161950027</b></span><button type="button" data-copyv="0334020161950027">نسخ</button></div>
-      <div class="brow"><span>التحويل السريع عبر الهاتف<b dir="ltr">92079057</b></span><button type="button" data-copyv="92079057">نسخ</button></div>
-      <p>حوّلي رسوم التوصيل (<span class="feeT">٢ ر.ع</span>) وأرسلي صورة الإيصال على الواتساب.</p>
-    </div>
-    <label class="f" style="margin-top:12px">ملاحظات (اختياري)<textarea name="notes" placeholder="أي تفاصيل تساعد المندوب"></textarea></label>
+    <details class="more"><summary>+ ملاحظة للمندوب (اختياري)</summary><textarea name="notes" placeholder="أي تفاصيل تساعد المندوب"></textarea></details>
   </div>
 
   <div class="box">
     <div class="sum"><span>رسوم التوصيل <small id="feeN" class="hint"></small></span><span class="feeT">٢ ر.ع</span></div>
-    <ul class="terms">
+    <p class="hint" style="margin:6px 0 0">💳 الدفع تحويل بنكي، تطلع لك تفاصيل الحساب بعد الإرسال.</p>
+    <details class="more"><summary>شروط التوصيل</summary><ul class="terms">
       <li>التوصيل داخل مسقط بس: مسقط، مطرح، بوشر، السيب، العامرات.</li>
       <li>نتواصل معك على الواتساب لتأكيد الطلب وموعد الاستلام.</li>
       <li>ممنوع إرسال المواد الخطرة أو الممنوعة أو الأموال النقدية.</li>
       <li>الأغراض القابلة للكسر لازم تكون مغلّفة زين.</li>
-    </ul>
-    <label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-weight:700;font-size:14px"><input type="checkbox" name="agree"> أوافق على شروط التوصيل</label>
+    </ul></details>
     <p class="err" id="err" hidden></p>
     <button class="go" id="go" type="submit">أرسلي طلب التوصيل 🛵</button>
+    <p class="hint" style="text-align:center;margin:8px 0 0">بإرسال الطلب توافقين على شروط التوصيل</p>
   </div>
   </form>
   <div class="box ok-box" id="done" hidden></div>
@@ -288,11 +280,20 @@ label.f textarea{min-height:76px;resize:vertical}
     c.querySelectorAll('input,select').forEach(function(x){x.value=''});stops.appendChild(c);renum();c.querySelector('.xPhone').focus()});
   stops.addEventListener('click',function(e){var b=e.target.closest('.rm');if(!b)return;b.closest('.stop').remove();renum()});
   document.addEventListener('click',function(e){var b=e.target.closest('[data-copyv]');if(!b)return;var t=b.dataset.copyv;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='تم ✓';setTimeout(function(){b.textContent='نسخ'},1500)}).catch(function(){prompt('انسخي:',t)})});
+  var BANK='<div class="bank" style="text-align:start"><div class="brow"><span>رقم الحساب · بنك مسقط · FATMA ALWAHIBI<b dir="ltr">0334020161950027</b></span><button type="button" data-copyv="0334020161950027">نسخ</button></div><div class="brow"><span>التحويل السريع عبر الهاتف<b dir="ltr">92079057</b></span><button type="button" data-copyv="92079057">نسخ</button></div></div>';
+  var pf=document.getElementById('pfields'),sv=document.getElementById('saved');
+  function openP(){pf.hidden=false;sv.hidden=true}
+  document.getElementById('svEdit').addEventListener('click',openP);
+  try{var sd=JSON.parse(localStorage.getItem('asas-dsender')||'null');
+    if(sd&&sd.pName&&sd.pPhone){['pName','pPhone','pArea','pSpot','pLoc'].forEach(function(k){if(sd[k])f.elements[k].value=sd[k]});
+      document.getElementById('svName').textContent=sd.pName+' · '+sd.pPhone;
+      document.getElementById('svAddr').textContent=(sd.pArea||'')+' - '+(sd.pSpot||'')+(sd.pLoc?' · 📍 الموقع محفوظ':'');
+      sv.hidden=false;pf.hidden=true;}}catch(_){}
   function ref(){return 'D'+Date.now().toString(36).toUpperCase().slice(-5)+Math.floor(Math.random()*90+10)}
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var v=function(n){var el=f.elements[n];if(!el)return '';if(el.length&&!el.tagName){for(var i=0;i<el.length;i++)if(el[i].checked)return el[i].value;return ''}return (el.value||'').trim()};
-    var bad=function(t){err.textContent=t;err.hidden=false;err.scrollIntoView({block:'center',behavior:'smooth'})};
+    var bad=function(t){if(/المرسل|الاستلام/.test(t))openP();err.textContent=t;err.hidden=false;err.scrollIntoView({block:'center',behavior:'smooth'})};
     var pp=normPhone(v('pPhone'));
     if(!v('pName'))return bad('اكتبي اسم المرسل');
     if(pp.replace(/\D/g,'').length<8)return bad('رقم المرسل غير صحيح');
@@ -305,13 +306,13 @@ label.f textarea{min-height:76px;resize:vertical}
       if(!S[k].spot)return bad('اكتبي منطقة التوصيل أو أقرب معلم'+t);}
     var N=S.length,TOT=N*FEE;
     if(!v('thing'))return bad('اكتبي إيش الغرض');
-    if(!f.elements.agree.checked)return bad('وافقي على شروط التوصيل');
     err.hidden=true;go.disabled=true;go.textContent='جارٍ الإرسال…';
-    var r=ref(),fr=f.elements.fragile.checked?' · قابل للكسر':'';
+    var r=ref(),fr=f.elements.fragile.checked?' (قابل للكسر)':'';
+    try{localStorage.setItem('asas-dsender',JSON.stringify({pName:v('pName'),pPhone:v('pPhone'),pArea:v('pArea'),pSpot:v('pSpot'),pLoc:v('pLoc')}))}catch(_){}
     var L=['🛵 طلب توصيل داخل مسقط','رقم الطلب: '+r,'',
       '📦 الاستلام من: '+v('pName')+' · '+pp,'   '+v('pArea')+' - '+v('pSpot')+(v('pLoc')?'\n   📍 '+v('pLoc'):''),'',
       S.map(function(x,k){return '🏠 التوصيل '+(N>1?ar(k+1)+' ':'')+'إلى: '+(x.name?x.name+' · ':'')+x.phone+'\n   '+x.area+' - '+x.spot}).join('\n')+'\n   (نتواصل مع الزبونات ناخذ مواقعهن)','',
-      '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day'),
+      '🎁 الغرض: '+v('thing')+fr,'🕒 الموعد: '+v('day'),
       '💳 الدفع: تحويل بنكي من المرسل','رسوم التوصيل: '+(N>1?N+' × '+FEE+' = ':'')+TOT+' ر.ع'];
     if(v('notes'))L.push('📝 ملاحظات: '+v('notes'));
     var text=L.join('\n')+'\n\n(بأرسل صورة إيصال التحويل)';
@@ -319,7 +320,7 @@ label.f textarea{min-height:76px;resize:vertical}
     var done=function(ok){
       var wa='https://api.whatsapp.com/send?phone='+WA+'&text='+encodeURIComponent(text);
       f.hidden=true;var d=document.getElementById('done');d.hidden=false;
-      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'حوّلي رسوم التوصيل '+ar(TOT)+' ر.ع على حساب بنك مسقط <b dir=ltr>0334020161950027</b> أو التحويل السريع <b dir=ltr>92079057</b>، وأرسلي صورة الإيصال مع التفاصيل على الواتساب:':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
+      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'حوّلي رسوم التوصيل <b>'+ar(TOT)+' ر.ع</b> وأرسلي صورة الإيصال مع التفاصيل على الواتساب:</p>'+BANK+'<p style="margin:0">':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
       window.scrollTo({top:0,behavior:'smooth'});
     };
     var ac=new AbortController(),tm=setTimeout(function(){ac.abort()},15000);
