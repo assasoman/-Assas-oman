@@ -196,7 +196,7 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:800
       <label class="f">الاسم<input name="pName" autocomplete="name" required></label>
       <label class="f">رقم الهاتف<input name="pPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
       <label class="f">الولاية<select name="pArea" required><option value="">اختاري الولاية</option><option>مسقط</option><option>مطرح</option><option>بوشر</option><option>السيب</option><option>العامرات</option></select></label>
-      <label class="f">المنطقة / أقرب معلم<input name="pSpot" placeholder="مثال: الخوض السابعة، قرب جامع…" required></label>
+      <label class="f">المنطقة / أقرب معلم<input name="pSpot" list="areas" autocomplete="off" placeholder="مثال: الخوض السابعة، قرب جامع…" required></label>
     </div>
     <label class="f" style="margin-top:10px">رابط الموقع
       <div class="loc"><input name="pLoc" dir="ltr" placeholder="الصقي رابط خرائط قوقل أو اضغطي الزر"><button type="button" class="gps" data-gps="p">📍 موقعي الحالي</button></div>
@@ -212,7 +212,7 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:800
       <div class="grid2">
       <label class="f">رقم هاتف الزبونة<input class="xPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx"></label>
       <label class="f">الولاية<select class="xArea"><option value="">اختاري الولاية</option><option>مسقط</option><option>مطرح</option><option>بوشر</option><option>السيب</option><option>العامرات</option></select></label>
-      <label class="f">المنطقة / أقرب معلم<input class="xSpot" placeholder="مثال: الخوض السابعة، قرب جامع…"></label>
+      <label class="f">المنطقة / أقرب معلم<input class="xSpot" list="areas" autocomplete="off" placeholder="مثال: الخوض السابعة، قرب جامع…"></label>
       <label class="f">اسم الزبونة (اختياري)<input class="xName" autocomplete="off"></label>
       </div>
     </div></div>
@@ -244,6 +244,7 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:800
     <button class="go" id="go" type="submit">أرسلي طلب التوصيل 🛵</button>
     <p class="hint" style="text-align:center;margin:8px 0 0">بإرسال الطلب توافقين على شروط التوصيل</p>
   </div>
+<datalist id="areas"><option value="البستان"><option value="سداب"><option value="قنتب"><option value="الجصة"><option value="مسقط القديمة"><option value="مطرح"><option value="الحمرية"><option value="روي"><option value="دارسيت"><option value="الوادي الكبير"><option value="وادي عدي"><option value="وادي حطاط"><option value="ريام"><option value="القرم"><option value="شاطئ القرم"><option value="الوطية"><option value="مدينة السلطان قابوس"><option value="الخوير"><option value="الخوير الجنوبية"><option value="بوشر"><option value="الغبرة"><option value="العذيبة"><option value="الأنصب"><option value="غلا"><option value="العوابي"><option value="العامرات"><option value="النهضة"><option value="الحاجر"><option value="المحج"><option value="السيب"><option value="الخوض"><option value="المعبيلة"><option value="الموالح"><option value="الحيل"><option value="الحيل الشمالية"><option value="المطار"><option value="مرتفعات المطار"><option value="الرسيل"><option value="حلبان"><option value="سور آل حديد"><option value="الودية"></datalist>
   </form>
   <div class="box ok-box" id="done" hidden></div>
 </main>
