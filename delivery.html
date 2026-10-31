@@ -151,6 +151,11 @@ label.f textarea{min-height:76px;resize:vertical}
 .go{border:0;border-radius:18px;padding:14px;font:inherit;font-weight:800;font-size:18px;background:var(--wa);color:#fff;cursor:pointer;width:100%}
 .go:disabled{opacity:.6}
 .err{color:var(--price);font-weight:800;margin:0}
+.stop{border:1.5px dashed var(--line);border-radius:16px;padding:10px 12px;margin-bottom:10px;background:#fff}
+.sthd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:14px}
+.stop .rm{font:inherit;font-size:12.5px;font-weight:700;color:#C0392B;background:none;border:0;cursor:pointer}
+#stops .stop:only-child .rm{display:none}
+.addst{width:100%;font:inherit;font-weight:800;font-size:15px;color:#E84A84;background:#FFF0F6;border:1.5px dashed #F7A8C7;border-radius:14px;padding:10px;cursor:pointer}
 .bank{margin-top:12px;background:#FFF8E6;border:1.5px solid #FFE3A3;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
 .bank .brow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 10px}
 .bank .brow span{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
@@ -192,12 +197,17 @@ label.f textarea{min-height:76px;resize:vertical}
   </div>
   <div class="box">
     <h2><i style="background:var(--pink)">٢</i>وين نوصّل؟</h2>
-    <div class="grid2">
-      <label class="f">رقم هاتف الزبونة<input name="dPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
-      <label class="f">الولاية<select name="dArea" required><option value="">اختاري الولاية</option><option>مسقط</option><option>مطرح</option><option>بوشر</option><option>السيب</option><option>العامرات</option></select></label>
-      <label class="f">المنطقة / أقرب معلم<input name="dSpot" placeholder="مثال: الخوض السابعة، قرب جامع…" required></label>
-      <label class="f">اسم الزبونة (اختياري)<input name="dName" autocomplete="off"></label>
-    </div>
+    <p class="hint" style="margin:-4px 0 10px">عندك أكثر من طلبية؟ أضيفي كل زبونة، وكل توصيلة بـ٢ ر.ع</p>
+    <div id="stops"><div class="stop">
+      <div class="sthd"><b>الزبونة <span class="sn">١</span></b><button type="button" class="rm" aria-label="حذف">✕ حذف</button></div>
+      <div class="grid2">
+      <label class="f">رقم هاتف الزبونة<input class="xPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx"></label>
+      <label class="f">الولاية<select class="xArea"><option value="">اختاري الولاية</option><option>مسقط</option><option>مطرح</option><option>بوشر</option><option>السيب</option><option>العامرات</option></select></label>
+      <label class="f">المنطقة / أقرب معلم<input class="xSpot" placeholder="مثال: الخوض السابعة، قرب جامع…"></label>
+      <label class="f">اسم الزبونة (اختياري)<input class="xName" autocomplete="off"></label>
+      </div>
+    </div></div>
+    <button type="button" class="addst" id="addst">+ إضافة زبونة ثانية</button>
     <p class="hint" style="margin:10px 0 0">📞 بنتواصل مع الزبونة على رقمها وهي ترسل لنا موقعها بالضبط.</p>
   </div>
 
@@ -224,13 +234,13 @@ label.f textarea{min-height:76px;resize:vertical}
       <b>💳 الدفع تحويل بنكي فقط</b>
       <div class="brow"><span>رقم الحساب · بنك مسقط · FATMA ALWAHIBI<b dir="ltr">0334020161950027</b></span><button type="button" data-copyv="0334020161950027">نسخ</button></div>
       <div class="brow"><span>التحويل السريع عبر الهاتف<b dir="ltr">92079057</b></span><button type="button" data-copyv="92079057">نسخ</button></div>
-      <p>حوّلي رسوم التوصيل (٢ ر.ع) وأرسلي صورة الإيصال على الواتساب.</p>
+      <p>حوّلي رسوم التوصيل (<span class="feeT">٢ ر.ع</span>) وأرسلي صورة الإيصال على الواتساب.</p>
     </div>
     <label class="f" style="margin-top:12px">ملاحظات (اختياري)<textarea name="notes" placeholder="أي تفاصيل تساعد المندوب"></textarea></label>
   </div>
 
   <div class="box">
-    <div class="sum"><span>رسوم التوصيل</span><span>٢ ر.ع</span></div>
+    <div class="sum"><span>رسوم التوصيل <small id="feeN" class="hint"></small></span><span class="feeT">٢ ر.ع</span></div>
     <ul class="terms">
       <li>التوصيل داخل مسقط بس: مسقط، مطرح، بوشر، السيب، العامرات.</li>
       <li>نتواصل معك على الواتساب لتأكيد الطلب وموعد الاستلام.</li>
@@ -268,35 +278,48 @@ label.f textarea{min-height:76px;resize:vertical}
       b.textContent='✓ تم';b.classList.add('ok');
     },function(){b.textContent='📍 موقعي الحالي';alert('ما قدرنا نحدد موقعك. اسمحي للمتصفح بالموقع أو الصقي الرابط')},{enableHighAccuracy:true,timeout:15000});
   })});
+  var stops=document.getElementById('stops'),AR='٠١٢٣٤٥٦٧٨٩';
+  var ar=function(n){return String(n).replace(/\d/g,function(d){return AR[d]})};
+  function renum(){var L=stops.querySelectorAll('.stop'),n=L.length;L.forEach(function(st,i){st.querySelector('.sn').textContent=ar(i+1)});
+    document.querySelectorAll('.feeT').forEach(function(e){e.textContent=ar(n*FEE)+' ر.ع'});
+    document.getElementById('feeN').textContent=n>1?'('+ar(n)+' توصيلات × ٢)':'';
+    document.getElementById('addst').hidden=n>=6;}
+  document.getElementById('addst').addEventListener('click',function(){var c=stops.querySelector('.stop').cloneNode(true);
+    c.querySelectorAll('input,select').forEach(function(x){x.value=''});stops.appendChild(c);renum();c.querySelector('.xPhone').focus()});
+  stops.addEventListener('click',function(e){var b=e.target.closest('.rm');if(!b)return;b.closest('.stop').remove();renum()});
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-copyv]');if(!b)return;var t=b.dataset.copyv;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='تم ✓';setTimeout(function(){b.textContent='نسخ'},1500)}).catch(function(){prompt('انسخي:',t)})});
   function ref(){return 'D'+Date.now().toString(36).toUpperCase().slice(-5)+Math.floor(Math.random()*90+10)}
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var v=function(n){var el=f.elements[n];if(!el)return '';if(el.length&&!el.tagName){for(var i=0;i<el.length;i++)if(el[i].checked)return el[i].value;return ''}return (el.value||'').trim()};
     var bad=function(t){err.textContent=t;err.hidden=false;err.scrollIntoView({block:'center',behavior:'smooth'})};
-    var pp=normPhone(v('pPhone')),dp=normPhone(v('dPhone'));
+    var pp=normPhone(v('pPhone'));
     if(!v('pName'))return bad('اكتبي اسم المرسل');
     if(pp.replace(/\D/g,'').length<8)return bad('رقم المرسل غير صحيح');
     if(!v('pArea'))return bad('اختاري ولاية الاستلام');
     if(!v('pSpot'))return bad('اكتبي منطقة الاستلام أو أقرب معلم');
-    if(dp.replace(/\D/g,'').length<8)return bad('رقم المستلم غير صحيح');
-    if(!v('dArea'))return bad('اختاري ولاية التوصيل');
-    if(!v('dSpot'))return bad('اكتبي منطقة التوصيل أو أقرب معلم');
+    var S=[].map.call(stops.querySelectorAll('.stop'),function(st){var q=function(c){return (st.querySelector(c).value||'').trim()};return {phone:normPhone(q('.xPhone')),area:q('.xArea'),spot:q('.xSpot'),name:q('.xName')}});
+    for(var k=0;k<S.length;k++){var t=S.length>1?' (الزبونة '+ar(k+1)+')':'';
+      if(S[k].phone.replace(/\D/g,'').length<8)return bad('رقم الزبونة غير صحيح'+t);
+      if(!S[k].area)return bad('اختاري ولاية التوصيل'+t);
+      if(!S[k].spot)return bad('اكتبي منطقة التوصيل أو أقرب معلم'+t);}
+    var N=S.length,TOT=N*FEE;
     if(!v('thing'))return bad('اكتبي إيش الغرض');
     if(!f.elements.agree.checked)return bad('وافقي على شروط التوصيل');
     err.hidden=true;go.disabled=true;go.textContent='جارٍ الإرسال…';
     var r=ref(),fr=f.elements.fragile.checked?' · قابل للكسر':'';
     var L=['🛵 طلب توصيل داخل مسقط','رقم الطلب: '+r,'',
       '📦 الاستلام من: '+v('pName')+' · '+pp,'   '+v('pArea')+' - '+v('pSpot')+(v('pLoc')?'\n   📍 '+v('pLoc'):''),'',
-      '🏠 التوصيل إلى: '+(v('dName')?v('dName')+' · ':'')+dp,'   '+v('dArea')+' - '+v('dSpot'),'   (نتواصل مع الزبونة تأخذ موقعها)','',
+      S.map(function(x,k){return '🏠 التوصيل '+(N>1?ar(k+1)+' ':'')+'إلى: '+(x.name?x.name+' · ':'')+x.phone+'\n   '+x.area+' - '+x.spot}).join('\n')+'\n   (نتواصل مع الزبونات ناخذ مواقعهن)','',
       '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day'),
-      '💳 الدفع: تحويل بنكي من المرسل','رسوم التوصيل: '+FEE+' ر.ع'];
+      '💳 الدفع: تحويل بنكي من المرسل','رسوم التوصيل: '+(N>1?N+' × '+FEE+' = ':'')+TOT+' ر.ع'];
     if(v('notes'))L.push('📝 ملاحظات: '+v('notes'));
     var text=L.join('\n')+'\n\n(بأرسل صورة إيصال التحويل)';
-    var body=JSON.stringify({ref:r,name:v('pName'),phone:pp,wilaya:'توصيل: '+v('pArea')+' ← '+v('dArea'),email:'',summary:text.slice(0,1000),total:String(FEE),discount:'',coupon:'',delivery:'توصيل مسقط'});
+    var body=JSON.stringify({ref:r,name:v('pName'),phone:pp,wilaya:'توصيل: '+v('pArea')+' ← '+S.map(function(x){return x.area}).join('، ')+(N>1?' ('+N+' زبونات)':''),email:'',summary:text.slice(0,1000),total:String(TOT),discount:'',coupon:'',delivery:'توصيل مسقط'});
     var done=function(ok){
       var wa='https://api.whatsapp.com/send?phone='+WA+'&text='+encodeURIComponent(text);
       f.hidden=true;var d=document.getElementById('done');d.hidden=false;
-      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'حوّلي رسوم التوصيل ٢ ر.ع على حساب بنك مسقط <b dir=ltr>0334020161950027</b> أو التحويل السريع <b dir=ltr>92079057</b>، وأرسلي صورة الإيصال مع التفاصيل على الواتساب:':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
+      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'حوّلي رسوم التوصيل '+ar(TOT)+' ر.ع على حساب بنك مسقط <b dir=ltr>0334020161950027</b> أو التحويل السريع <b dir=ltr>92079057</b>، وأرسلي صورة الإيصال مع التفاصيل على الواتساب:':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
       window.scrollTo({top:0,behavior:'smooth'});
     };
     var ac=new AbortController(),tm=setTimeout(function(){ac.abort()},15000);
@@ -304,7 +327,6 @@ label.f textarea{min-height:76px;resize:vertical}
   });
 })();
 </script>
-<script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js">document.addEventListener('click',function(e){var b=e.target.closest('[data-copyv]');if(!b)return;var t=b.dataset.copyv;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='تم ✓';setTimeout(function(){b.textContent='نسخ'},1500)}).catch(function(){prompt('انسخي:',t)})});
-</script>
+<script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
