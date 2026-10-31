@@ -193,14 +193,12 @@ label.f textarea{min-height:76px;resize:vertical}
   <div class="box">
     <h2><i style="background:var(--pink)">٢</i>وين نوصّل؟</h2>
     <div class="grid2">
-      <label class="f">الاسم<input name="dName" autocomplete="name" required></label>
-      <label class="f">رقم الهاتف<input name="dPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
+      <label class="f">رقم هاتف الزبونة<input name="dPhone" type="tel" inputmode="tel" dir="ltr" placeholder="9xxxxxxx" required></label>
       <label class="f">الولاية<select name="dArea" required><option value="">اختاري الولاية</option><option>مسقط</option><option>مطرح</option><option>بوشر</option><option>السيب</option><option>العامرات</option></select></label>
       <label class="f">المنطقة / أقرب معلم<input name="dSpot" placeholder="مثال: الخوض السابعة، قرب جامع…" required></label>
+      <label class="f">اسم الزبونة (اختياري)<input name="dName" autocomplete="off"></label>
     </div>
-    <label class="f" style="margin-top:10px">رابط الموقع
-      <div class="loc"><input name="dLoc" dir="ltr" placeholder="الصقي رابط خرائط قوقل أو اضغطي الزر"><button type="button" class="gps" data-gps="d">📍 موقعي الحالي</button></div>
-      <span class="hint">اضغطي «موقعي الحالي» إذا كنتي في نفس المكان، أو الصقي رابط الموقع من الواتساب أو خرائط قوقل</span></label>
+    <p class="hint" style="margin:10px 0 0">📞 بنتواصل مع الزبونة على رقمها وهي ترسل لنا موقعها بالضبط.</p>
   </div>
 
   <div class="box">
@@ -280,7 +278,6 @@ label.f textarea{min-height:76px;resize:vertical}
     if(pp.replace(/\D/g,'').length<8)return bad('رقم المرسل غير صحيح');
     if(!v('pArea'))return bad('اختاري ولاية الاستلام');
     if(!v('pSpot'))return bad('اكتبي منطقة الاستلام أو أقرب معلم');
-    if(!v('dName'))return bad('اكتبي اسم المستلم');
     if(dp.replace(/\D/g,'').length<8)return bad('رقم المستلم غير صحيح');
     if(!v('dArea'))return bad('اختاري ولاية التوصيل');
     if(!v('dSpot'))return bad('اكتبي منطقة التوصيل أو أقرب معلم');
@@ -290,7 +287,7 @@ label.f textarea{min-height:76px;resize:vertical}
     var r=ref(),fr=f.elements.fragile.checked?' · قابل للكسر':'';
     var L=['🛵 طلب توصيل داخل مسقط','رقم الطلب: '+r,'',
       '📦 الاستلام من: '+v('pName')+' · '+pp,'   '+v('pArea')+' - '+v('pSpot')+(v('pLoc')?'\n   📍 '+v('pLoc'):''),'',
-      '🏠 التوصيل إلى: '+v('dName')+' · '+dp,'   '+v('dArea')+' - '+v('dSpot')+(v('dLoc')?'\n   📍 '+v('dLoc'):''),'',
+      '🏠 التوصيل إلى: '+(v('dName')?v('dName')+' · ':'')+dp,'   '+v('dArea')+' - '+v('dSpot'),'   (نتواصل مع الزبونة تأخذ موقعها)','',
       '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day'),
       '💳 الدفع: تحويل بنكي من المرسل','رسوم التوصيل: '+FEE+' ر.ع'];
     if(v('notes'))L.push('📝 ملاحظات: '+v('notes'));
