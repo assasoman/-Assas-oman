@@ -151,6 +151,7 @@ label.f textarea{min-height:76px;resize:vertical}
 .go{border:0;border-radius:18px;padding:14px;font:inherit;font-weight:800;font-size:18px;background:var(--wa);color:#fff;cursor:pointer;width:100%}
 .go:disabled{opacity:.6}
 .err{color:var(--price);font-weight:800;margin:0}
+.gpsmsg{margin-top:6px;background:#FFF4E5;border:1.5px solid #FFD8A8;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:600;line-height:1.7;color:#7A4A00}.gpsmsg[hidden]{display:none}
 .saved[hidden]{display:none}.saved{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#F2FAFF;border:1.5px solid #BFE0F4;border-radius:16px;padding:10px 12px}
 .saved div{display:flex;flex-direction:column;font-size:13px;color:var(--muted);font-weight:600}.saved b{font-size:15px;color:var(--ink)}
 .saved button{flex:none;font:inherit;font-weight:800;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;cursor:pointer}
@@ -261,14 +262,23 @@ details.more{margin-top:12px}details.more summary{cursor:pointer;font-weight:800
   var WA='96892079057',HOOK='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec',FEE=2;
   var f=document.getElementById('dform'),err=document.getElementById('err'),go=document.getElementById('go');
   var normPhone=function(x){return String(x||'').replace(/[٠-٩]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'.indexOf(d)}).replace(/[^\d+]/g,'')};
+  if(location.protocol==='http:'&&location.hostname!=='localhost')location.replace('https://'+location.host+location.pathname+location.search);
   document.querySelectorAll('[data-gps]').forEach(function(b){b.addEventListener('click',function(){
-    var k=b.dataset.gps,inp=f.elements[k+'Loc'];
-    if(!navigator.geolocation){alert('المتصفح ما يدعم تحديد الموقع، الصقي الرابط بدلها');return}
+    var k=b.dataset.gps,inp=f.elements[k+'Loc'],box=b.closest('label'),msg=box.querySelector('.gpsmsg');
+    if(!msg){msg=document.createElement('div');msg.className='gpsmsg';box.appendChild(msg)}
+    var say=function(h){msg.innerHTML=h;msg.hidden=!h};say('');
+    var ua=navigator.userAgent,inApp=/Instagram|FBAN|FBAV|Snapchat|TikTok|WhatsApp/i.test(ua),ios=/iPhone|iPad/i.test(ua);
+    if(!navigator.geolocation||!window.isSecureContext){say('المتصفح هذا ما يسمح بتحديد الموقع. افتحي الصفحة في Safari أو Chrome، أو الصقي رابط موقعك من خرائط قوقل.');return}
     b.textContent='جاري التحديد…';
-    navigator.geolocation.getCurrentPosition(function(p){
-      inp.value='https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);
-      b.textContent='✓ تم';b.classList.add('ok');
-    },function(){b.textContent='📍 موقعي الحالي';alert('ما قدرنا نحدد موقعك. اسمحي للمتصفح بالموقع أو الصقي الرابط')},{enableHighAccuracy:true,timeout:15000});
+    var ok=function(p){inp.value='https://maps.google.com/?q='+p.coords.latitude.toFixed(6)+','+p.coords.longitude.toFixed(6);b.textContent='✓ تم';b.classList.add('ok');say('')};
+    var fail=function(e){b.textContent='📍 موقعي الحالي';
+      if(e&&e.code===1){say(inApp?'أنتِ فاتحة الصفحة من داخل تطبيق (إنستقرام/واتساب) وهو يمنع الموقع. اضغطي ⋯ فوق واختاري «فتح في Safari»، أو الصقي رابط موقعك.'
+        :ios?'الآيفون مانع الموقع عن الصفحة. روحي الإعدادات ← الخصوصية والأمان ← خدمات الموقع ← خليها شغالة، وانزلي لـ Safari ← «أثناء الاستخدام». بعدها حدّثي الصفحة واضغطي الزر واختاري «سماح».'
+        :'المتصفح مانع الموقع. اضغطي على 🔒 جنب الرابط فوق واسمحي بالموقع، بعدها حدّثي الصفحة.');}
+      else say('ما قدرنا نحدد الموقع الحين. تأكدي إن خدمات الموقع شغالة وجربي مرة ثانية، أو افتحي خرائط قوقل وانسخي رابط موقعك والصقيه هنا.');};
+    navigator.geolocation.getCurrentPosition(ok,function(e){
+      if(e&&e.code!==1)navigator.geolocation.getCurrentPosition(ok,fail,{enableHighAccuracy:false,timeout:20000,maximumAge:300000});else fail(e)
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
   })});
   var stops=document.getElementById('stops'),AR='٠١٢٣٤٥٦٧٨٩';
   var ar=function(n){return String(n).replace(/\d/g,function(d){return AR[d]})};
