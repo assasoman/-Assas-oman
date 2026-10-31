@@ -222,11 +222,6 @@ label.f textarea{min-height:76px;resize:vertical}
       <label><input type="radio" name="day" value="اليوم" checked><span>اليوم</span></label>
       <label><input type="radio" name="day" value="بكره"><span>بكره</span></label>
     </div>
-    <div class="f" style="margin-top:12px;font-weight:700;font-size:14px">مين يدفع التوصيل؟</div>
-    <div class="seg" style="margin-top:6px">
-      <label><input type="radio" name="payer" value="المرسل" checked><span>المرسل</span></label>
-      <label><input type="radio" name="payer" value="المستلم"><span>المستلم</span></label>
-    </div>
     <div class="bank">
       <b>💳 الدفع تحويل بنكي فقط</b>
       <div class="brow"><span>رقم الحساب · بنك مسقط · FATMA ALWAHIBI<b dir="ltr">0334020161950027</b></span><button type="button" data-copyv="0334020161950027">نسخ</button></div>
@@ -297,7 +292,7 @@ label.f textarea{min-height:76px;resize:vertical}
       '📦 الاستلام من: '+v('pName')+' · '+pp,'   '+v('pArea')+' - '+v('pSpot')+(v('pLoc')?'\n   📍 '+v('pLoc'):''),'',
       '🏠 التوصيل إلى: '+v('dName')+' · '+dp,'   '+v('dArea')+' - '+v('dSpot')+(v('dLoc')?'\n   📍 '+v('dLoc'):''),'',
       '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day'),
-      '💳 الدفع: تحويل بنكي · يدفع '+v('payer'),'رسوم التوصيل: '+FEE+' ر.ع'];
+      '💳 الدفع: تحويل بنكي من المرسل','رسوم التوصيل: '+FEE+' ر.ع'];
     if(v('notes'))L.push('📝 ملاحظات: '+v('notes'));
     var text=L.join('\n')+'\n\n(بأرسل صورة إيصال التحويل)';
     var body=JSON.stringify({ref:r,name:v('pName'),phone:pp,wilaya:'توصيل: '+v('pArea')+' ← '+v('dArea'),email:'',summary:text.slice(0,1000),total:String(FEE),discount:'',coupon:'',delivery:'توصيل مسقط'});
