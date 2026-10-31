@@ -151,6 +151,12 @@ label.f textarea{min-height:76px;resize:vertical}
 .go{border:0;border-radius:18px;padding:14px;font:inherit;font-weight:800;font-size:18px;background:var(--wa);color:#fff;cursor:pointer;width:100%}
 .go:disabled{opacity:.6}
 .err{color:var(--price);font-weight:800;margin:0}
+.bank{margin-top:12px;background:#FFF8E6;border:1.5px solid #FFE3A3;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.bank .brow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;border-radius:10px;padding:8px 10px}
+.bank .brow span{display:flex;flex-direction:column;font-size:12px;color:var(--muted)}
+.bank .brow b{font-size:15px;color:var(--ink);text-align:right}
+.bank button{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;cursor:pointer}
+.bank p{margin:0;font-size:12.5px;color:var(--muted)}
 .terms{font-size:13px;color:var(--muted);line-height:1.8;margin:0;padding-inline-start:18px}
 .ok-box{text-align:center;padding:20px}.ok-box .big{font-size:56px}.ok-box h2{justify-content:center}
 .wa{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--wa);color:#fff;border-radius:16px;padding:13px;font-weight:800;text-decoration:none;margin-top:10px}
@@ -216,19 +222,16 @@ label.f textarea{min-height:76px;resize:vertical}
       <label><input type="radio" name="day" value="اليوم" checked><span>اليوم</span></label>
       <label><input type="radio" name="day" value="بكره"><span>بكره</span></label>
     </div>
-    <div class="seg" style="margin-top:8px">
-      <label><input type="radio" name="slot" value="الصبح" checked><span>الصبح</span></label>
-      <label><input type="radio" name="slot" value="العصر"><span>العصر</span></label>
-      <label><input type="radio" name="slot" value="المسا"><span>المسا</span></label>
-    </div>
     <div class="f" style="margin-top:12px;font-weight:700;font-size:14px">مين يدفع التوصيل؟</div>
     <div class="seg" style="margin-top:6px">
       <label><input type="radio" name="payer" value="المرسل" checked><span>المرسل</span></label>
       <label><input type="radio" name="payer" value="المستلم"><span>المستلم</span></label>
     </div>
-    <div class="seg" style="margin-top:8px">
-      <label><input type="radio" name="pay" value="كاش" checked><span>كاش للمندوب</span></label>
-      <label><input type="radio" name="pay" value="تحويل"><span>تحويل بنكي</span></label>
+    <div class="bank">
+      <b>💳 الدفع تحويل بنكي فقط</b>
+      <div class="brow"><span>رقم الحساب · بنك مسقط · FATMA ALWAHIBI<b dir="ltr">0334020161950027</b></span><button type="button" data-copyv="0334020161950027">نسخ</button></div>
+      <div class="brow"><span>التحويل السريع عبر الهاتف<b dir="ltr">92079057</b></span><button type="button" data-copyv="92079057">نسخ</button></div>
+      <p>حوّلي رسوم التوصيل (٢ ر.ع) وأرسلي صورة الإيصال على الواتساب.</p>
     </div>
     <label class="f" style="margin-top:12px">ملاحظات (اختياري)<textarea name="notes" placeholder="أي تفاصيل تساعد المندوب"></textarea></label>
   </div>
@@ -293,15 +296,15 @@ label.f textarea{min-height:76px;resize:vertical}
     var L=['🛵 طلب توصيل داخل مسقط','رقم الطلب: '+r,'',
       '📦 الاستلام من: '+v('pName')+' · '+pp,'   '+v('pArea')+' - '+v('pSpot')+(v('pLoc')?'\n   📍 '+v('pLoc'):''),'',
       '🏠 التوصيل إلى: '+v('dName')+' · '+dp,'   '+v('dArea')+' - '+v('dSpot')+(v('dLoc')?'\n   📍 '+v('dLoc'):''),'',
-      '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day')+' '+v('slot'),
-      '💳 الدفع: '+v('payer')+' يدفع · '+v('pay'),'رسوم التوصيل: '+FEE+' ر.ع'];
+      '🎁 الغرض: '+v('thing')+' ('+v('size')+fr+')','🕒 الموعد: '+v('day'),
+      '💳 الدفع: تحويل بنكي · يدفع '+v('payer'),'رسوم التوصيل: '+FEE+' ر.ع'];
     if(v('notes'))L.push('📝 ملاحظات: '+v('notes'));
-    var text=L.join('\n');
+    var text=L.join('\n')+'\n\n(بأرسل صورة إيصال التحويل)';
     var body=JSON.stringify({ref:r,name:v('pName'),phone:pp,wilaya:'توصيل: '+v('pArea')+' ← '+v('dArea'),email:'',summary:text.slice(0,1000),total:String(FEE),discount:'',coupon:'',delivery:'توصيل مسقط'});
     var done=function(ok){
       var wa='https://api.whatsapp.com/send?phone='+WA+'&text='+encodeURIComponent(text);
       f.hidden=true;var d=document.getElementById('done');d.hidden=false;
-      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'بنتواصل معك على الواتساب لتأكيد الموعد. وتقدرين ترسلين التفاصيل لنا على الواتساب بعد:':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
+      d.innerHTML='<div class="big">'+(ok?'✅':'📲')+'</div><h2>'+(ok?'وصلنا طلب التوصيل':'أرسلي طلبك عبر واتساب')+'</h2><p style="margin:0">رقم الطلب <b dir="ltr">'+r+'</b></p><p class="hint" style="font-size:14px">'+(ok?'حوّلي رسوم التوصيل ٢ ر.ع على حساب بنك مسقط <b dir=ltr>0334020161950027</b> أو التحويل السريع <b dir=ltr>92079057</b>، وأرسلي صورة الإيصال مع التفاصيل على الواتساب:':'ما قدرنا نحفظ الطلب، أرسليه لنا على الواتساب ونكمله معك:')+'</p><a class="wa" href="'+wa+'" target="_blank" rel="noopener">أرسلي التفاصيل عبر واتساب</a>';
       window.scrollTo({top:0,behavior:'smooth'});
     };
     var ac=new AbortController(),tm=setTimeout(function(){ac.abort()},15000);
@@ -309,6 +312,7 @@ label.f textarea{min-height:76px;resize:vertical}
   });
 })();
 </script>
-<script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js">document.addEventListener('click',function(e){var b=e.target.closest('[data-copyv]');if(!b)return;var t=b.dataset.copyv;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='تم ✓';setTimeout(function(){b.textContent='نسخ'},1500)}).catch(function(){prompt('انسخي:',t)})});
+</script>
 </body>
 </html>
