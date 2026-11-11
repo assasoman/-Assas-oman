@@ -315,8 +315,14 @@ footer .kidrow img{height:130px;width:auto}
 .scrim{position:fixed;inset:0;z-index:40;background:rgba(30,25,40,.42)}
 .drawer{position:fixed;top:0;bottom:0;inset-inline-start:0;z-index:41;width:min(86vw,380px);background:var(--paper);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-10px 0 30px -10px rgba(0,0,0,.25)}
 .drawer.menu{inset-inline-start:0}
-.tagbar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 12px;background:linear-gradient(90deg,var(--pink),#F27BA6);color:#fff;font-size:12.5px;font-weight:700;padding:6px 12px;text-align:center}.tagbar a{color:#fff;text-decoration:none}.tagbar b{background:rgba(255,255,255,.22);border-radius:99px;padding:1px 10px}
-@media(max-width:520px){.tagbar{font-size:11.5px;gap:2px 9px;padding:5px 8px}}
+.tagbar{overflow:hidden;background:linear-gradient(90deg,var(--pink),#F27BA6);color:#fff;font-size:13px;font-weight:700;padding:7px 0;white-space:nowrap;direction:rtl}
+.tagtrack{display:flex;width:max-content;animation:tagmove 28s linear infinite}
+.tagbar:hover .tagtrack,.tagbar:active .tagtrack{animation-play-state:paused}
+.tg{display:flex;align-items:center;gap:14px;padding-inline-end:14px}
+.tg a{color:#fff;text-decoration:none}.tg i{font-style:normal;opacity:.7}.tg b{background:rgba(255,255,255,.22);border-radius:99px;padding:1px 10px}
+@keyframes tagmove{from{transform:translateX(0)}to{transform:translateX(50%)}}
+@media(prefers-reduced-motion:reduce){.tagtrack{animation-duration:80s}}
+@media(max-width:520px){.tagbar{font-size:12px;padding:6px 0}}
 .trustl{display:flex;flex-direction:column;gap:6px;background:var(--leaf-soft);border-radius:16px;padding:10px 12px;font-size:13.5px;font-weight:600;line-height:1.6}.trustl span{display:flex;gap:6px}
 .trust{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 4px}
 .trust div{background:var(--paper);border-radius:18px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px;box-shadow:0 6px 18px -14px rgba(0,0,0,.3)}
@@ -455,7 +461,7 @@ footer .kidrow img{height:130px;width:auto}
 
 <div class="search gut"><div class="max"><label><svg class="i"><use href="#search"/></svg><input id="q" type="search" placeholder="ابحث عن بكج أو منتج" autocomplete="off"></label></div></div>
 
-<div class="tagbar" role="note"><span>✂️ ملفات قص</span><span>✨ طباعة UV</span><span>🎓 دورات</span><a href="delivery.html">🛵 توصيل داخل مسقط</a><b>كله في أساس 🌷</b></div>
+<div class="tagbar" role="note" aria-label="ملفات قص، طباعة UV، دورات، توصيل داخل مسقط، كله في أساس"><div class="tagtrack" aria-hidden="false"><div class="tg"><span>✂️ ملفات قص</span><i>•</i><span>✨ طباعة UV</span><i>•</i><span>🎓 دورات</span><i>•</i><a href="delivery.html">🛵 توصيل داخل مسقط</a><i>•</i><b>كله في أساس 🌷</b><i>•</i><span>✂️ ملفات قص</span><i>•</i><span>✨ طباعة UV</span><i>•</i><span>🎓 دورات</span><i>•</i><a href="delivery.html">🛵 توصيل داخل مسقط</a><i>•</i><b>كله في أساس 🌷</b><i>•</i></div><div class="tg" aria-hidden="true"><span>✂️ ملفات قص</span><i>•</i><span>✨ طباعة UV</span><i>•</i><span>🎓 دورات</span><i>•</i><a href="delivery.html">🛵 توصيل داخل مسقط</a><i>•</i><b>كله في أساس 🌷</b><i>•</i><span>✂️ ملفات قص</span><i>•</i><span>✨ طباعة UV</span><i>•</i><span>🎓 دورات</span><i>•</i><a href="delivery.html">🛵 توصيل داخل مسقط</a><i>•</i><b>كله في أساس 🌷</b><i>•</i></div></div></div>
 <header class="top gut">
   <div class="in max">
     <div class="start">
