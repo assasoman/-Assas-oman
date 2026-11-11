@@ -1050,4 +1050,106 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 <script>(function(){try{var H=location.hostname;if(!H||/claude\.(ai|com)|claudeusercontent|anthropic|localhost/i.test(H))return;if(/bot|crawl|spider|slurp|preview/i.test(navigator.userAgent))return;if(sessionStorage.getItem('asasV'))return;sessionStorage.setItem('asasV','1');fetch(ORDERS_HOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},keepalive:true,body:JSON.stringify({type:'visit'})}).catch(function(){})}catch(e){}})();</script>
 <script data-goatcounter="https://assas-oman.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 
+<!-- مساعدة أساس -->
+<style>
+.asst-btn{position:fixed;inset-inline-end:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:26;width:64px;height:64px;border-radius:50%;border:0;padding:0;background:linear-gradient(135deg,#FFE3EC,#E3F3FC);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pink),0 10px 24px -8px rgba(232,74,132,.6);cursor:pointer;overflow:visible}
+.asst-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%}
+.asst-btn .dot{position:absolute;bottom:2px;inset-inline-start:2px;width:14px;height:14px;border-radius:50%;background:#2DBE60;box-shadow:0 0 0 2px #fff}
+.asst-bub{position:absolute;bottom:58px;left:38px;background:#fff;border-radius:16px 16px 16px 4px;padding:6px 10px;box-shadow:0 6px 16px -6px rgba(0,0,0,.3);display:flex;gap:4px;white-space:nowrap;font:700 12.5px var(--font);color:var(--ink)}
+.asst-bub i{width:6px;height:6px;border-radius:50%;background:var(--pink);opacity:.4;animation:asstdot 1.2s infinite}
+.asst-bub i:nth-child(2){animation-delay:.2s}.asst-bub i:nth-child(3){animation-delay:.4s}
+@keyframes asstdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.asst-p{position:fixed;inset-inline-end:12px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:60;width:min(370px,calc(100vw - 24px));height:min(560px,calc(100dvh - 120px));background:var(--ground);border-radius:24px;box-shadow:0 24px 60px -18px rgba(40,10,30,.45);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);font-family:var(--font)}
+.asst-p[hidden]{display:none}
+.asst-h{display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,var(--pink),#F27BA6);color:#fff}
+.asst-h img{width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:50% 12%;background:#fff;box-shadow:0 0 0 2px #fff}
+.asst-h b{display:block;font-size:16px}.asst-h small{font-size:12px;opacity:.9}
+.asst-h button{margin-inline-start:auto;background:rgba(255,255,255,.25);border:0;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer}
+.asst-m{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.am{max-width:86%;padding:9px 12px;border-radius:16px;font-size:14px;line-height:1.7;white-space:pre-line;word-wrap:break-word}
+.am.b{align-self:flex-start;background:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 8px -6px rgba(0,0,0,.3)}
+.am.u{align-self:flex-end;background:var(--pink);color:#fff;border-bottom-left-radius:4px}
+.am a{color:var(--pink);font-weight:800}
+.am .pl{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.am .pl button{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:start;font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--ground);border-radius:12px;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.am .pl button span{color:var(--pink);white-space:nowrap}
+.asst-c{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 2px;scrollbar-width:none}.asst-c::-webkit-scrollbar{display:none}
+.asst-c button{flex:none;font:inherit;font-size:12.5px;font-weight:700;border:1.5px solid var(--pink-soft);background:#fff;color:var(--pink);border-radius:99px;padding:5px 11px;cursor:pointer}
+.asst-f{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid var(--line)}
+.asst-f input{flex:1;min-width:0;font:inherit;font-size:16px;border:1.5px solid var(--line);border-radius:99px;padding:8px 14px;background:var(--ground);color:var(--ink)}
+.asst-f button{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--pink);color:#fff;font-size:18px;cursor:pointer}
+.am.typing{display:flex;gap:4px}.am.typing i{width:7px;height:7px;border-radius:50%;background:var(--pink);opacity:.4;animation:asstdot 1.2s infinite}.am.typing i:nth-child(2){animation-delay:.2s}.am.typing i:nth-child(3){animation-delay:.4s}
+</style>
+<button class="asst-btn" id="asstBtn" type="button" aria-label="مساعدة أساس"><img id="asstAv" alt=""><span class="dot"></span><span class="asst-bub" id="asstBub"><i></i><i></i><i></i></span></button>
+<div class="asst-p" id="asstP" hidden role="dialog" aria-label="مساعدة أساس">
+  <div class="asst-h"><img id="asstAv2" alt=""><div><b>مساعدة أساس 🌷</b><small>نرد عليك على طول</small></div><button type="button" id="asstX" aria-label="إغلاق">✕</button></div>
+  <div class="asst-m" id="asstM"></div>
+  <div class="asst-c" id="asstC"></div>
+  <form class="asst-f" id="asstF"><input id="asstI" placeholder="اكتبي سؤالك…" autocomplete="off"><button type="submit" aria-label="إرسال">➤</button></form>
+</div>
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var av=((typeof CHARS!=='undefined'?CHARS:null)&&(CHARS.girl_point||CHARS.kid_girl_files))||'';
+  $('#asstAv').src=av;$('#asstAv2').src=av;
+  var M=$('#asstM'),P=$('#asstP'),started=false;
+  var wa=function(t){return 'https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent(t||'السلام عليكم، عندي استفسار عن متجر أساس')};
+  var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var N=function(t){return String(t||'').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[ًٌٍَُِّْـ]/g,'').replace(/[؟?!.,،]/g,' ')};
+  var pr=function(p){return p==null||isNaN(p)?'':(Math.round(p*1000)/1000)+' ر.ع'};
+  function add(html,who){var d=document.createElement('div');d.className='am '+(who||'b');d.innerHTML=html;M.appendChild(d);M.scrollTop=M.scrollHeight;return d}
+  function bot(html){var t=add('<i></i><i></i><i></i>','b typing');setTimeout(function(){t.remove();add(html,'b')},450)}
+  function packList(){
+    var L=((typeof PACKS!=='undefined'?PACKS:null)||[]).filter(function(p){return !/مدرس/.test(p.section||'')});
+    if(!L.length)return 'البكجات تتحمّل الحين، جربي بعد ثواني 🌷';
+    return 'هذي البكجات المتوفرة الحين، اضغطي على أي وحدة تشوفين تفاصيلها:<div class="pl">'+L.map(function(p){return '<button type="button" data-asst-open="'+esc(p.id)+'">'+esc(p.name)+'<span>'+pr(p.price)+'</span></button>'}).join('')+'</div>';
+  }
+  function bank(){var B=(typeof BANK!=='undefined'?BANK:null)||{};return 'الدفع تحويل بنكي 💳\n• '+(B.name||'بنك مسقط')+' · '+(B.holder||'')+'\nرقم الحساب: <b dir="ltr">'+(B.acct||'')+'</b>\n• أو تحويل سريع على الرقم: <b dir="ltr">'+(B.phone||'')+'</b>\n\nبعد التحويل أرسلي صورة الإيصال على <a href="'+wa('السلام عليكم، هذا إيصال التحويل لطلبي')+'" target="_blank" rel="noopener">الواتساب</a>.'}
+  var KB=[
+   {k:['اطلب','الطلب','اشتري','شراء','كيف اطلب','طريقه'],a:function(){return 'طريقة الطلب سهلة 🛍️\n١. اختاري البكج أو المنتج واضغطي «أضف للسلة».\n٢. افتحي السلة واكتبي اسمك ورقمك وإيميلك.\n٣. حوّلي المبلغ وأرسلي صورة الإيصال على الواتساب.\n٤. بعد ما نأكد التحويل، يوصلك ملف البكج على إيميلك 📩'}},
+   {k:['الملف','ايميل','وصلني','ما وصل','spam','سبام','غير مرغوب','رابط','ما يفتح','ما ينفتح','ينضغط'],a:function(){return 'ملف البكج يوصلك على الإيميل بعد ما نأكد التحويل 📩\n• إذا ما لقيتيه في الوارد، شيكي «الرسائل غير المرغوب فيها» (Spam)، واضغطي «ليست رسالة غير مرغوب فيها» علشان الرابط يشتغل.\n• وتلاقين الملف بعد في Google Drive ضمن «تمت مشاركتها معي».\n• وإذا للحين ما وصل، كلمينا على <a href="'+wa('السلام عليكم، ما وصلني ملف البكج')+'" target="_blank" rel="noopener">الواتساب</a> ونرسله لك.'}},
+   {k:['افتح','برنامج','سلويت','silhouette','studio','كاميو','cameo','قص'],a:function(){return 'ملفات البكجات بصيغة <b>.studio3</b> ✂️\nتفتحينها ببرنامج <b>Silhouette Studio</b> على الكمبيوتر، وتقصينها بمكينة الكاميو.\nوإذا تبين تتعلمين خطوة بخطوة، عندنا <a href="#courses" data-asst-go="courses">دورة الكاميو</a> 🎓'}},
+   {k:['دفع','تحويل','حساب','بنك','ادفع','كاش'],a:bank},
+   {k:['بكج','بكجات','ملفات','قوالب','مناسبه','متوفر'],a:packList},
+   {k:['توصيل','مندوب','مسقط','ارسال','شحن','اوصل','يوصل'],a:function(){return 'عندنا نوعين توصيل 🛵\n• <b>المطبوعات والمنتجات:</b> نوصلها لكل الولايات، ورسوم التوصيل تندفع عند الاستلام.\n• <b>توصيل أساس داخل مسقط:</b> مندوب يستلم أي غرض من عندك ويوصله لزبونتك بسعر ثابت ٢ ر.ع (مسقط، مطرح، بوشر، السيب، العامرات).\n<a href="delivery.html">اطلبي توصيل من هنا</a>'}},
+   {k:['uv','يو في','طباعه','ستيكر','ملصق','a4','a3'],a:function(){return 'طباعة UV غير قابلة للخدش وضد الماء ✨\n• A4: <b>2.5 ر.ع</b>\n• A3: <b>3.5 ر.ع</b>\nارفعي تصميمك PNG من <a href="#uv" data-asst-go="uv">قسم طباعة UV</a> واطلبي على طول.'}},
+   {k:['دوره','دورات','تعلم','ورشه','كورس'],a:function(){return 'دورات أساس تعلمك الكاميو والتصميم خطوة بخطوة 🎓\nشوفي المواعيد والأسعار في <a href="#courses" data-asst-go="courses">قسم الدورات</a>.'}},
+   {k:['ملحقات','اضافات','مطبوعات','منتجات','توزيعات'],a:function(){return 'تقدرين تضيفين مع البكج منتجات مطبوعة جاهزة (ميداليات، تعليقات، 3D…) 🎁\nشوفيها كلها في <a href="#addons" data-asst-go="addons">قسم ملحقات البكجات</a>، أو افتحي أي بكج وتطلع لك تحته.'}},
+   {k:['مدرسه','مدرسي','طالب','معلمه'],a:function(){return 'عندنا قسم خاص للمدرسة 🏫 <a href="#school" data-asst-go="school">افتحيه من هنا</a>.'}},
+   {k:['عجله','سحب','حظ','فائز','جايزه','جائزه'],a:function(){return 'كل طلب من الموقع يدخلك سحب عجلة الحظ في المناسبات 🎡\nتابعي السحب والفائزات في <a href="lucky.html">صفحة عجلة الحظ</a>.'}},
+   {k:['تواصل','رقم','واتساب','كلم','موظف','اكلم'],a:function(){return 'حياك! كلمينا على <a href="'+wa()+'" target="_blank" rel="noopener">الواتساب 92079057</a> ونرد عليك 🌷'}},
+   {k:['سلام','هلا','مرحبا','هاي','السلام'],a:function(){return 'وعليكم السلام وهلا والله 🌷 كيف أقدر أساعدك؟'}},
+   {k:['شكرا','مشكور','يعطيك','تسلم'],a:function(){return 'العفو حبيبتي 🤍 أي وقت!'}}
+  ];
+  function search(q){
+    var w=N(q).split(/\s+/).filter(function(x){return x.length>1});if(!w.length)return [];
+    var all=[].concat((typeof PACKS!=='undefined'?PACKS:null)||[],(typeof SHOP!=='undefined'?SHOP:null)||[]);
+    return all.map(function(it){var n=N(it.name);var s=0;w.forEach(function(x){if(n.indexOf(x)>-1)s+=x.length});return {it:it,s:s}}).filter(function(x){return x.s>=3}).sort(function(a,b){return b.s-a.s}).slice(0,5).map(function(x){return x.it});
+  }
+  function answer(q){
+    var n=N(q),best=null,bs=0;
+    KB.forEach(function(e){var s=0;e.k.forEach(function(k){if(n.indexOf(N(k))>-1)s+=k.length});if(s>bs){bs=s;best=e}});
+    var found=search(q);
+    if(found.length&&(!best||bs<5))return 'لقيت لك هذي 👇<div class="pl">'+found.map(function(p){return '<button type="button" data-asst-open="'+esc(p.id)+'">'+esc(p.name)+'<span>'+pr(p.price)+'</span></button>'}).join('')+'</div>';
+    if(best)return best.a();
+    return 'ما فهمت عليك زين 🙈 جربي تختارين من الأزرار تحت، أو <a href="'+wa(q)+'" target="_blank" rel="noopener">أرسلي سؤالك على الواتساب</a> ونرد عليك.';
+  }
+  var CH=[['🛍️ كيف أطلب؟','كيف اطلب'],['🎁 البكجات','البكجات'],['📩 وين الملف؟','ما وصلني الملف'],['💳 الدفع','الدفع'],['🛵 التوصيل','التوصيل'],['✨ طباعة UV','طباعة uv'],['✂️ فتح الملف','كيف افتح الملف'],['🎓 الدورات','الدورات'],['💬 كلمي أساس','واتساب']];
+  $('#asstC').innerHTML=CH.map(function(c){return '<button type="button" data-aq="'+c[1]+'">'+c[0]+'</button>'}).join('');
+  function ask(q,label){add(esc(label||q),'u');bot(answer(q))}
+  function open(){P.hidden=false;$('#asstBub').style.display='none';try{sessionStorage.setItem('asstSeen','1')}catch(e){}
+    if(!started){started=true;bot('هلا والله 🌷 أنا مساعدة أساس.\nأقدر أساعدك في الطلب والدفع ووصول الملفات والتوصيل. اختاري من الأزرار تحت أو اكتبي سؤالك 👇')}
+    if(matchMedia('(min-width:700px)').matches)setTimeout(function(){$('#asstI').focus()},300)}
+  $('#asstBtn').addEventListener('click',function(){P.hidden?open():P.hidden=true});
+  $('#asstX').addEventListener('click',function(){P.hidden=true});
+  $('#asstC').addEventListener('click',function(e){var b=e.target.closest('[data-aq]');if(b)ask(b.dataset.aq,b.textContent)});
+  $('#asstF').addEventListener('submit',function(e){e.preventDefault();var v=$('#asstI').value.trim();if(!v)return;$('#asstI').value='';ask(v)});
+  M.addEventListener('click',function(e){
+    var o=e.target.closest('[data-asst-open]');if(o){P.hidden=true;try{openSheet(o.dataset.asstOpen)}catch(_){}return}
+    var g=e.target.closest('[data-asst-go]');if(g){e.preventDefault();P.hidden=true;var el=document.getElementById(g.dataset.asstGo);if(el){el.hidden=false;el.scrollIntoView({behavior:'smooth'})}}
+  });
+  try{if(sessionStorage.getItem('asstSeen'))$('#asstBub').style.display='none'}catch(e){}
+})();
+</script>
+
 </body></html>
