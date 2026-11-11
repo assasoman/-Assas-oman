@@ -1160,7 +1160,8 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 <!-- مساعدة أساس -->
 <style>
 .asst-btn{position:fixed;inset-inline-end:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:26;width:64px;height:64px;border-radius:50%;border:0;padding:0;background:linear-gradient(135deg,#FFE3EC,#E3F3FC);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pink),0 10px 24px -8px rgba(232,74,132,.6);cursor:pointer;overflow:visible}
-.asst-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%;transform-origin:50% 85%;animation:asstwonder 4.5s ease-in-out infinite}
+.asst-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%;transform:scale(1.5);transform-origin:52% 30%}
+.asst-btn{overflow:visible}.asst-btn .avw{position:absolute;inset:0;border-radius:50%;overflow:hidden}
 @keyframes asstwonder{0%,100%{transform:rotate(0) translateY(0)}12%{transform:rotate(-9deg) translateY(-2px)}24%{transform:rotate(-9deg) translateY(-2px)}36%{transform:rotate(6deg) translateY(0)}48%{transform:rotate(0) translateY(0)}60%{transform:rotate(0) translateY(-4px) scale(1.04)}68%{transform:rotate(0) translateY(0) scale(1)}}
 .asst-btn{animation:asstbob 4.5s ease-in-out infinite}
 @keyframes asstbob{0%,100%{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pink),0 10px 24px -8px rgba(232,74,132,.6)}55%{box-shadow:0 0 0 3px #fff,0 0 0 7px var(--pink),0 14px 28px -8px rgba(232,74,132,.75)}}
@@ -1195,7 +1196,7 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .asst-f button{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--pink);color:#fff;font-size:18px;cursor:pointer}
 .am.typing{display:flex;gap:4px}.am.typing i{width:7px;height:7px;border-radius:50%;background:var(--pink);opacity:.4;animation:asstdot 1.2s infinite}.am.typing i:nth-child(2){animation-delay:.2s}.am.typing i:nth-child(3){animation-delay:.4s}
 </style>
-<button class="asst-btn" id="asstBtn" type="button" aria-label="مساعدة أساس"><img id="asstAv" alt=""><span class="dot"></span><span class="asst-bub" id="asstBub"><span class="dots"><i></i><i></i><i></i></span><span class="q">؟</span></span></button>
+<button class="asst-btn" id="asstBtn" type="button" aria-label="مساعدة أساس"><span class="avw"><img id="asstAv" alt=""></span><span class="dot"></span><span class="asst-bub" id="asstBub"><span class="dots"><i></i><i></i><i></i></span><span class="q">؟</span></span></button>
 <div class="asst-p" id="asstP" hidden role="dialog" aria-label="مساعدة أساس">
   <div class="asst-h"><img id="asstAv2" alt=""><div><b>مساعدة أساس 🌷</b><small>نرد عليك على طول</small></div><button type="button" id="asstX" aria-label="إغلاق">✕</button></div>
   <div class="asst-m" id="asstM"></div>
@@ -1207,6 +1208,7 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
   var $=function(s){return document.querySelector(s)};
   var av=((typeof CHARS!=='undefined'?CHARS:null)&&(CHARS.girl_point||CHARS.kid_girl_files))||'';
   $('#asstAv').src=av;$('#asstAv2').src=av;
+  try{if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){var im=new Image();im.onload=function(){$('#asstAv').src=im.src;$('#asstAv2').src=im.src};im.src='img/asst/girl_think.webp?v=1'}}catch(e){}
   var M=$('#asstM'),P=$('#asstP'),started=false;
   var wa=function(t){return 'https://api.whatsapp.com/send?phone='+WHATSAPP+'&text='+encodeURIComponent(t||'السلام عليكم، عندي استفسار عن متجر أساس')};
   var esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
