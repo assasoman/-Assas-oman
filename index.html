@@ -315,6 +315,7 @@ footer .kidrow img{height:130px;width:auto}
 .scrim{position:fixed;inset:0;z-index:40;background:rgba(30,25,40,.42)}
 .drawer{position:fixed;top:0;bottom:0;inset-inline-start:0;z-index:41;width:min(86vw,380px);background:var(--paper);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:-10px 0 30px -10px rgba(0,0,0,.25)}
 .drawer.menu{inset-inline-start:0}
+.pknote{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:-2px}
 .tagbar{overflow:hidden;background:linear-gradient(90deg,var(--pink),#F27BA6);color:#fff;font-size:13px;font-weight:700;padding:7px 0;white-space:nowrap;direction:rtl}
 .tagtrack{display:flex;width:max-content;animation:tagmove 28s linear infinite}
 .tagbar:hover .tagtrack,.tagbar:active .tagtrack{animation-play-state:paused}
@@ -731,6 +732,8 @@ let PACKS=[
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const money=n=>(Math.round(n*1000)/1000).toString();
+const packN=u=>{u=String(u||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));if(/درزن|دزن|دزينه|دزينة/.test(u))return 12;if(/حبتين|قطعتين/.test(u))return 2;const m=u.match(/(\d+)\s*(حب|قطع|علب|توزيع|بالون|ورق)/);return m&&+m[1]>1?+m[1]:1};
+const packNote=it=>it&&it.pack?`<small class="pknote">للحبة · ${money(it.packPrice)} ${CURRENCY} ${it.pack===12?'للدرزن':'لـ'+it.pack+' حبات'}</small>`:'';
 const priceHTML=p=>p==null?'<span class="price ask">السعر حسب الكمية</span>':`<span class="price num">${money(p)} <small>${CURRENCY}</small></span>`;
 const ART={
   cup:`<div class="art" style="background:var(--sky-soft)"><svg viewBox="0 0 100 100"><path d="M22 34h56l-6 40a10 10 0 0 1-10 8H38a10 10 0 0 1-10-8z" fill="#fff" stroke="#3F6B8A" stroke-width="3"/><path d="M14 86h72" stroke="#3F6B8A" stroke-width="3" stroke-linecap="round"/><path d="M42 50c4-8 12-8 16 0-4 8-12 8-16 0Z" fill="#E84A84"/><path d="M40 22c4-6-4-8 0-14M52 22c4-6-4-8 0-14M64 22c4-6-4-8 0-14" stroke="#F49AB6" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>`,
@@ -786,7 +789,7 @@ function dbg(t){return;try{const c=document.getElementById('crs');if(c&&c.queryS
 async function loadProducts(){
   try{
     const [pk,pr,sh]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات'),loadSheet('المنتجات').catch(()=>null)]);
-    if(sh){sh.forEach(r=>{if(r['الاسم'])r['الاسم']=String(r['الاسم']).trim()});const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم'])||undefined,emoji:(SHOP.find(x=>x.name===r['الاسم'])||{}).emoji||'🎁',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
+    if(sh){sh.forEach(r=>{if(r['الاسم'])r['الاسم']=String(r['الاسم']).trim()});const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);const pr=num(r['السعر']),un=String(r['الوحدة']||'حبة').trim(),pn=packN(un);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:pn>1?pr/pn:pr,unit:pn>1?'حبة':un,...(pn>1?{pack:pn,packPrice:pr,packUnit:un}:{}),image:imgURL(r['رابط الصورة'],r['الاسم'])||undefined,emoji:(SHOP.find(x=>x.name===r['الاسم'])||{}).emoji||'🎁',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
       desc:r['الوصف'],section:String(r['القسم']||'').trim(),cat:String(r['التصنيف']||'').trim(),includes:splitList(r['يشمل الملف']),galTitle:String(r['عنوان الصور']||'').trim(),galFolder:(String(r['صور العرض']||'').match(/https?:\/\/drive\.google\.com\/[^\s,،]+/)||[''])[0],gallery:String(r['صور العرض']||'').split(/[\s,،]+/).map(x=>x.trim()).filter(x=>!/drive\.google\.com\/(drive\/|open\?)/.test(x)).filter(x=>/^(https?:\/\/|data:image\/|[\w\-\/]+\.(jpe?g|png|webp|mp4|mov|webm)$)/i.test(x)).map(x=>imgURL(x,'')),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return Array.from(new Set(splitList(raw).map(n=>'s:'+n.trim())))})()}));
@@ -875,7 +878,7 @@ function card(it){
   return `<article class="card">
     <div class="pic"><button data-open="${esc(it.id)}" style="all:unset;display:block;width:100%;height:100%;cursor:pointer" aria-label="تفاصيل ${esc(it.name)}">${thumb(it)}</button>
       <button class="fav ${fav?'on':''}" data-fav="${esc(it.id)}" aria-label="المفضلة"><svg class="i"><use href="#heart"/></svg></button>${it.tag?`<span class="tag">${esc(it.tag)}</span>`:''}</div>
-    <div class="body"><h3>${esc(it.name)}</h3><span class="sub">${esc(it.sub||'')}</span>${priceHTML(it.price)}
+    <div class="body"><h3>${esc(it.name)}</h3><span class="sub">${esc(it.sub||'')}</span>${priceHTML(it.price)}${packNote(it)}
       <button class="addbtn ${inCart?'done':''}" data-add="${esc(it.id)}"><svg class="i"><use href="#bag"/></svg>${inCart?'في السلة':'أضف إلى السلة'}</button></div>
   </article>`;
 }
@@ -941,7 +944,7 @@ function drawSheet(it){
       <label class="ad ${packOn?'on':''}"><input type="checkbox" data-pk ${packOn?'checked':''}>
         <span><b>${esc(it.name)} (الملف الرقمي)</b><span class="meta">${money(it.price)} ${CURRENCY}</span></span></label>
       ${ads.map(a=>`<label class="ad ${picked[a.id].on?'on':''}"><input type="checkbox" id="ad-${esc(a.id)}" data-ad="${esc(a.id)}" ${picked[a.id].on?'checked':''}>
-        <span><b>${esc(a.name)}</b><span class="meta">${a.price!=null?money(a.price)+' '+CURRENCY+' / '+a.unit:'السعر حسب الكمية'}</span></span>
+        <span><b>${esc(a.name)}</b><span class="meta">${a.price!=null?money(a.price)+' '+CURRENCY+' / '+a.unit+(a.pack?' · '+money(a.packPrice)+' '+CURRENCY+(a.pack===12?' للدرزن':' لـ'+a.pack+' حبات'):''):'السعر حسب الكمية'}</span></span>
         <span class="step"><button type="button" data-adq="+" data-id="${esc(a.id)}" aria-label="زيادة">+</button><input id="adq-${esc(a.id)}" class="num" inputmode="numeric" value="${picked[a.id].q}" data-adqi="${esc(a.id)}" aria-label="الكمية"><button type="button" data-adq="-" data-id="${esc(a.id)}" aria-label="نقص">−</button></span>
         ${a.variants?`<span class="advars">${a.variants.map((v,k)=>`<button type="button" class="${picked[a.id].v===k?'on':''}" data-adv="${esc(a.id)}|${k}">${esc(v)}</button>`).join('')}</span>`:''}</label>`).join('')}
     </div>`:''}
@@ -995,7 +998,7 @@ async function submitOrder(form){
     p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
   try{parts.forEach(p=>myOrd.push({ref:p.ref,ph:String(f.phone).replace(/\D/g,'').slice(-4),at:Date.now(),total:money(p.t.sum),items:p.items.map(i=>({p:i.p,q:i.q,...(i.k?{k:1}:{})}))}));myOrd=myOrd.slice(-30);localStorage.setItem('asas-myorders',JSON.stringify(myOrd))}catch(e){}
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
-  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]&&UVF[l.id].fid).map((l,i)=>{const u=UVF[l.id];return {fid:u.fid,name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_')}})});
+  const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+(Math.round(i.u*1e5)/1e5)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]&&UVF[l.id].fid).map((l,i)=>{const u=UVF[l.id];return {fid:u.fid,name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_')}})});
   const sendHook=async p=>{const body=hookBody(p);
     if(body.length>200000)return new Promise(res=>{const x=new XMLHttpRequest();let up=false;x.open('POST',ORDERS_HOOK);x.setRequestHeader('Content-Type','text/plain;charset=utf-8');x.timeout=300000;
       x.upload.onprogress=e=>{if(e.lengthComputable){const pc=Math.round(e.loaded/e.total*100);btn.textContent='جارٍ رفع التصميم… '+pc+'%';if(pc>=100){up=true;btn.textContent='لحظات… نحفظ تصميمك'}}};
