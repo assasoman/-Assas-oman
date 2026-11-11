@@ -323,6 +323,8 @@ footer .kidrow img{height:130px;width:auto}
 .ordc{border:1.5px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--ground)}
 .ordc .oh{display:flex;justify-content:space-between;align-items:center}.ordc .oh span{font-size:12.5px;color:var(--muted)}
 .ordc ul{margin:0;padding-inline-start:18px;font-size:14px}.ordc .ot{display:flex;justify-content:space-between;font-size:14px}
+.ostat{background:#fff;border:1.5px solid var(--leaf);border-radius:12px;padding:7px 10px;font-size:13.5px;display:flex;flex-direction:column}.ostat b{color:#3F7A12}.ostat.x{border-color:var(--coral)}.ostat.x b{color:var(--coral)}.ostat small{color:var(--muted)}
+.trkf{display:flex;flex-direction:column;gap:8px;background:var(--sky-soft);border-radius:16px;padding:12px}.trkf div{display:flex;gap:8px}.trkf input{flex:1;min-width:0;font:inherit;font-size:16px;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff}.trkf .pill{align-self:flex-start}
 .osteps{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:11.5px;font-weight:700}.osteps span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--muted)}.osteps span.on{background:var(--pink);border-color:var(--pink);color:#fff}.osteps i{font-style:normal;color:var(--muted)}
 .bnav{display:none}
 @media(max-width:760px){
@@ -809,16 +811,41 @@ function waMessage(c){
 function renderFavs(){const b=$('#favs-body');if(!b)return;const L=favs.map(findItem).filter(Boolean);
   b.innerHTML=L.length?`<div class="rail grid" style="grid-auto-flow:row;grid-template-columns:1fr 1fr;overflow:visible">${L.map(card).join('')}</div>`:`<div class="empty-st"><div style="font-size:46px">🤍</div><b>ما عندك مفضلة للحين</b><p>اضغطي على القلب ❤️ فوق أي بكج أو منتج، ويحفظ لك هنا.</p><button class="pill" data-bn="packs">تصفّحي البكجات</button></div>`}
 let myOrd=[];try{myOrd=JSON.parse(localStorage.getItem('asas-myorders')||'[]')}catch(e){}
-function renderMyOrd(){const b=$('#myord-body');if(!b)return;
-  if(!myOrd.length){b.innerHTML=`<div class="empty-st"><div style="font-size:46px">📦</div><b>ما فيه طلبات من هالجهاز</b><p>لما تطلبين من الموقع، يطلع طلبك هنا برقمه وتفاصيله.</p><button class="pill" data-bn="packs">ابدئي التسوق</button></div>`;return}
-  b.innerHTML=`<p class="hint" style="margin:0">طلباتك اللي سويتيها من هالجهاز 👇 للاستفسار عن أي طلب اضغطي «استفسري عن الطلب».</p>`+myOrd.slice().reverse().map(o=>{const d=new Date(o.at);const dig=o.items.some(i=>i.k),phy=o.items.some(i=>!i.k);
-    const steps=dig?['تم استلام الطلب','تأكيد التحويل','الملف على إيميلك 📩']:['تم استلام الطلب','تأكيد التحويل','التجهيز والشحن 🚚'];
-    return `<div class="ordc"><div class="oh"><b dir="ltr">${esc(o.ref)}</b><span>${d.toLocaleDateString('ar-OM',{day:'numeric',month:'short',year:'numeric'})}</span></div>
-      <ul>${o.items.map(i=>`<li>${esc(i.p)} × ${i.q}</li>`).join('')}</ul>
-      <div class="ot"><span>الإجمالي</span><b class="num">${esc(o.total)} ${CURRENCY}</b></div>
-      <div class="osteps">${steps.map((s,i)=>`<span class="${i===0?'on':''}">${s}</span>`).join('<i>←</i>')}</div>
-      ${dig?'<p class="hint" style="margin:0">بعد ما نأكد التحويل يوصلك الملف على الإيميل. شيكي «الوارد» و«Spam» 📩</p>':''}
-      <a class="wabtn" target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent('السلام عليكم، أبي أستفسر عن طلبي رقم '+o.ref)}"><svg><use href="#wa"/></svg>استفسري عن الطلب</a></div>`}).join('')}
+let ORDST={},ORDQ=0;
+function trackFetch(list,cb){
+  const by={};list.forEach(o=>{if(o.ph&&o.ph.length===4)(by[o.ph]=by[o.ph]||[]).push(o.ref)});
+  const keys=Object.keys(by);if(!keys.length)return cb&&cb();let left=keys.length;
+  keys.forEach(ph=>{const fn='__trk'+(++ORDQ);let done=false;const sc=document.createElement('script');
+    const fin=()=>{if(done)return;done=true;try{delete window[fn]}catch(e){window[fn]=undefined}sc.remove();if(!--left&&cb)cb()};
+    window[fn]=d=>{try{Object.assign(ORDST,(d&&d.orders)||{})}catch(e){}fin()};
+    sc.onerror=fin;setTimeout(fin,12000);
+    sc.src=ORDERS_HOOK+'?track='+encodeURIComponent(by[ph].join(','))+'&p='+ph+'&cb='+fn;document.body.appendChild(sc)});
+}
+function stepIdx(st,dig){st=String(st||'');if(!st||st==='جديد')return 0;if(/ملغي/.test(st))return -1;
+  if(dig)return /إرسال الملف على/.test(st)?2:1;
+  return /التسليم|التوصيل 🎉|تم التوصيل/.test(st)?3:/شحن|المندوب/.test(st)?2:1}
+function ordCard(o){const d=new Date(o.at);const dig=o.items.some(i=>i.k)&&!o.items.some(i=>!i.k);const S=ORDST[String(o.ref).toUpperCase()];
+  const steps=dig?['تم استلام الطلب','تأكيد الطلب','الملف على إيميلك 📩']:['تم استلام الطلب','تأكيد الطلب','الشحن 🚚','التسليم 🎉'];
+  const k=S?stepIdx(S.status,dig):0;
+  return `<div class="ordc"><div class="oh"><b dir="ltr">${esc(o.ref)}</b><span>${d.toLocaleDateString('ar-OM',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+    ${S?`<div class="ostat ${k<0?'x':''}">الحالة: <b>${esc(S.status==='جديد'?'بانتظار تأكيد التحويل':S.status)}</b>${S.note?`<small>${esc(S.note)}</small>`:''}</div>`:''}
+    <ul>${o.items.map(i=>`<li>${esc(i.p)} × ${i.q}</li>`).join('')}</ul>
+    ${o.total?`<div class="ot"><span>الإجمالي</span><b class="num">${esc(o.total)} ${CURRENCY}</b></div>`:''}
+    ${k>=0?`<div class="osteps">${steps.map((s,i)=>`<span class="${i<=k?'on':''}">${s}</span>`).join('<i>←</i>')}</div>`:''}
+    ${dig&&k<2?'<p class="hint" style="margin:0">بعد ما نأكد التحويل يوصلك الملف على الإيميل. شيكي «الوارد» و«Spam» 📩</p>':''}
+    <a class="wabtn" target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent('السلام عليكم، أبي أستفسر عن طلبي رقم '+o.ref)}"><svg><use href="#wa"/></svg>استفسري عن الطلب</a></div>`}
+function renderMyOrd(fetch=true){const b=$('#myord-body');if(!b)return;
+  const form=`<form class="trkf" id="trkf"><b>🔎 تتبّعي طلب</b><div><input name="r" placeholder="رقم الطلب" dir="ltr" autocomplete="off"><input name="p" placeholder="آخر ٤ أرقام" inputmode="numeric" maxlength="8" dir="ltr"></div><button class="pill" type="submit">تتبّع</button><p class="hint" id="trkmsg" hidden style="margin:0"></p></form>`;
+  if(!myOrd.length){b.innerHTML=form+`<div class="empty-st"><div style="font-size:46px">📦</div><b>ما فيه طلبات من هالجهاز</b><p>لما تطلبين من الموقع، يطلع طلبك هنا برقمه وحالته.</p><button class="pill" data-bn="packs">ابدئي التسوق</button></div>`;return}
+  b.innerHTML=form+`<p class="hint" style="margin:0">طلباتك من هالجهاز 👇 الحالة تتحدث أول ما نأكد الطلب أو نرسل الملف.</p>`+myOrd.slice().reverse().map(ordCard).join('');
+  if(fetch)trackFetch(myOrd,()=>{if(!$('#myord').hidden)renderMyOrd(false)});
+}
+document.addEventListener('submit',e=>{if(e.target.id!=='trkf')return;e.preventDefault();const f=e.target,r=f.r.value.trim().toUpperCase(),ph=f.p.value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g,'').slice(-4),m=$('#trkmsg');
+  if(!r||ph.length<4){m.textContent='اكتبي رقم الطلب وآخر ٤ أرقام من جوالك';m.hidden=false;return}
+  m.textContent='جاري البحث…';m.hidden=false;
+  trackFetch([{ref:r,ph}],()=>{const S=ORDST[r];if(!S){$('#trkmsg').textContent='ما لقينا طلب بهالرقم 🙈 تأكدي من الرقم أو كلمينا على الواتساب';return}
+    if(!myOrd.some(o=>o.ref===r)){myOrd.push({ref:r,ph,at:Date.now(),total:'',items:[]});try{localStorage.setItem('asas-myorders',JSON.stringify(myOrd))}catch(_){}}
+    renderMyOrd(false)})});
 function renderBnav(){const e=$('#bncount');if(!e)return;const n=totals().n;e.textContent=n;e.hidden=!n}
 function renderCart(){
   const body=$('#cart-body'),foot=$('#cart-foot');
@@ -950,7 +977,7 @@ async function submitOrder(form){
     p.items=p.snap.map(l=>{const it=findItem(l.id);return {p:it.name,q:l.q,u:it.price||0,...(isPackItem(it)?{k:1}:{})}});
     p.wa=waMessage({...f,ref:p.ref,snap:p.snap});
     p.body=new URLSearchParams({'form-name':'order','bot-field':'',ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,total:p.t.sum.toFixed(3),ask:p.t.ask?'1':'0',items:JSON.stringify(p.items),summary:p.snap.map(l=>{const it=findItem(l.id);return it.name+' × '+l.q}).join(' | ')}).toString()});
-  try{parts.forEach(p=>myOrd.push({ref:p.ref,at:Date.now(),total:money(p.t.sum),items:p.items.map(i=>({p:i.p,q:i.q,...(i.k?{k:1}:{})}))}));myOrd=myOrd.slice(-30);localStorage.setItem('asas-myorders',JSON.stringify(myOrd))}catch(e){}
+  try{parts.forEach(p=>myOrd.push({ref:p.ref,ph:String(f.phone).replace(/\D/g,'').slice(-4),at:Date.now(),total:money(p.t.sum),items:p.items.map(i=>({p:i.p,q:i.q,...(i.k?{k:1}:{})}))}));myOrd=myOrd.slice(-30);localStorage.setItem('asas-myorders',JSON.stringify(myOrd))}catch(e){}
   const H=location.hostname,ON_NL=/\.netlify\.app$/i.test(H),LIVE=!(H===''||/claude\.(ai|com)|claudeusercontent|anthropic/i.test(H));
   const hookBody=p=>JSON.stringify({ref:p.ref,name:f.name,phone:f.phone,wilaya:f.wilaya,email:f.email,summary:p.items.map(i=>i.p+' × '+i.q+(i.u?' ('+money(i.u)+' ر.ع)':'')).join('، '),total:money(p.t.sum)+(p.t.ask?' + حسب الكمية':''),discount:'',coupon:'',delivery:'',files:p.snap.filter(l=>UVF[l.id]&&UVF[l.id].fid).map((l,i)=>{const u=UVF[l.id];return {fid:u.fid,name:p.ref+'-'+(i+1)+'-'+u.size+'-x'+l.q+'-'+u.fname.replace(/[^\w.\-]+/g,'_')}})});
   const sendHook=async p=>{const body=hookBody(p);
