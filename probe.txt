@@ -1,6 +1,0 @@
-A:
-{"orders":{"AQLW5C14":{"status":"جديد","note":""}}}
-B:
-{"orders":{}}
-C:
-x({"orders":{"AQLW5C14":{"status":"جديد","note":""}}})
