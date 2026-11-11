@@ -1160,9 +1160,17 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 <!-- مساعدة أساس -->
 <style>
 .asst-btn{position:fixed;inset-inline-end:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:26;width:64px;height:64px;border-radius:50%;border:0;padding:0;background:linear-gradient(135deg,#FFE3EC,#E3F3FC);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pink),0 10px 24px -8px rgba(232,74,132,.6);cursor:pointer;overflow:visible}
-.asst-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%}
+.asst-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:50% 12%;transform-origin:50% 85%;animation:asstwonder 4.5s ease-in-out infinite}
+@keyframes asstwonder{0%,100%{transform:rotate(0) translateY(0)}12%{transform:rotate(-9deg) translateY(-2px)}24%{transform:rotate(-9deg) translateY(-2px)}36%{transform:rotate(6deg) translateY(0)}48%{transform:rotate(0) translateY(0)}60%{transform:rotate(0) translateY(-4px) scale(1.04)}68%{transform:rotate(0) translateY(0) scale(1)}}
+.asst-btn{animation:asstbob 4.5s ease-in-out infinite}
+@keyframes asstbob{0%,100%{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pink),0 10px 24px -8px rgba(232,74,132,.6)}55%{box-shadow:0 0 0 3px #fff,0 0 0 7px var(--pink),0 14px 28px -8px rgba(232,74,132,.75)}}
+.asst-bub .dots{display:flex;gap:4px;animation:asstswapA 4.5s infinite}
+.asst-bub .q{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:900;color:var(--pink);opacity:0;animation:asstswapB 4.5s infinite}
+@keyframes asstswapA{0%,40%{opacity:1}48%,92%{opacity:0}100%{opacity:1}}
+@keyframes asstswapB{0%,44%{opacity:0;transform:scale(.4) rotate(-20deg)}52%{opacity:1;transform:scale(1.25) rotate(8deg)}58%,88%{opacity:1;transform:scale(1) rotate(0)}96%,100%{opacity:0;transform:scale(.6)}}
+@media(prefers-reduced-motion:reduce){.asst-btn img,.asst-btn,.asst-bub .dots,.asst-bub .q{animation:none}.asst-bub .q{display:none}}
 .asst-btn .dot{position:absolute;bottom:2px;inset-inline-start:2px;width:14px;height:14px;border-radius:50%;background:#2DBE60;box-shadow:0 0 0 2px #fff}
-.asst-bub{position:absolute;bottom:58px;left:38px;background:#fff;border-radius:16px 16px 16px 4px;padding:6px 10px;box-shadow:0 6px 16px -6px rgba(0,0,0,.3);display:flex;gap:4px;white-space:nowrap;font:700 12.5px var(--font);color:var(--ink)}
+.asst-bub{position:absolute;bottom:58px;left:38px;min-width:38px;justify-content:center;background:#fff;border-radius:16px 16px 16px 4px;padding:6px 10px;box-shadow:0 6px 16px -6px rgba(0,0,0,.3);display:flex;gap:4px;white-space:nowrap;font:700 12.5px var(--font);color:var(--ink)}
 .asst-bub i{width:6px;height:6px;border-radius:50%;background:var(--pink);opacity:.4;animation:asstdot 1.2s infinite}
 .asst-bub i:nth-child(2){animation-delay:.2s}.asst-bub i:nth-child(3){animation-delay:.4s}
 @keyframes asstdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
@@ -1187,7 +1195,7 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .asst-f button{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--pink);color:#fff;font-size:18px;cursor:pointer}
 .am.typing{display:flex;gap:4px}.am.typing i{width:7px;height:7px;border-radius:50%;background:var(--pink);opacity:.4;animation:asstdot 1.2s infinite}.am.typing i:nth-child(2){animation-delay:.2s}.am.typing i:nth-child(3){animation-delay:.4s}
 </style>
-<button class="asst-btn" id="asstBtn" type="button" aria-label="مساعدة أساس"><img id="asstAv" alt=""><span class="dot"></span><span class="asst-bub" id="asstBub"><i></i><i></i><i></i></span></button>
+<button class="asst-btn" id="asstBtn" type="button" aria-label="مساعدة أساس"><img id="asstAv" alt=""><span class="dot"></span><span class="asst-bub" id="asstBub"><span class="dots"><i></i><i></i><i></i></span><span class="q">؟</span></span></button>
 <div class="asst-p" id="asstP" hidden role="dialog" aria-label="مساعدة أساس">
   <div class="asst-h"><img id="asstAv2" alt=""><div><b>مساعدة أساس 🌷</b><small>نرد عليك على طول</small></div><button type="button" id="asstX" aria-label="إغلاق">✕</button></div>
   <div class="asst-m" id="asstM"></div>
