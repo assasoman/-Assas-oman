@@ -363,7 +363,10 @@ const money=v=>(Math.round((+v||0)*1000)/1000).toFixed(3);
 const r3=money,ro=v=>money(v)+' ر.ع';
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
 let VER=false;
-async function checkVer(){if(VER)return;let j=null;try{const r=await fetch(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());j=JSON.parse(await r.text())}catch(e){throw new Error('السكربت قديم أو ما يرد: حدثيه (New version) وجربي')}
+function jsonp(url){return new Promise((res,rej)=>{const cb='_jp'+Date.now()+Math.floor(Math.random()*1e4);const sc=document.createElement('script');const t=setTimeout(()=>{cl();rej(new Error('timeout'))},15000);const cl=()=>{clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}sc.remove()};window[cb]=d=>{cl();res(d)};sc.onerror=()=>{cl();rej(new Error('script error'))};sc.src=url+(url.includes('?')?'&':'?')+'cb='+cb;document.head.appendChild(sc)})}
+let DIAG='';
+async function checkVer(){if(VER)return;let j=null,fe='';try{const r=await fetch(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());const t=await r.text();try{j=JSON.parse(t)}catch(e){fe='HTTP '+r.status+' · '+t.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,90)}}catch(e){fe=(e&&e.message)||'fetch failed'}
+  if(!j){let jp='';try{j=await jsonp(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());jp='jsonp ok'}catch(e){jp='jsonp: '+e.message}DIAG=fe+' | '+jp;if(!j)throw new Error('ما قدرت أوصل للسكربت. ('+DIAG+')');if(j&&j.ok)throw new Error('الاتصال المباشر مقفول في هالجوال. ('+DIAG+')')}
   if(j.error==='denied'){store.del('asas-admin');KEY='';render();throw new Error('كلمة السر غلط')}if(!j.ok)throw new Error('السكربت ما رد');VER=true}
 async function api(body){await checkVer();if(body.action==='ping')return {ok:true};
   const r=await fetch(HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'admin',key:KEY,...body})});
