@@ -1,5 +1,5 @@
 /* أساس عُمان — service worker بسيط: الشبكة أولًا، والنسخة المحفوظة إذا انقطع النت */
-const C='asas-v1';
+const C='asas-v2';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/','/admin.html','/img/app/icon-192.png']).catch(()=>{})));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin)return;
