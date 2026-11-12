@@ -362,12 +362,12 @@ const imgU=u=>{u=String(u||'');if(!u||u==='(data)')return '';const m=u.match(/\/
 const money=v=>(Math.round((+v||0)*1000)/1000).toFixed(3);
 const r3=money,ro=v=>money(v)+' ر.ع';
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
-let VER=false;
+let VER=store.get('asas-admin-ver')==='13';
 function jsonp(url){return new Promise((res,rej)=>{const cb='_jp'+Date.now()+Math.floor(Math.random()*1e4);const sc=document.createElement('script');const t=setTimeout(()=>{cl();rej(new Error('timeout'))},15000);const cl=()=>{clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}sc.remove()};window[cb]=d=>{cl();res(d)};sc.onerror=()=>{cl();rej(new Error('script error'))};sc.src=url+(url.includes('?')?'&':'?')+'cb='+cb;document.head.appendChild(sc)})}
 let DIAG='';
 async function checkVer(){if(VER)return;let j=null,fe='';try{const r=await fetch(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());const t=await r.text();try{j=JSON.parse(t)}catch(e){fe='HTTP '+r.status+' · '+t.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,90)}}catch(e){fe=(e&&e.message)||'fetch failed'}
   if(!j){let jp='';try{j=await jsonp(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());jp='jsonp ok'}catch(e){jp='jsonp: '+e.message}DIAG=fe+' | '+jp;if(!j)throw new Error('ما قدرت أوصل للسكربت. ('+DIAG+')');if(j&&j.ok)throw new Error('الاتصال المباشر مقفول في هالجوال. ('+DIAG+')')}
-  if(j.error==='denied'){store.del('asas-admin');KEY='';render();throw new Error('كلمة السر غلط')}if(!j.ok)throw new Error('السكربت ما رد');VER=true}
+  if(j.error==='denied'){store.del('asas-admin');KEY='';render();throw new Error('كلمة السر غلط')}if(!j.ok)throw new Error('السكربت ما رد');VER=true;store.set('asas-admin-ver','13')}
 async function api(body){await checkVer();if(body.action==='ping')return {ok:true};
   const r=await fetch(HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'admin',key:KEY,...body})});
   const t=await r.text();let j;try{j=JSON.parse(t)}catch(e){throw new Error('السكربت ما رد صح')}
@@ -380,7 +380,7 @@ function render(){
   if(!KEY){$('#app').innerHTML=`<div class="top hdr" style="margin-top:12vh"><div class="stripe"></div><div class="brand"><img alt="" src="${LOGO}"><div class="bt"><h1>إدارة أساس</h1><div class="date">اكتبي كلمة السر</div></div></div>
     <div style="padding:16px 18px 0;display:flex;flex-direction:column;gap:10px"><input class="search" id="pw" type="text" placeholder="كلمة السر" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false" style="margin:0;text-align:center;direction:ltr"><button class="btn primary" id="go">دخول</button><p class="muted" id="lm" style="margin:0;color:var(--bad)"></p></div></div>`;
     $('#bn').hidden=true;$('#fab').hidden=true;
-    const go=async()=>{KEY=$('#pw').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,'').toLowerCase();VER=false;if(!KEY)return;$('#go').disabled=true;$('#go').textContent='لحظة…';try{await api({action:'ping'});store.set('asas-admin',KEY);render();load();loadOrders(true)}catch(e){KEY='';$('#lm').textContent=e.message;$('#go').disabled=false;$('#go').textContent='دخول'}};
+    const go=async()=>{KEY=$('#pw').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\s+/g,'').toLowerCase();VER=false;if(!KEY)return;$('#go').disabled=true;$('#go').textContent='لحظة…';try{await api({action:'ping'});store.set('asas-admin',KEY);render();loadOrders(true)}catch(e){KEY='';$('#lm').textContent=e.message;$('#go').disabled=false;$('#go').textContent='دخول'}};
     $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key==='Enter')go()};return}
   $('#bn').hidden=false;
   $('#bn').innerHTML=NAV.map(([k,l,ic])=>`<button data-tab="${k}" class="${tab===k?'on':''}"><svg viewBox="0 0 24 24">${ic}</svg>${l}</button>`).join('');
@@ -462,8 +462,9 @@ const isOpen=o=>['new','confirmed','ready'].includes(ost(o.status));
 const waN=p=>{const d=String(p||'').replace(/\D/g,'');return d.length===8?'968'+d:d};
 const when=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})T?(\d{2})?:?(\d{2})?/.exec(v||'');return m?`${+m[3]}/${+m[2]}${m[4]?' · '+m[4]+':'+m[5]:''}`:String(v||'').slice(0,16)};
 const shipOf=o=>/المكتب/.test(o.wilaya)?'مكتب':/البيت|المنزل/.test(o.wilaya)?'بيت':'';
+if(!O){try{const c=JSON.parse(store.get('asas-admin-orders')||'null');if(c&&c.orders)O=c}catch(e){}}
 async function loadOrders(force){if(OLOAD)return;if(!force&&O&&Date.now()-OAT<20000)return;OLOAD=true;
-  try{O=await api({action:'orders',limit:600});OAT=Date.now()}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
+  try{O=await api({action:'orders',limit:400});OAT=Date.now();try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
   OLOAD=false;if(['home','orders','dv'].includes(tab))drawList();if(OSEL&&!$('#sheet').hidden)drawOrder()}
 setInterval(()=>{if(!document.hidden&&KEY&&['home','orders','dv'].includes(tab)&&$('#sheet').hidden)loadOrders(true)},60000);
 const mergeC=o=>{const k=phK(o.phone);if(k.length<8||!isOpen(o)||isDv(o))return [];return O.orders.filter(x=>x.ref!==o.ref&&isOpen(x)&&!isDv(x)&&phK(x.phone)===k)};
@@ -787,7 +788,7 @@ function drawLabel(o,W){
   return c;
 }
 
-render();if(KEY){loadOrders(true);load()}
+render();if(KEY){loadOrders(true);if(tab==='products'||tab==='packs')load()}
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{})}catch(e){}
 
 </script></body></html>
