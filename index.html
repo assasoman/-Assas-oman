@@ -948,7 +948,7 @@ function drawSheet(it){
       ${ads.map(a=>`<label class="ad ${picked[a.id].on?'on':''}"><input type="checkbox" id="ad-${esc(a.id)}" data-ad="${esc(a.id)}" ${picked[a.id].on?'checked':''}>
         <span><b>${esc(a.name)}</b><span class="meta">${a.price!=null?money(a.price)+' '+CURRENCY+' / '+a.unit+(a.pack?' · '+money(a.packPrice)+' '+CURRENCY+(a.pack===12?' للدرزن':' لـ'+a.pack+' حبات'):''):'السعر حسب الكمية'}</span></span>
         <span class="step"><button type="button" data-adq="+" data-id="${esc(a.id)}" aria-label="زيادة">+</button><input id="adq-${esc(a.id)}" class="num" inputmode="numeric" value="${picked[a.id].q}" data-adqi="${esc(a.id)}" aria-label="الكمية"><button type="button" data-adq="-" data-id="${esc(a.id)}" aria-label="نقص">−</button></span>
-        ${a.variants?`<span class="advars">${a.variants.map((v,k)=>`<button type="button" class="${picked[a.id].v===k?'on':''}" data-adv="${esc(a.id)}|${k}">${esc(v)}</button>`).join('')}</span>`:''}</label>`).join('')}
+        ${a.variants?`<span class="advars">${a.variants.map((v,k)=>`<button type="button" class="${picked[a.id].v===k?'on':''}" data-adv="${esc(a.id)}|${k}">${a.varImgs&&a.varImgs[k]?`<img src="${esc(a.varImgs[k])}" alt="" loading="lazy" style="display:block;width:100%;aspect-ratio:7/10;object-fit:cover;border-radius:8px;margin-bottom:4px">`:''}${esc(v)}</button>`).join('')}</span>`:''}</label>${a.variants&&picked[a.id].on&&isCustomVar(a.variants[picked[a.id].v])?`<div class="advt" style="margin:-4px 0 6px"><b style="font-size:14px">اكتبي اللي تبينه في الورقة</b><textarea data-advt="${esc(a.id)}" rows="3" placeholder="مثال: ٣ فناجين نساء والباقي رجال" style="width:100%;margin-top:6px;border:1.5px solid var(--pink);border-radius:12px;padding:10px;font:inherit;font-size:15px">${esc(picked[a.id].t||'')}</textarea></div>`:''}`).join('')}
     </div>`:''}
     <button class="wabtn" style="background:var(--ink)" data-addsheet="${esc(it.id)}"><svg class="i" style="fill:none;stroke:#fff"><use href="#bag"/></svg>أضف إلى السلة</button>
   </div>`;
@@ -1102,11 +1102,14 @@ document.addEventListener('click',e=>{
   if(x=g('[data-open-name]')){const it=PACKS.find(p=>p.name===x.dataset.openName);if(it)openSheet(it.id);return}
   if(x=g('[data-q]')){const l=cart.find(c=>c.id===x.dataset.id);l.q=Math.max(1,l.q+(x.dataset.q==='+'?1:-1));save();renderHeader();renderCart();return}
   if(x=g('[data-rm]')){cart=cart.filter(c=>c.id!==x.dataset.rm);save();renderHeader();renderCart();renderRails();return}
-  if(x=g('[data-adv]')){e.preventDefault();const [aid,ai]=x.dataset.adv.split('|');picked[aid].v=+ai;picked[aid].on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
+  if(x=g('[data-adv]')){e.preventDefault();document.querySelectorAll('[data-advt]').forEach(t=>{if(picked[t.dataset.advt])picked[t.dataset.advt].t=t.value});const [aid,ai]=x.dataset.adv.split('|');picked[aid].v=+ai;picked[aid].on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-adq]')){e.preventDefault();const p=picked[x.dataset.id];p.q=Math.max(1,p.q+(x.dataset.adq==='+'?1:-1));p.on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-var]')){const ta=$('#vartext');if(ta)varText=ta.value;pickedVar=+x.dataset.var;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);const packMode=!!(_it&&_it.addons&&_it.addons.length);if(packMode&&!packOn&&!Object.values(picked).some(v=>v.on)){toast('اختر خيارًا واحدًا على الأقل');return}if(_it&&_it.variants&&isCustomVar(_it.variants[pickedVar])){const tx=(($('#vartext')||{}).value||varText||'').trim();if(!tx){toast('اكتبي اللي تبينه في الورقة');const ta=$('#vartext');if(ta)ta.focus();return}varText=tx}
-  if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar+(isCustomVar(_it.variants[pickedVar])?'|'+encodeURIComponent(varText.replace(/\|/g,'/')):''):id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
+  document.querySelectorAll('[data-advt]').forEach(t=>{if(picked[t.dataset.advt])picked[t.dataset.advt].t=t.value});
+  {const miss=Object.entries(picked).find(([k,v])=>{if(!v.on)return false;const _a=findItem(k);return _a&&_a.variants&&isCustomVar(_a.variants[v.v])&&!String(v.t||'').trim()});if(miss){toast('اكتبي اللي تبينه في الورقة');const ta=document.querySelector('[data-advt]');if(ta)ta.focus();return}}
+  if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar+(isCustomVar(_it.variants[pickedVar])?'|'+encodeURIComponent(varText.replace(/\|/g,'/')):''):id,1);
+  Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);const cu=_a&&_a.variants&&isCustomVar(_a.variants[v.v]);addLine(_a&&_a.variants?k+'|'+v.v+(cu?'|'+encodeURIComponent(String(v.t).trim().replace(/\|/g,'/')):''):k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
   if(x=g('[data-dot]')){clearInterval(auto);slideTo(slides[+x.dataset.dot]);return}
 });
 document.addEventListener('change',e=>{
