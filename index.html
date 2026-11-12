@@ -745,8 +745,9 @@ const saveUVF=()=>{try{const o={};Object.keys(UVF).forEach(k=>{const u=UVF[k];if
 const findItem=id=>{if(String(id).startsWith('u:')){const u=UVF[id];return u?{id,name:'طباعة UV '+u.size+' ('+u.fname+')',price:UVP[u.size],unit:'ورقة',image:u.url,emoji:'🎨',uv:1}:undefined}
   let it=PACKS.find(p=>p.id===id)||PRINTS.find(p=>p.id===id)||SHOP.find(p=>p.id===id)||COURSES.find(p=>p.id===id);if(it)return it;
   if(String(id).startsWith('k:c:')){let n='';try{n=decodeURIComponent(String(id).slice(4))}catch(e){n=String(id).slice(4)}return {id,name:n,price:0,course:1}}
-  const [b,i]=String(id).split('|');const base=SHOP.find(p=>p.id===b);
-  if(base&&base.variants&&base.variants[+i]!=null)return Object.assign({},base,{id,name:base.name+' - '+base.variants[+i],variants:null,baseId:b});return it};
+  const [b,i,tx]=String(id).split('|');const base=SHOP.find(p=>p.id===b);
+  if(base&&base.variants&&base.variants[+i]!=null){let t='';try{t=tx?decodeURIComponent(tx):''}catch(e){t=tx||''}return Object.assign({},base,{id,name:base.name+' - '+base.variants[+i]+(t?' ('+t+')':''),variants:null,baseId:b,...(base.varImgs&&base.varImgs[+i]?{image:base.varImgs[+i]}:{})})}return it};
+const isCustomVar=v=>/تكتب|اكتبي|حسب طلبك|مخصص/.test(v||'');
 const EMO=['#FFE3EC','#FFF0C9','#DDF1FB','#E7F5D3','#F3E4FA'];
 const thumb=it=>it.image?`<img class="ph" src="${it.image}" alt="${esc(it.name)}" loading="lazy">`:(it.emoji?`<div class="emo" style="background:linear-gradient(160deg,${EMO[(it.name.length+(it.price*10|0))%EMO.length]},#fff)">${it.emoji}</div>`:(ART[it.art]||''));
 
@@ -790,7 +791,7 @@ function dbg(t){return;try{const c=document.getElementById('crs');if(c&&c.queryS
 async function loadProducts(){
   try{
     const [pk,pr,sh]=await Promise.all([loadSheet('البكجات'),loadSheet('المطبوعات'),loadSheet('المنتجات').catch(()=>null)]);
-    if(sh){sh.forEach(r=>{if(r['الاسم'])r['الاسم']=String(r['الاسم']).trim()});const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v=splitList(r['الخيارات']);const pr=num(r['السعر']),un=String(r['الوحدة']||'حبة').trim(),pn=packN(un);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:pn>1?pr/pn:pr,unit:pn>1?'حبة':un,...(pn>1?{pack:pn,packPrice:pr,packUnit:un}:{}),image:imgURL(r['رابط الصورة'],r['الاسم'])||undefined,emoji:(SHOP.find(x=>x.name===r['الاسم'])||{}).emoji||'🎁',...(v.length?{variants:v,sub:'اختر نوع التصميم'}:{})}});if(items.length)SHOP=items}
+    if(sh){sh.forEach(r=>{if(r['الاسم'])r['الاسم']=String(r['الاسم']).trim()});const items=sh.filter(r=>r['الاسم']&&shown(r)&&!isNaN(num(r['السعر'])||NaN)).map(r=>{const v0=splitList(r['الخيارات']),v=v0.map(x=>x.split('=')[0].trim()),vi=v0.map(x=>{const k=x.indexOf('=');return k>0?x.slice(k+1).trim():''});const pr=num(r['السعر']),un=String(r['الوحدة']||'حبة').trim(),pn=packN(un);return {id:'s:'+r['الاسم'],name:r['الاسم'],price:pn>1?pr/pn:pr,unit:pn>1?'حبة':un,...(pn>1?{pack:pn,packPrice:pr,packUnit:un}:{}),image:imgURL(r['رابط الصورة'],r['الاسم'])||undefined,emoji:(SHOP.find(x=>x.name===r['الاسم'])||{}).emoji||'🎁',...(v.length?{variants:v,sub:'اختر نوع التصميم',...(vi.some(Boolean)?{varImgs:vi}:{})}:{})}});if(items.length)SHOP=items}
     const prints=[];const _unusedPrints=pr.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'p:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),unit:r['الوحدة']||'حبة',image:imgURL(r['رابط الصورة'],r['الاسم']),art:/فنج/.test(r['الاسم'])?'cup':'uv'}));
     const packs=pk.filter(r=>r['الاسم']&&shown(r)).map(r=>({id:'k:'+r['الاسم'],name:r['الاسم'],sub:r['الوصف المختصر'],price:num(r['السعر']),tag:r['الشارة'],image:imgURL(r['رابط الصورة'],r['الاسم']),
       desc:r['الوصف'],section:String(r['القسم']||'').trim(),cat:String(r['التصنيف']||'').trim(),includes:splitList(r['يشمل الملف']),galTitle:String(r['عنوان الصور']||'').trim(),galFolder:(String(r['صور العرض']||'').match(/https?:\/\/drive\.google\.com\/[^\s,،]+/)||[''])[0],gallery:String(r['صور العرض']||'').split(/[\s,،]+/).map(x=>x.trim()).filter(x=>!/drive\.google\.com\/(drive\/|open\?)/.test(x)).filter(x=>/^(https?:\/\/|data:image\/|[\w\-\/]+\.(jpe?g|png|webp|mp4|mov|webm)$)/i.test(x)).map(x=>imgURL(x,'')),addons:(()=>{const raw=String(r['المطبوعات المضافة']||'').trim();if(!raw||/^(لا|بدون)$/.test(raw))return [];if(/^(ال)?كل$/.test(raw))return null;return Array.from(new Set(splitList(raw).map(n=>'s:'+n.trim())))})()}));
@@ -918,10 +919,10 @@ function renderRails(){
 }
 
 /* ---------- product sheet ---------- */
-let picked={},pickedVar=0,packOn=true;
+let picked={},pickedVar=0,packOn=true,varText='';
 function openSheet(id){
   const it=findItem(id);if(!it)return;
-  pickedVar=0;packOn=true;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
+  pickedVar=0;varText='';packOn=true;picked={};(it.addons||[]).forEach(a=>picked[a]={on:false,q:1,v:0});
   drawSheet(it);$('#sheet').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';sheetHist();
 }
 function trustBox(it){const pk=isPackItem(it),crs=!!it.course;
@@ -933,14 +934,14 @@ function drawSheet(it){
   const ads=(it.addons||[]).map(findItem).filter(Boolean);
   $('#sheet').innerHTML=`<div class="in">
     <button class="closer" data-act="close" aria-label="إغلاق">✕</button>
-    <div class="hero">${thumb(it)}</div>
+    <div class="hero">${it.varImgs&&it.varImgs[pickedVar]?`<img src="${esc(it.varImgs[pickedVar])}" alt="${esc(it.variants[pickedVar])}" style="width:100%;height:100%;object-fit:contain;background:#fff">`:thumb(it)}</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="s-title">${esc(it.name)}</h2>${it.price!=null?`<span class="pr num">${money(it.price)} ${CURRENCY}</span>`:'<span class="hint">السعر حسب الكمية</span>'}</div>
     ${it.desc?`<p style="font-size:14.5px;line-height:1.8">${esc(it.desc)}</p>`:it.sub?`<p class="hint">${esc(it.sub)}</p>`:''}
     ${trustBox(it)}
     ${it.gallery&&it.gallery.length?`<div><b>${esc(it.galTitle||'صور البكج')}</b> <span class="hint" style="font-size:12.5px">· اضغطي على الصورة أو الفيديو لتكبيره وحفظه</span><div class="gal">${it.gallery.map((u,i)=>`<button type="button" data-gal="${i}" aria-label="${isVid(u)?'فيديو':'صورة'} ${i+1}">${isVid(u)?`<img src="${esc(vPoster(u))}" alt="" loading="lazy"><i class="play">▶</i>`:`<img src="${esc(u)}" alt="" loading="lazy">`}</button>`).join('')}</div></div>`:''}
     ${it.galFolder?`<div class="galdl">${it.gallery&&it.gallery.length?'':`<b>${esc(it.galTitle||'صور البكج')}</b>`}<a class="pill" href="${esc(it.galFolder)}" target="_blank" rel="noopener">⬇ تحميل صور البكج</a><span class="hint" style="font-size:12.5px">${it.gallery&&it.gallery.length?'لتحميل الصور والفيديوهات الأصلية من Google Drive':'تنفتح الصور في Google Drive، واضغطي «تنزيل» لحفظها'}</span></div>`:''}
     ${it.includes&&it.includes.length?`<div><b>يشمل الملف</b><ul class="inc">${it.includes.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-    ${it.variants?`<div><b>اختر نوع التصميم</b><div class="vars" style="margin-top:8px">${it.variants.map((v,i)=>`<label class="${i===pickedVar?'on':''}"><input type="radio" name="var" data-var="${i}" ${i===pickedVar?'checked':''}>${esc(v)}</label>`).join('')}</div></div>`:''}
+    ${it.variants?`<div><b>اختر نوع التصميم</b><div class="vars" style="margin-top:8px">${it.variants.map((v,i)=>`<label class="${i===pickedVar?'on':''}"><input type="radio" name="var" data-var="${i}" ${i===pickedVar?'checked':''}>${it.varImgs&&it.varImgs[i]?`<img src="${esc(it.varImgs[i])}" alt="" loading="lazy" style="display:block;width:100%;aspect-ratio:7/10;object-fit:cover;border-radius:9px;margin-bottom:6px">`:''}<span class="num" style="opacity:.6">${i+1}.</span> ${esc(v)}</label>`).join('')}</div>${isCustomVar(it.variants[pickedVar])?`<label style="display:block;margin-top:10px"><b>اكتبي اللي تبينه في الورقة</b><textarea id="vartext" rows="3" placeholder="مثال: ٣ فناجين نساء والباقي رجال" style="width:100%;margin-top:6px;border:1.5px solid var(--line,#E8DDE2);border-radius:12px;padding:10px;font:inherit;font-size:15px">${esc(varText)}</textarea></label>`:''}</div>`:''}
     ${ads.length?`<div class="addons"><h3>اختر ما تريد شراءه</h3>
       <label class="ad ${packOn?'on':''}"><input type="checkbox" data-pk ${packOn?'checked':''}>
         <span><b>${esc(it.name)} (الملف الرقمي)</b><span class="meta">${money(it.price)} ${CURRENCY}</span></span></label>
@@ -1103,8 +1104,9 @@ document.addEventListener('click',e=>{
   if(x=g('[data-rm]')){cart=cart.filter(c=>c.id!==x.dataset.rm);save();renderHeader();renderCart();renderRails();return}
   if(x=g('[data-adv]')){e.preventDefault();const [aid,ai]=x.dataset.adv.split('|');picked[aid].v=+ai;picked[aid].on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
   if(x=g('[data-adq]')){e.preventDefault();const p=picked[x.dataset.id];p.q=Math.max(1,p.q+(x.dataset.adq==='+'?1:-1));p.on=true;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
-  if(x=g('[data-var]')){pickedVar=+x.dataset.var;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
-  if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);const packMode=!!(_it&&_it.addons&&_it.addons.length);if(packMode&&!packOn&&!Object.values(picked).some(v=>v.on)){toast('اختر خيارًا واحدًا على الأقل');return}if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar:id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
+  if(x=g('[data-var]')){const ta=$('#vartext');if(ta)varText=ta.value;pickedVar=+x.dataset.var;drawSheet(findItem($('[data-addsheet]').dataset.addsheet));return}
+  if(x=g('[data-addsheet]')){const id=x.dataset.addsheet;const _it=findItem(id);const packMode=!!(_it&&_it.addons&&_it.addons.length);if(packMode&&!packOn&&!Object.values(picked).some(v=>v.on)){toast('اختر خيارًا واحدًا على الأقل');return}if(_it&&_it.variants&&isCustomVar(_it.variants[pickedVar])){const tx=(($('#vartext')||{}).value||varText||'').trim();if(!tx){toast('اكتبي اللي تبينه في الورقة');const ta=$('#vartext');if(ta)ta.focus();return}varText=tx}
+  if(!packMode||packOn)addLine(_it&&_it.variants?id+'|'+pickedVar+(isCustomVar(_it.variants[pickedVar])?'|'+encodeURIComponent(varText.replace(/\|/g,'/')):''):id,1);Object.entries(picked).forEach(([k,v])=>{if(v.on){const _a=findItem(k);addLine(_a&&_a.variants?k+'|'+v.v:k,v.q)}});renderRails();closeAll();toast('تمت الإضافة إلى السلة');return}
   if(x=g('[data-dot]')){clearInterval(auto);slideTo(slides[+x.dataset.dot]);return}
 });
 document.addEventListener('change',e=>{
