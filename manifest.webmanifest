@@ -1,0 +1,62 @@
+{
+ "id": "/",
+ "name": "أساس عُمان",
+ "short_name": "أساس",
+ "description": "ملفات قص للكاميو، طباعة UV، مطبوعات وتوزيعات، دورات، وتوصيل داخل مسقط",
+ "lang": "ar",
+ "dir": "rtl",
+ "start_url": "/?src=app",
+ "scope": "/",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#FFF8F4",
+ "theme_color": "#E84A84",
+ "icons": [
+  {
+   "src": "/img/app/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/img/app/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/img/app/icon-mask-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "maskable"
+  },
+  {
+   "src": "/img/app/icon-mask-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "طلباتي",
+   "url": "/?open=myord",
+   "icons": [
+    {
+     "src": "/img/app/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  },
+  {
+   "name": "توصيل داخل مسقط",
+   "url": "/delivery.html",
+   "icons": [
+    {
+     "src": "/img/app/icon-192.png",
+     "sizes": "192x192"
+    }
+   ]
+  }
+ ]
+}
