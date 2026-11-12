@@ -1,0 +1,19 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          npm i playwright@1.47.2 >/dev/null 2>&1 && npx playwright install --with-deps webkit chromium >/dev/null 2>&1
+          cat > t.js <<'JS'
+          const pw=require('playwright');(async()=>{for(const n of ['webkit','chromium']){const b=await pw[n].launch();const p=await b.newPage();
+          await p.goto('https://assas-oman.com/admin.html',{waitUntil:'load'});
+          const r=await p.evaluate(async()=>{const H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec';const out={};
+            try{const x=await fetch(H+'?admin=ping&key=pzjsn5es');out.get=x.status+' '+(await x.text()).slice(0,60)}catch(e){out.get='ERR '+e.message}
+            try{const x=await fetch(H,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'admin',key:'pzjsn5es',action:'ping'})});out.post=x.status+' '+(await x.text()).slice(0,60)}catch(e){out.post='ERR '+e.message}
+            out.jsonp=await new Promise(res=>{window.__cb=d=>res('ok '+JSON.stringify(d));const s=document.createElement('script');s.onerror=()=>res('script error');s.src=H+'?admin=ping&key=pzjsn5es&cb=__cb';document.head.appendChild(s);setTimeout(()=>res('timeout'),15000)});
+            return out});
+          console.log('RES',n,JSON.stringify(r));await b.close()}})();
+          JS
+          node t.js
