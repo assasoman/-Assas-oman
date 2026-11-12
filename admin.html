@@ -67,7 +67,11 @@ let KEY=store.get('asas-admin')||'',D=null,tab='products',q='',F=null;
 const img=u=>{u=String(u||'');if(!u||u==='(data)')return '';const m=u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400':u};
 const money=v=>{const n=Number(v);return isNaN(n)?'':(Math.round(n*1000)/1000).toString()};
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+let VER=false;
+async function checkVer(){if(VER)return;let j=null;try{const r=await fetch(HOOK+'?admin=ping&key='+encodeURIComponent(KEY)+'&_='+Date.now());j=JSON.parse(await r.text())}catch(e){throw new Error('السكربت قديم: حدثيه أول (New version) وبعدين جربي')}
+  if(j.error==='denied'){store.del('asas-admin');KEY='';render();throw new Error('كلمة السر غلط')}if(!j.ok)throw new Error('السكربت ما رد');VER=true}
 async function api(body){
+  await checkVer();if(body.action==='ping')return {ok:true};
   const r=await fetch(HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'admin',key:KEY,...body})});
   const t=await r.text();let j;try{j=JSON.parse(t)}catch(e){throw new Error('السكربت ما رد صح. تأكدي إنك حدثتيه')}
   if(j.error==='denied'){store.del('asas-admin');KEY='';render();throw new Error('كلمة السر غلط')}
