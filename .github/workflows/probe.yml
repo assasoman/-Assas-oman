@@ -1,0 +1,12 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          R=$(curl -sL "$H?admin=ping&key=pzjsn5es"); echo "RES1 $R"
+          if echo "$R" | grep -q '"ok":true'; then
+            curl -sL -H 'Content-Type: text/plain' -d '{"type":"admin","key":"pzjsn5es","action":"list"}' "$H" | python3 -c "import sys,json;d=json.load(sys.stdin);print('RES2', d.get('error') or ('products',len(d['products']),'packs',len(d['packs']),[(p['name'],len(p['addons'])) for p in d['packs']]))"
+          fi
