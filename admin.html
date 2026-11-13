@@ -465,7 +465,7 @@ const when=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})T?(\d{2})?:?(\d{2})?/.exec(v||''
 const shipOf=o=>/المكتب/.test(o.wilaya)?'مكتب':/البيت|المنزل/.test(o.wilaya)?'بيت':'';
 if(!O){try{const c=JSON.parse(store.get('asas-admin-orders')||'null');if(c&&c.orders)O=c}catch(e){}}
 async function loadOrders(force){if(OLOAD)return;if(!force&&O&&Date.now()-OAT<20000)return;OLOAD=true;
-  try{O=await api({action:'orders',limit:400});OAT=Date.now();try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
+  try{O=await api({action:'orders',limit:400});{const seen=new Set();O.orders=O.orders.filter(o=>{const k=String(o.ref||'').trim().toUpperCase();if(!k)return true;if(seen.has(k))return false;seen.add(k);return true})}OAT=Date.now();try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
   OLOAD=false;if(['home','orders','dv'].includes(tab))drawList();if(OSEL&&!$('#sheet').hidden)drawOrder()}
 setInterval(()=>{if(!document.hidden&&KEY&&['home','orders','dv'].includes(tab)&&$('#sheet').hidden)loadOrders(true)},60000);
 const mergeC=o=>{const k=phK(o.phone);if(k.length<8||!isOpen(o)||isDv(o))return [];return O.orders.filter(x=>x.ref!==o.ref&&isOpen(x)&&!isDv(x)&&phK(x.phone)===k)};
