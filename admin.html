@@ -342,6 +342,7 @@ details.plan summary{cursor:pointer;font-weight:800;font-size:15px}details.plan 
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.tiles .tile{flex:none;cursor:pointer;font:inherit;color:inherit}
 .top h1{margin:0}.top .brand h1{font-family:var(--font-display);font-size:20px}
 #bn button{flex:1}
+.hseg{display:flex;gap:6px;margin:18px 0 12px;padding:5px;border-radius:18px;background:var(--surface2);overflow-x:auto}.hseg button{flex:1;border:0;background:none;border-radius:14px;padding:10px 12px;font:inherit;font-weight:600;color:var(--muted);white-space:nowrap;cursor:pointer}.hseg button.on{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px -4px rgba(70,20,50,.25)}.hseg em{font-style:normal;background:var(--warn-bg);color:var(--warn);border-radius:99px;padding:0 9px;margin-inline-start:4px;font-size:13px}
 .sheet .sbody{padding-bottom:24px}
 </style>
 </head><body>
@@ -470,10 +471,15 @@ setInterval(()=>{if(!document.hidden&&KEY&&['home','orders','dv'].includes(tab)&
 const mergeC=o=>{const k=phK(o.phone);if(k.length<8||!isOpen(o)||isDv(o))return [];return O.orders.filter(x=>x.ref!==o.ref&&isOpen(x)&&!isDv(x)&&phK(x.phone)===k)};
 const F_={new:o=>ost(o.status)==='new',prep:o=>ost(o.status)==='confirmed',ready:o=>ost(o.status)==='ready',ship:o=>ost(o.status)==='shipped',done:o=>['delivered','sent','cancelled','merged'].includes(ost(o.status)),all:()=>true};
 const loadingBox=()=>'<div class="panel empty"><p>جاري تحميل الطلبات…</p></div>';
+let HSEG=store.get('asas-admin-hseg')||'miss';
+function missAgg(){const M={};O.orders.filter(o=>!isDv(o)&&['confirmed','ready'].includes(ost(o.status))).forEach(o=>{const rd=String(o.ready||'').split(',').filter(Boolean).map(Number);oitems(o).forEach((i,j)=>{if(isPackIt(i.p)||rd.includes(j))return;const k=i.p.trim();(M[k]=M[k]||{p:k,q:0,os:[]});M[k].q+=i.q;M[k].os.push({ref:o.ref,row:o.row,j,q:i.q})})});return Object.values(M).sort((a,b)=>b.os.length-a.os.length||b.q-a.q)}
+async function arrive(p,btn){const it=missAgg().find(x=>x.p===p);if(!it)return;btn.disabled=true;btn.textContent='لحظة…';const by={};it.os.forEach(x=>(by[x.ref]=by[x.ref]||[]).push(x.j));
+  try{for(const ref in by){const o=O.orders.find(y=>y.ref===ref);const s=new Set(String(o.ready||'').split(',').filter(Boolean).map(Number));by[ref].forEach(j=>s.add(j));o.ready=[...s].sort((a,b)=>a-b).join(',');await api({action:'setFields',row:o.row,ref:o.ref,fields:{ready:o.ready?"'"+o.ready:' '}})}
+    try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}toast('تم ✅ '+p+' في '+Object.keys(by).length+' طلب');drawList()}catch(e){toast(e.message);btn.disabled=false;btn.textContent='وصل'}}
 function drawHome(m){
   if(!O){m.innerHTML=loadingBox();loadOrders();return}
   const L0=O.orders.filter(o=>!isDv(o)),c=k=>L0.filter(F_[k]).length,dvO=O.orders.filter(o=>isDv(o)&&!['delivered','cancelled'].includes(ost(o.status))).length;
-  const nw=L0.filter(F_.new).reverse(),rdy=c('ready');
+  const nw=L0.filter(F_.new).reverse(),rdy=c('ready'),MS=missAgg();
   m.innerHTML=`<div class="tiles">
     <button class="tile unpaid" data-go="new"><b class="num">${c('new')}</b><span>جديدة بانتظار الدفع</span></button>
     <button class="tile missing" data-go="prep"><b class="num">${c('prep')}</b><span>قيد التجهيز</span></button>
@@ -481,8 +487,11 @@ function drawHome(m){
     <button class="tile shipped" data-go="dv"><b class="num">${dvO}</b><span>توصيل مسقط مفتوح</span></button></div>
   ${rdy?`<button class="btn" id="hlbl" style="width:100%;margin-top:10px">🏷️ بوليصات الجاهزة (${rdy})</button>`:''}
   ${O.quota!=null&&O.quota<15?`<div class="notice" style="margin-top:10px">⚠️ باقي ${O.quota} إيميل اليوم (حد Google اليومي).</div>`:''}
-  <section class="sec inbox"><h2>🆕 طلبات الموقع الجديدة ${nw.length?`<em class="cnt num">${nw.length}</em>`:''}</h2>
-  ${nw.length?`<div class="olist">${nw.map(pendCard).join('')}</div>`:'<div class="panel empty"><p>ما فيه طلبات جديدة 🌷</p></div>'}</section>`;
+  <div class="hseg">${[['miss','الناقص',MS.length],['new','الطلبات الجديدة',nw.length]].map(([k,l,n])=>`<button data-hs="${k}" class="${HSEG===k?'on':''}">${l}${n?` <em>${n}</em>`:''}</button>`).join('')}</div>
+  ${HSEG==='miss'?(MS.length?`<div class="panel rows">${MS.map(x=>`<div class="row" style="display:flex;align-items:center;gap:12px;padding:12px 14px"><div class="grow"><div class="t" style="font-weight:600">${esc(x.p)} <b class="num">× ${x.q}</b></div><div class="s num">للطلبات: ${x.os.map(y=>esc(y.ref)).join('، ')}</div></div><button class="btn sm" data-arr="${esc(x.p)}">وصل</button></div>`).join('')}</div><p class="muted" style="font-size:12.5px;margin:8px 2px 0">«وصل» يعلّم الصنف جاهز في كل الطلبات اللي تحتاجه. تنحسب هنا الطلبات المؤكدة اللي للحين ما انشحنت.</p>`:'<div class="panel empty"><p>ما فيه نواقص 🎉 كل الأصناف جاهزة.</p></div>')
+  :(nw.length?`<div class="olist">${nw.map(pendCard).join('')}</div>`:'<div class="panel empty"><p>ما فيه طلبات جديدة 🌷</p></div>')}`;
+  m.querySelectorAll('[data-hs]').forEach(b=>b.onclick=()=>{HSEG=b.dataset.hs;store.set('asas-admin-hseg',HSEG);drawList()});
+  m.querySelectorAll('[data-arr]').forEach(b=>b.onclick=()=>arrive(b.dataset.arr,b));
   m.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const g=b.dataset.go;if(g==='dv'){tab='dv'}else{tab='orders';OF=g}store.set('asas-admin-tab',tab);render()});
   const hl=$('#hlbl');if(hl)hl.onclick=()=>labels(L0.filter(o=>ost(o.status)==='ready'));
   bindCards(m)}
@@ -556,7 +565,7 @@ function drawOrder(){
   <p id="om" style="margin:0;color:var(--bad);font-weight:600"></p>`,
   act.map(([a,l,c])=>`<button class="btn ${c}" data-a="${esc(a)}">${l}</button>`).join(''),badge(k));
   const sh=$('#sheet');
-  sh.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{const n=+b.dataset.it,s=new Set(rd);s.has(n)?s.delete(n):s.add(n);o.ready=[...s].sort((a,b)=>a-b).join(',');const y=$('.sbody').scrollTop;drawOrder();$('.sbody').scrollTop=y;api({action:'setFields',row:o.row,ref:o.ref,fields:{ready:o.ready||' '}}).catch(e=>toast(e.message))});
+  sh.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{const n=+b.dataset.it,s=new Set(rd);s.has(n)?s.delete(n):s.add(n);o.ready=[...s].sort((a,b)=>a-b).join(',');const y=$('.sbody').scrollTop;drawOrder();$('.sbody').scrollTop=y;api({action:'setFields',row:o.row,ref:o.ref,fields:{ready:o.ready?"'"+o.ready:' '}}).catch(e=>toast(e.message))});
   sh.querySelectorAll('[data-merge]').forEach(b=>b.onclick=async()=>{const r=b.dataset.merge;if(MCONF!==r){MCONF=r;drawOrder();return}b.disabled=true;b.textContent='جاري الدمج…';try{const x=O.orders.find(y=>y.ref===r);const res=await api({action:'merge',a:{row:o.row,ref:o.ref},b:{row:x.row,ref:x.ref}});toast('تم الدمج ✅');OSEL=res.into;MCONF=null;await loadOrders(true)}catch(e){$('#om').textContent=e.message;b.disabled=false}});
   $('#o-priv').onchange=()=>{const p=saveSide_(o);if(p)p.then(()=>toast('انحفظت الملاحظة')).catch(e=>toast(e.message))};
   sh.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>orderAct(o,b.dataset.a,b))}
