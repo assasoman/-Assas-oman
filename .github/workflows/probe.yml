@@ -1,0 +1,25 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          cat > t.py <<'PY'
+          import json,urllib.request
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          def api(d):
+              d.update({'type':'admin','key':'pzjsn5es'})
+              r=urllib.request.urlopen(urllib.request.Request(H,data=json.dumps(d).encode(),headers={'Content-Type':'text/plain'}),timeout=60)
+              return json.loads(r.read())
+          L=api({'action':'list'})
+          p=[x for x in L['products'] if x['name'].startswith('بالونات')]
+          print('RES1',json.dumps(p,ensure_ascii=False))
+          if len(p)==1:
+              x=p[0];packs=[k['name'] for k in L['packs'] if x['name'] in k['addons']]
+              print('RES2 packs',packs)
+              r=api({'action':'saveProduct','row':x['row'],'name':'بالونات 🇴🇲 (بدون التصميم)','price':0.35,'unit':'حبة','options':x['options'],'image':x['image'],'shown':x['shown'],'packs':packs})
+              print('RES3',r)
+              L=api({'action':'list'});print('RES4',[ (y['name'],y['price'],y['unit']) for y in L['products'] if y['name'].startswith('بالونات')],[k['name'] for k in L['packs'] if 'بالونات 🇴🇲 (بدون التصميم)' in k['addons']])
+          PY
+          python3 t.py
