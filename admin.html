@@ -476,6 +476,37 @@ function missAgg(){const M={};O.orders.filter(o=>!isDv(o)&&['confirmed','ready']
 async function arrive(p,btn){const it=missAgg().find(x=>x.p===p);if(!it)return;btn.disabled=true;btn.textContent='لحظة…';const by={};it.os.forEach(x=>(by[x.ref]=by[x.ref]||[]).push(x.j));
   try{for(const ref in by){const o=O.orders.find(y=>y.ref===ref);const s=new Set(String(o.ready||'').split(',').filter(Boolean).map(Number));by[ref].forEach(j=>s.add(j));o.ready=[...s].sort((a,b)=>a-b).join(',');await api({action:'setFields',row:o.row,ref:o.ref,fields:{ready:o.ready?"'"+o.ready:' '}})}
     try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}toast('تم ✅ '+p+' في '+Object.keys(by).length+' طلب');drawList()}catch(e){toast(e.message);btn.disabled=false;btn.textContent='وصل'}}
+
+let SM='all';
+const oMonth=o=>{const a=String(o.at||o.date||'');let m=/^(\d{4})-(\d{2})/.exec(a);if(m)return m[1]+'-'+m[2];m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(a);return m?m[3]+'-'+m[2].padStart(2,'0'):''};
+const AR_M=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const mName=k=>{const [y,m]=k.split('-');return AR_M[+m-1]+' '+y};
+const region=w=>{w=String(w||'').split('|')[0].trim();if(!w)return '';w=w.replace(/^(ولاي[ةه]|محافظ[ةه])\s+/,'');return w.split(/\s*[-–—/،,]\s*/)[0].trim()};
+function drawSales(){
+  if(!O){toast('لحظة، الطلبات تتحمّل…');return}
+  const paid=O.orders.filter(o=>!isDv(o)&&!['new','cancelled','merged'].includes(ost(o.status)));
+  const months=[...new Set(paid.map(oMonth).filter(Boolean))].sort();
+  const L=SM==='all'?paid:paid.filter(o=>oMonth(o)===SM);
+  const tot=L.reduce((a,o)=>a+(+o.total||0),0);
+  const byM=months.map(k=>({k,v:paid.filter(o=>oMonth(o)===k).reduce((a,o)=>a+(+o.total||0),0),n:paid.filter(o=>oMonth(o)===k).length}));
+  const mx=Math.max(1,...byM.map(x=>x.v));
+  const P={};L.forEach(o=>parseItems(o.summary).forEach(i=>{const k=i.p.trim();(P[k]=P[k]||{p:k,q:0,v:0});P[k].q+=i.q;P[k].v+=i.q*(i.u||0)}));
+  const PL=Object.values(P).sort((a,b)=>b.v-a.v||b.q-a.q);
+  const R={};let noAddr=0;L.forEach(o=>{const r=region(o.wilaya);if(!r){noAddr++;return}R[r]=(R[r]||0)+1});
+  const RL=Object.entries(R).sort((a,b)=>b[1]-a[1]).slice(0,10),rmx=Math.max(1,...RL.map(x=>x[1]));
+  const bar=(w,c)=>`<div style="height:10px;border-radius:6px;background:var(--line);overflow:hidden"><div style="height:100%;width:${Math.max(2,w)}%;background:${c||'var(--accent)'};border-radius:6px"></div></div>`;
+  const body=`<div class="hseg" style="position:static;flex-shrink:0;margin-top:4px">${[['all','الكل'],...months.map(k=>[k,mName(k)])].map(([k,l])=>`<button data-sm="${k}" class="${SM===k?'on':''}">${l}</button>`).join('')}</div>
+  <div class="tiles" style="margin-top:12px"><div class="tile ready"><b class="num">${money(tot)}</b><span>المبيعات (ر.ع)</span></div><div class="tile missing"><b class="num">${L.length}</b><span>طلب مدفوع</span></div><div class="tile shipped"><b class="num">${money(L.length?tot/L.length:0)}</b><span>متوسط الطلب</span></div><div class="tile unpaid"><b class="num">${PL.length}</b><span>صنف مباع</span></div></div>
+  ${byM.length>1?`<h3 style="margin:18px 2px 8px;font-size:15px">المبيعات بالشهر</h3><div class="panel" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">${byM.map(x=>`<div><div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px"><span>${mName(x.k)} · <span class="muted num">${x.n} طلب</span></span><b class="num">${money(x.v)}</b></div>${bar(x.v/mx*100)}</div>`).join('')}</div>`:''}
+  <h3 style="margin:18px 2px 8px;font-size:15px">المبيعات حسب المنتج</h3>
+  <div class="panel" style="padding:0;overflow-x:auto;flex-shrink:0"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:var(--bg)"><th style="text-align:start;padding:9px 10px">المنتج</th><th style="padding:9px 6px">العدد</th><th style="padding:9px 6px">المبيعات</th><th style="padding:9px 6px">التكلفة</th><th style="padding:9px 6px">الربح</th></tr></thead><tbody>${PL.map(x=>`<tr style="border-top:1px solid var(--line)"><td style="padding:8px 10px">${esc(x.p)}</td><td class="num" style="text-align:center">${x.q}</td><td class="num" style="text-align:center;font-weight:600">${x.v?money(x.v):'—'}</td><td style="text-align:center" class="muted">—</td><td style="text-align:center" class="muted">—</td></tr>`).join('')}</tbody></table></div>
+  <p class="muted" style="font-size:12px;margin:6px 2px 0">التكلفة والربح فاضيين الحين، نعبيهم لما تحددين تكلفة كل صنف.</p>
+  <h3 style="margin:18px 2px 8px;font-size:15px">الطلبات حسب المنطقة</h3>
+  <div class="panel" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">${RL.map(([r,n])=>`<div><div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px"><span>${esc(r)}</span><b class="num">${n}</b></div>${bar(n/rmx*100,'var(--ok)')}</div>`).join('')||'<p class="muted">ما فيه عناوين</p>'}${noAddr?`<div class="muted" style="font-size:12.5px">+ ${noAddr} طلب ملفات بدون عنوان</div>`:''}</div>
+  <p class="muted" style="font-size:12px;margin:10px 2px 16px">تنحسب الطلبات المؤكدة والمشحونة والمسلّمة فقط (بدون الجديدة غير المدفوعة والملغية والمدموجة وطلبات المندوب).</p>`;
+  openSheet('📊 المبيعات',body);$('.sbody').querySelectorAll(':scope>*').forEach(e=>e.style.flexShrink='0');
+  document.querySelectorAll('[data-sm]').forEach(b=>b.onclick=()=>{SM=b.dataset.sm;const y=$('.sbody').scrollTop;drawSales();$('.sbody').scrollTop=0})
+}
 function drawHome(m){
   if(!O){m.innerHTML=loadingBox();loadOrders();return}
   const L0=O.orders.filter(o=>!isDv(o)),c=k=>L0.filter(F_[k]).length,dvO=O.orders.filter(o=>isDv(o)&&!['delivered','cancelled'].includes(ost(o.status))).length;
@@ -485,6 +516,7 @@ function drawHome(m){
     <button class="tile missing" data-go="prep"><b class="num">${c('prep')}</b><span>قيد التجهيز</span></button>
     <button class="tile ready" data-go="ready"><b class="num">${rdy}</b><span>جاهزة للشحن</span></button>
     <button class="tile shipped" data-go="dv"><b class="num">${dvO}</b><span>توصيل مسقط مفتوح</span></button></div>
+  <button class="btn" id="hsales" style="width:100%;margin-top:10px">📊 المبيعات</button>
   ${rdy?`<button class="btn" id="hlbl" style="width:100%;margin-top:10px">🏷️ بوليصات الجاهزة (${rdy})</button>`:''}
   ${O.quota!=null&&O.quota<15?`<div class="notice" style="margin-top:10px">⚠️ باقي ${O.quota} إيميل اليوم (حد Google اليومي).</div>`:''}
   <div class="hseg">${[['miss','الناقص',MS.length],['new','الطلبات الجديدة',nw.length]].map(([k,l,n])=>`<button data-hs="${k}" class="${HSEG===k?'on':''}">${l}${n?` <em>${n}</em>`:''}</button>`).join('')}</div>
@@ -493,6 +525,7 @@ function drawHome(m){
   m.querySelectorAll('[data-hs]').forEach(b=>b.onclick=()=>{HSEG=b.dataset.hs;store.set('asas-admin-hseg',HSEG);drawList()});
   m.querySelectorAll('[data-arr]').forEach(b=>b.onclick=()=>arrive(b.dataset.arr,b));
   m.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const g=b.dataset.go;if(g==='dv'){tab='dv'}else{tab='orders';OF=g}store.set('asas-admin-tab',tab);render()});
+  $('#hsales').onclick=()=>{SM='all';drawSales()};
   const hl=$('#hlbl');if(hl)hl.onclick=()=>labels(L0.filter(o=>ost(o.status)==='ready'));
   bindCards(m)}
 function pendCard(o){const its=oitems(o),mc=mergeC(o).length;
