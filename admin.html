@@ -572,6 +572,7 @@ function drawOrder(){
   if(k==='ready')act.push(['ship','تم الشحن','primary']);
   if(k==='shipped')act.push(['st:تم التسليم 🎉','تم التسليم','primary']);
   if(phy&&['confirmed','ready','new'].includes(k))act.push(['label','بوليصة الشحن','']);
+  if(!isDv(o)&&k!=='merged')act.push(['invoice','🧾 فاتورة PDF','']);
   if(hasP&&!['new','confirmed'].includes(k))act.push(['resend','📩 إعادة إرسال الملف','']);
   if(['shipped','delivered','sent','cancelled'].includes(k))act.push(['st:تم تأكيد الطلب ✅','إعادة فتح','']);
   if(!['cancelled','merged','delivered','sent','shipped'].includes(k))act.push(['cancel','إلغاء الطلب','']);
@@ -606,6 +607,7 @@ function saveSide_(o){const pe=$('#o-priv'),te=$('#o-trk');if(!pe)return;const p
 async function orderAct(o,a,b){
   const om=$('#om');om.textContent='';
   if(a==='label'){labels([o]);return}
+  if(a==='invoice'){invoice(o);return}
   if((a==='cancel'||a==='confirm')&&b.dataset.sure!=='1'){b.dataset.sure='1';b.classList.add('warn');b.textContent=a==='cancel'?'متأكدة؟ اضغطي مرة ثانية للإلغاء':'متأكدة إنها دفعت؟ اضغطي';return}
   const old=b.textContent;b.disabled=true;b.textContent='لحظة…';
   try{
@@ -721,6 +723,55 @@ function courForm(){let C=(O.couriers||[]).map(c=>({...c}));
     document.querySelectorAll('.crh').forEach(e=>e.onchange=()=>{C[+e.dataset.i].home=e.value.trim()||'البستان';save('انحفظ البيت')})};
   draw()}
 /* ============ البوليصة ============ */
+
+let LOGOIMG=null;const logoImg=()=>LOGOIMG?Promise.resolve(LOGOIMG):new Promise(r=>{const i=new Image();i.onload=()=>{LOGOIMG=i;r(i)};i.onerror=()=>r(null);i.src=LOGO});
+const INV_ROWS=14;
+function invPages(o){const its=parseItems(o.summary);const P=[];for(let i=0;i<Math.max(1,its.length);i+=INV_ROWS)P.push(its.slice(i,i+INV_ROWS));return {its,P}}
+function drawInvoice(o,page,np,rows,startNo,W,logo){
+  const s=W/1240,H=Math.round(1754*s),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.scale(s,s);
+  const F='"IBM Plex Sans Arabic",sans-serif',MR='#7a1f1f',INK='#2b211a',MU='#8a7663',LN='#eadfcf';
+  x.fillStyle='#fff';x.fillRect(0,0,1240,1754);x.direction='rtl';
+  const band=(y,h)=>{x.fillStyle='#c8102e';x.fillRect(0,y,1240,h/3);x.fillStyle='#fff';x.fillRect(0,y+h/3,1240,h/3);x.fillStyle='#008000';x.fillRect(0,y+2*h/3,1240,h/3)};
+  band(0,18);band(1736,18);
+  const T=(t,X,Y,sz,w,al,col)=>{x.font=(w||400)+' '+sz+'px '+F;x.textAlign=al||'right';x.fillStyle=col||INK;x.fillText(String(t),X,Y)};
+  if(logo)x.drawImage(logo,1240-90-150,70,150,150);
+  T('أساس عُمان',1240-90-170,135,46,700,'right',MR);T('assas-oman.com · @assas.oman',1240-90-170,180,22,400,'right',MU);
+  T('فاتورة',90,130,58,700,'left',MR);
+  const dt=(()=>{const a=String(o.at||'');let m=/^(\d{4})-(\d{2})-(\d{2})/.exec(a);if(m)return m[3]+'/'+m[2]+'/'+m[1];m=/^(\d{1,2}\/\d{1,2}\/\d{4})/.exec(a);return m?m[1]:a.slice(0,10)})();
+  x.direction='ltr';T('#'+o.ref,90,175,26,600,'left',INK);T(dt,90,210,22,400,'left',MU);x.direction='rtl';
+  x.fillStyle=LN;x.fillRect(90,250,1060,2);
+  let y=300;T('فاتورة إلى',1150,y,22,600,'right',MU);
+  T(o.name||'—',1150,y+42,30,600);
+  const ph=String(o.phone||'').trim(),wl=String(o.wilaya||'').split('|')[0].trim();
+  let yy=y+82;if(ph){x.direction='ltr';T(ph,1150,yy,24,400,'right',INK);x.direction='rtl';yy+=36}
+  if(wl){T(wl,1150,yy,24,400,'right',INK);yy+=36}
+  if(np>1)T('صفحة '+(page+1)+' من '+np,90,y,20,400,'left',MU);
+  y=Math.max(yy,y+120)+30;
+  const cx={no:1135,p:1080,q:560,u:400,t:108};
+  x.fillStyle=MR;x.beginPath();x.roundRect?x.roundRect(90,y,1060,58,12):x.rect(90,y,1060,58);x.fill();
+  T('#',cx.no,y+38,22,600,'right','#fff');T('الصنف',cx.p,y+38,22,600,'right','#fff');T('الكمية',cx.q,y+38,22,600,'center','#fff');T('سعر الوحدة',cx.u,y+38,22,600,'center','#fff');T('المجموع',cx.t,y+38,22,600,'left','#fff');
+  y+=58;
+  const wrap=(t,max)=>{x.font='400 23px '+F;const w=String(t).split(/\s+/),L=[];let l='';w.forEach(v=>{const tt=l?l+' '+v:v;if(x.measureText(tt).width>max&&l){L.push(l);l=v}else l=tt});if(l)L.push(l);return L.slice(0,2)};
+  rows.forEach((it,k)=>{const L=wrap(it.p,440),h=L.length>1?78:58;if(k%2){x.fillStyle='#fbf7f1';x.fillRect(90,y,1060,h)}
+    T(startNo+k+1,cx.no,y+37,22,400,'right',MU);L.forEach((l,j)=>T(l,cx.p,y+37+j*30,23,400));
+    T(it.q,cx.q,y+37,23,600,'center');T(it.u?money(it.u):'—',cx.u,y+37,23,400,'center');T(it.u?money(it.u*it.q):'—',cx.t,y+37,23,600,'left');
+    y+=h;x.fillStyle=LN;x.fillRect(90,y,1060,1)});
+  if(page===np-1){
+    const its=parseItems(o.summary),sub=its.reduce((a,i)=>a+(i.u||0)*i.q,0),tot=+o.total||sub,disc=+o.discount||Math.max(0,Math.round((sub-tot)*1000)/1000);
+    y+=40;const lx=90,rx=520;
+    const line=(l,v,b)=>{T(l,rx,y,b?28:23,b?700:400,'right',b?MR:INK);T(v,lx,y,b?30:23,b?700:500,'left',b?MR:INK);y+=b?0:42};
+    if(disc>0.0005&&sub>tot){line('المجموع قبل الخصم',money(sub)+' ر.ع');line('الخصم'+(o.coupon?' ('+o.coupon+')':''),'- '+money(disc)+' ر.ع')}
+    x.fillStyle='#f6ece0';x.fillRect(lx-10,y-10,rx-lx+40,64);y+=33;line('الإجمالي',money(tot)+' ر.ع',true);
+    const st=ost(o.status);T(st==='new'?'الحالة: بانتظار الدفع':'الحالة: مدفوع ✓',1150,y-28,23,600,'right',st==='new'?'#b45309':'#15803d');
+  }
+  T('شكراً لثقتكم بأساس عُمان 🤍',620,1660,26,600,'center',MR);T('assas-oman.com',620,1700,20,400,'center',MU);
+  return c}
+async function invoice(o){
+  const J=window.jspdf&&window.jspdf.jsPDF;if(!J){toast('ما قدرت أحمل أداة PDF، تأكدي من النت');return}
+  toast('جاري تجهيز الفاتورة…');await loadLabelFonts();try{await document.fonts.load('700 30px "IBM Plex Sans Arabic"','فاتورة')}catch(e){}
+  const logo=await logoImg(),{P}=invPages(o),doc=new J({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+  let n=0;P.forEach((rows,k)=>{if(k)doc.addPage('a4','portrait');const c=drawInvoice(o,k,P.length,rows,n,1240,logo);n+=rows.length;doc.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297,undefined,'FAST')});
+  const url=doc.output('bloburl');const a=document.createElement('a');a.href=url;a.download='فاتورة-'+o.ref+'.pdf';a.target='_blank';document.body.appendChild(a);a.click();a.remove()}
 async function labels(list){
   const os=list.map(o=>({no:o.ref,ref:o.ref,name:o.name,phone:o.phone,wilaya:String(o.wilaya||'').split('|')[0].trim(),area:'',ship:shipOf(o)==='مكتب'?'مكتب':'مندوب',courier:'',tracking:o.tracking,date:String(o.at||'').slice(0,10),items:oitems(o).filter(i=>!isPackIt(i.p)).map(i=>({p:i.p,q:i.q}))}));
   openSheet('بوليصة الشحن'+(os.length>1?' · '+os.length+' طلب':''),`<p class="muted" style="margin:0;font-size:13px">المقاس 100 × 150 مم (4×6 للطابعة الحرارية)، صفحة لكل طلب.</p><div class="lblwrap" id="lw"><div class="muted">جاري تجهيز البوليصة…</div></div>`,`<button class="btn primary" id="lpdf">حفظ PDF</button><button class="btn" id="cx">إغلاق</button>`);
