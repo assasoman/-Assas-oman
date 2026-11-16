@@ -1,0 +1,10 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          curl -sL "$H?admin=ping&key=pzjsn5es" | head -c 400; echo
+          curl -sL -o /dev/null -w "POST status %{http_code}\n" -X POST -H 'Content-Type: text/plain' --data '{"type":"admin","key":"pzjsn5es","action":"ping"}' "$H"
