@@ -462,7 +462,7 @@ const phK=p=>String(p||'').replace(/\D/g,'').slice(-8);
 const isOpen=o=>['new','confirmed','ready'].includes(ost(o.status));
 const waN=p=>{const d=String(p||'').replace(/\D/g,'');return d.length===8?'968'+d:d};
 const when=v=>{const m=/^(\d{4})-(\d{2})-(\d{2})T?(\d{2})?:?(\d{2})?/.exec(v||'');return m?`${+m[3]}/${+m[2]}${m[4]?' · '+m[4]+':'+m[5]:''}`:String(v||'').slice(0,16)};
-const shipOf=o=>/المكتب/.test(o.wilaya)?'مكتب':/البيت|المنزل/.test(o.wilaya)?'بيت':'';
+const shipOf=o=>/مكتب/.test(o.wilaya)?'مكتب':/البيت|منزل/.test(o.wilaya)?'بيت':'';
 if(!O){try{const c=JSON.parse(store.get('asas-admin-orders')||'null');if(c&&c.orders)O=c}catch(e){}}
 async function loadOrders(force){if(OLOAD)return;if(!force&&O&&Date.now()-OAT<20000)return;OLOAD=true;
   try{O=await api({action:'orders',limit:400});{const seen=new Set();O.orders=O.orders.filter(o=>{const k=String(o.ref||'').trim().toUpperCase();if(!k)return true;if(seen.has(k))return false;seen.add(k);return true})}OAT=Date.now();try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
@@ -628,7 +628,7 @@ function drawNO(){
   <div class="fgrid"><label class="fld">الاسم<input id="n-name" value="${esc(NO.name)}"></label><label class="fld">الهاتف<input id="n-phone" dir="ltr" inputmode="tel" value="${esc(NO.phone)}"></label></div>
   <label class="fld">الإيميل (لو فيه بكج)<input id="n-email" dir="ltr" inputmode="email" value="${esc(NO.email)}"></label>
   <label class="fld">الولاية والمنطقة<input id="n-wil" value="${esc(NO.wilaya)}"></label>
-  <div class="chips" style="margin:-4px -16px 0">${['🏠 لين البيت','🏢 لين المكتب'].map(t=>`<button type="button" class="chip ${NO.dt===t?'on':''}" data-dt="${t}">${t}</button>`).join('')}</div></div>
+  <div class="chips" style="margin:-4px -16px 0">${['🏠 للمنزل','🏢 للمكتب'].map(t=>`<button type="button" class="chip ${NO.dt===t?'on':''}" data-dt="${t}">${t}</button>`).join('')}</div></div>
   <section><h3 style="font-size:14px;margin:0 0 8px">الأصناف</h3><div style="display:flex;flex-direction:column;gap:10px">
   ${NO.items.map((i,n)=>`<div class="item"><div class="l1"><label class="fld">الصنف<input data-ip="${n}" list="plist" placeholder="اسم المنتج أو البكج" value="${esc(i.p)}" autocomplete="off"></label><button class="ibtn" data-ix="${n}" aria-label="حذف">✕</button></div>
     <div class="g2"><label class="fld">الكمية<input data-iq="${n}" type="number" min="1" inputmode="numeric" value="${esc(i.q)}"></label><label class="fld">سعر الحبة<input data-iu="${n}" inputmode="decimal" value="${esc(i.u)}"></label></div></div>`).join('')}
