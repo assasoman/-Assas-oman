@@ -116,6 +116,16 @@
 .adhd b{font-size:15.5px;display:block}.adhd span{font-size:12.5px;color:var(--muted)}
 .adhd button{margin-inline-start:auto;border:0;background:var(--ink);color:#fff;border-radius:99px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
 .dtype{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 4px}.dtype>span{grid-column:1/-1;font-weight:700;font-size:14px}.dtype label{position:relative;display:flex;align-items:center;justify-content:center;border:1.5px solid #E7E5EC;border-radius:999px;padding:9px 6px;background:#fff;cursor:pointer;text-align:center}.ordrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ordrow label{min-width:0}.ordrow input{min-width:0;width:100%}.dtype label input{position:absolute;opacity:0;pointer-events:none}.dtype label b{font-size:14px}.dtype label small{font-size:11px;color:#7B7785}.dtype label:has(input:checked){border-color:var(--pink);background:#FFF0F5;box-shadow:0 0 0 2px rgba(232,74,132,.15)}
+header.top .in{min-height:64px!important;padding-top:10px}
+.hsearch{padding:0 0 10px}
+.hsearch label{display:flex;align-items:center;gap:8px;background:#F7F4F8;border:1px solid #EEE9F0;border-radius:99px;padding:0 14px;min-height:42px;color:var(--muted)}
+.hsearch svg{width:18px;height:18px}
+.hsearch input{border:0;background:none;outline:0;flex:1;min-width:0;font-size:16px;color:var(--ink);font-family:var(--font)}
+.brand img{width:46px!important;height:46px!important}
+.brand b{font-size:24px!important;letter-spacing:0;color:var(--pink)}
+.brand small{direction:rtl!important;text-align:right!important;letter-spacing:0!important;font-size:11px!important;margin-top:2px}
+.total{font-family:var(--font);font-weight:700;font-size:14px}
+.circ{width:44px!important;height:44px!important}
 </style></head><body>
 
 <meta name="description" content="أساس عُمان: بكجات وملفات قص للكاميو للمناسبات، طباعة UV، دورات الكاميو، ومطبوعات وتوزيعات، وتوصيل داخل مسقط.">
@@ -461,19 +471,19 @@ footer .kidrow img{height:130px;width:auto}
   <symbol id="cloud" viewBox="0 0 120 70"><path d="M20 70a20 20 0 0 1 2-40 26 26 0 0 1 48-12 22 22 0 0 1 38 14 19 19 0 0 1-4 38Z"/></symbol>
 </svg>
 
-<div class="search gut"><div class="max"><label><svg class="i"><use href="#search"/></svg><input id="q" type="search" placeholder="ابحث عن بكج أو منتج" autocomplete="off"></label></div></div>
 
 <header class="top gut">
   <div class="in max">
     <div class="start">
       <button class="burger" data-act="menu" aria-label="القائمة"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-      <a class="brand" href="#top"><img data-logo alt="شعار أساس"><span><b>أسـ<i>ـاس</i></b><small>Assas.oman</small></span></a>
+      <a class="brand" href="#top"><img data-logo alt="شعار أساس"><span><b>أساس <i>عُمان</i></b><small>توزيعات · ملفات قص · طباعة</small></span></a>
     </div>
     <div class="end">
       <span class="total num" id="htotal"></span>
       <button class="circ" data-act="cart" aria-label="السلة"><svg class="i"><use href="#bag"/></svg><span class="cnt num" id="hcount">0</span></button>
     </div>
   </div>
+  <div class="hsearch max"><label><svg class="i"><use href="#search"/></svg><input id="q" type="search" placeholder="ابحثي عن بكج أو منتج" autocomplete="off"></label></div>
 </header>
 
 <main class="gut" id="top">
