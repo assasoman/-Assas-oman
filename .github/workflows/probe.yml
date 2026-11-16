@@ -1,0 +1,12 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          echo "PING $(curl -sL "$H?admin=ping&key=pzjsn5es")"
+          echo "BANK $(curl -sL -H 'Content-Type: text/plain' --data '{"type":"bank","key":"pzjsn5es","text":"تم خصم OMR 6.760 من حسابك رقم 0334XXXX0027 بإستخدام بطاقة الخصم"}' "$H")"
+          echo "RCPT $(curl -sL -H 'Content-Type: text/plain' --data '{"type":"receipt","ref":"ZZTEST00","ph":"0000","img":"data:image/jpeg;base64,AAAA"}' "$H")"
+          echo "TRAN $(curl -sL -H 'Content-Type: text/plain' --data '{"type":"admin","key":"pzjsn5es","action":"transfers"}' "$H" | head -c 300)"
