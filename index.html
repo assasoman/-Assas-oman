@@ -836,6 +836,23 @@ function trackFetch(list,cb){
 function stepIdx(st,dig){st=String(st||'');if(!st||st==='جديد')return 0;if(/ملغي/.test(st))return -1;
   if(dig)return /إرسال الملف على/.test(st)?2:1;
   return /التسليم|التوصيل 🎉|تم التوصيل/.test(st)?3:/شحن|المندوب/.test(st)?2:1}
+
+/* ---------- إيصال التحويل ---------- */
+const RC_ON=false;
+const rcBtn=ref=>!RC_ON?'':`<div class="rcbox" data-rcbox="${esc(ref)}"><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 أرفقي صورة إيصال التحويل</button><small>بعد التحويل أرفقي صورة الإيصال من تطبيق البنك، ونأكد طلبك ونرسل الملف تلقائيًا</small></div>`;
+function rcPick(ref){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{if(i.files[0])rcSend(ref,i.files[0])};i.click()}
+function rcShrink(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.85))};im.onerror=rej;im.src=u})}
+async function rcSend(ref,file){
+  const box=document.querySelector(`[data-rcbox="${CSS.escape(ref)}"]`),set=(h)=>{if(box)box.innerHTML=h};
+  const o=myOrd.find(x=>String(x.ref).toUpperCase()===String(ref).toUpperCase());const ph=o&&o.ph;
+  if(!ph){toast('ما لقيت بيانات الطلب على هالجهاز، أرسلي الإيصال واتساب');return}
+  set('<div class="rcst">⏳ جاري رفع الإيصال…</div>');
+  try{const img=await rcShrink(file);
+    const r=await fetch(ORDERS_HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'receipt',ref,ph,img})});
+    let j={};try{j=JSON.parse(await r.text())}catch(e){}
+    if(j.error){set(`<div class="rcst x">⚠️ ${esc(j.error)}</div><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 جربي مرة ثانية</button>`);return}
+    set(`<div class="rcst ok">${esc(j.msg||'وصلنا الإيصال 🤍')}</div>`);if(j.confirmed){ORDST[String(ref).toUpperCase()]={status:'تم تأكيد الطلب ✅'}}
+  }catch(e){set('<div class="rcst x">⚠️ ما قدرنا نرفع الإيصال، جربي مرة ثانية أو أرسليه واتساب</div>')}}
 function ordCard(o){const d=new Date(o.at);const dig=o.items.some(i=>i.k)&&!o.items.some(i=>!i.k);const S=ORDST[String(o.ref).toUpperCase()];
   const steps=dig?['تم استلام الطلب','تأكيد الطلب','الملف على إيميلك 📩']:['تم استلام الطلب','تأكيد الطلب','الشحن 🚚','التسليم 🎉'];
   const k=S?stepIdx(S.status,dig):0;
@@ -843,6 +860,7 @@ function ordCard(o){const d=new Date(o.at);const dig=o.items.some(i=>i.k)&&!o.it
     ${S?`<div class="ostat ${k<0?'x':''}">الحالة: <b>${esc(S.status==='جديد'?'بانتظار تأكيد التحويل':S.status)}</b>${S.note?`<small>${esc(S.note)}</small>`:''}</div>`:''}
     <ul>${o.items.map(i=>`<li>${esc(i.p)} × ${i.q}</li>`).join('')}</ul>
     ${o.total?`<div class="ot"><span>الإجمالي</span><b class="num">${esc(o.total)} ${CURRENCY}</b></div>`:''}
+    ${(!S||S.status==='جديد')?rcBtn(o.ref):''}
     ${k>=0?`<div class="osteps">${steps.map((s,i)=>`<span class="${i<=k?'on':''}">${s}</span>`).join('<i>←</i>')}</div>`:''}
     ${dig&&k<2?'<p class="hint" style="margin:0">بعد ما نأكد التحويل يوصلك الملف على الإيميل. شيكي «الوارد» و«Spam» 📩</p>':''}
     <a class="wabtn" target="_blank" rel="noopener noreferrer" href="https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent('السلام عليكم، أبي أستفسر عن طلبي رقم '+o.ref)}"><svg><use href="#wa"/></svg>استفسري عن الطلب</a></div>`}
@@ -1034,7 +1052,7 @@ async function submitOrder(form){
   const multi=parts.length>1;
   const waBtn=(p,l)=>`<a class="wabtn" href="${p.wa}" target="_blank" rel="noopener noreferrer"><svg><use href="#wa"/></svg>${l}</a>`;
   if(ok){cart=[];save();if(hasUV){UVF={};saveUVF();uvList()}renderHeader();renderRails();
-    const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}</div>`).join('');
+    const blocks=parts.map(p=>`<div style="border:2px dashed #ffc2d8;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px">${multi?`<b>${p.tag} · <span class="num">${money(p.t.sum)} ${CURRENCY}</span></b>`:''}<p style="margin:0">رقم الطلب <b class="num" dir="ltr">${p.ref}</b></p>${waBtn(p,multi?'أرسل تفاصيل '+p.tag+' عبر واتساب':'أرسل تفاصيل الطلب عبر واتساب')}${rcBtn(p.ref)}</div>`).join('');
     showSheet(`<div style="text-align:center;display:flex;flex-direction:column;gap:12px;padding:8px 0"><div style="font-size:54px">✅</div><h2>تم استلام طلبك</h2>${multi?'<p class="hint">تم تسجيل طلبين منفصلين، لكل منهما دفعته.</p>':''}${blocks}${bankBox()}${hasUV?'<p class="hint" style="color:#2E7D5B;font-weight:700">🎨 وصلنا تصميمك، وبنتواصل معك قبل الطباعة.</p>':''}<p class="hint">سنتواصل معك لتأكيد الطلب${g.dig.length?'، ويصلك الملف على بريدك الإلكتروني بعد التأكيد':''}.</p>${g.dig.length?'<div style="background:#FFF3D1;border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.8;text-align:start">📩 <b>مهم:</b> يوصلك الملف من <b dir="ltr">assasoman7@gmail.com</b>. إذا ما لقيتيه في البريد الوارد، شيكي <b>البريد غير الهام (Spam / Junk)</b> واضغطي <b>«ليس بريدًا مزعجًا»</b>، وكذا توصلك رسائلنا الجاية في الوارد 💗</div>':''}</div>`);
     if(g.dig.length)setTimeout(thanksPop,350);
   }else{
@@ -1115,6 +1133,7 @@ document.addEventListener('click',e=>{
   }
   if(x=g('[data-scat]')){schCat=x.dataset.scat;renderRails();return}
   if(x=g('[data-store]')){openStore(x.dataset.store||null);return}
+  if(x=g('[data-rc]')){rcPick(x.dataset.rc);return}
   if(x=g('[data-tjin]')){tajirLogin();return}
   if(x=g('[data-tjout]')){tajirSet(false);toast('تم الخروج من وضع التاجرات');return}
   if(x=g('[data-stsel]')){const sc=$('#sheet .in')?.scrollTop||0;openStore(x.dataset.stsel);return}
@@ -1342,6 +1361,11 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .tjbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#22202B;color:#fff;border-radius:14px;padding:9px 12px;font-size:13px;font-weight:700;margin-bottom:12px}
 .tjbar button{border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:12px;cursor:pointer}
 .adg{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:700}
+
+.rcbox{display:flex;flex-direction:column;gap:4px;align-items:stretch;text-align:center}
+.rcbtn{border:1.5px dashed var(--pink);background:#FFF3F8;color:var(--pink);border-radius:14px;padding:11px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer}
+.rcbox small{font-size:11.5px;color:var(--muted);line-height:1.5}
+.rcst{border-radius:12px;padding:10px;font-weight:700;font-size:13.5px;background:#F3F1F6}.rcst.ok{background:#E8F7EC;color:#1F7A3D}.rcst.x{background:#FDECEC;color:#B3263B}
 </style>
 <script>
 (function(){
