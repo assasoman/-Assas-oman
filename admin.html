@@ -466,7 +466,7 @@ const shipOf=o=>/مكتب/.test(o.wilaya)?'مكتب':/البيت|منزل/.test(
 if(!O){try{const c=JSON.parse(store.get('asas-admin-orders')||'null');if(c&&c.orders)O=c}catch(e){}}
 async function loadOrders(force){if(OLOAD)return;if(!force&&O&&Date.now()-OAT<20000)return;OLOAD=true;
   try{O=await api({action:'orders',limit:400});{const seen=new Set();O.orders=O.orders.filter(o=>{const k=String(o.ref||'').trim().toUpperCase();if(!k)return true;if(seen.has(k))return false;seen.add(k);return true})}OAT=Date.now();try{store.set('asas-admin-orders',JSON.stringify(O))}catch(e){}}catch(e){if(!O){const m=$('#main');if(m&&['home','orders','dv'].includes(tab))m.innerHTML='<div class="panel empty"><p>'+esc(e.message)+'</p><button class="btn primary" id="rt">حاولي مرة ثانية</button></div>';const b=$('#rt');if(b)b.onclick=()=>loadOrders(true)}}
-  OLOAD=false;if(['home','orders','dv'].includes(tab))drawList();if(OSEL&&!$('#sheet').hidden)drawOrder()}
+  OLOAD=false;loadTr();if(['home','orders','dv'].includes(tab))drawList();if(OSEL&&!$('#sheet').hidden)drawOrder()}
 setInterval(()=>{if(!document.hidden&&KEY&&['home','orders','dv'].includes(tab)&&$('#sheet').hidden)loadOrders(true)},60000);
 const mergeC=o=>{const k=phK(o.phone);if(k.length<8||!isOpen(o)||isDv(o))return [];return O.orders.filter(x=>x.ref!==o.ref&&isOpen(x)&&!isDv(x)&&phK(x.phone)===k)};
 const F_={new:o=>ost(o.status)==='new',prep:o=>ost(o.status)==='confirmed',ready:o=>ost(o.status)==='ready',ship:o=>ost(o.status)==='shipped',done:o=>['delivered','sent','cancelled','merged'].includes(ost(o.status)),all:()=>true};
@@ -507,11 +507,19 @@ function drawSales(){
   openSheet('📊 المبيعات',body);$('.sbody').querySelectorAll(':scope>*').forEach(e=>e.style.flexShrink='0');
   document.querySelectorAll('[data-sm]').forEach(b=>b.onclick=()=>{SM=b.dataset.sm;const y=$('.sbody').scrollTop;drawSales();$('.sbody').scrollTop=0})
 }
+
+let TR=[];
+async function loadTr(){try{const r=await api({action:'transfers'});TR=(r.transfers||[]).filter(t=>/بانتظار|ما فيه/.test(t.status));if(tab==='home'&&$('#sheet').hidden)drawList()}catch(e){TR=[]}}
+function trHTML(){if(!TR.length||!O)return '';
+  return `<div class="panel" style="padding:12px 14px;margin-bottom:12px;border:1.5px solid #F6C453;background:#FFFBEB"><div style="font-weight:700;margin-bottom:8px">💰 تحويلات وصلت من البنك (${TR.length})</div>${TR.slice().reverse().map(t=>{const c=O.orders.filter(o=>ost(o.status)==='new'&&Math.abs((+o.total||0)-t.amount)<0.0005);
+    return `<div style="border-top:1px dashed #F1D58A;padding:8px 0;display:flex;flex-direction:column;gap:6px"><div><b class="num">${money(t.amount)} ر.ع</b> · ${esc(t.sender||'—')} <span class="muted num" dir="ltr" style="font-size:12px;unicode-bidi:isolate">${esc(String(t.at).replace('T',' '))}</span></div>${c.length?`<div style="display:flex;flex-wrap:wrap;gap:6px">${c.map(o=>`<button class="btn sm primary" data-trl="${t.row}" data-ref="${esc(o.ref)}" data-orow="${o.row}">✅ ${esc(o.name||'')} · ${esc(o.ref)}</button>`).join('')}</div>`:'<div class="muted" style="font-size:12.5px">ما فيه طلب جديد بنفس المبلغ</div>'}<button class="btn sm" data-trx="${t.row}" style="align-self:flex-start">تجاهل</button></div>`}).join('')}</div>`}
+function bindTr(m){m.querySelectorAll('[data-trl]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{const r=await api({action:'linkTransfer',row:+b.dataset.trl,ref:b.dataset.ref,orow:+b.dataset.orow});toast('تأكد الطلب '+b.dataset.ref+(r.sent&&r.sent.length?' وانرسل الملف':''));await loadOrders(true)}catch(e){toast(e.message);b.disabled=false}});
+  m.querySelectorAll('[data-trx]').forEach(b=>b.onclick=async()=>{b.disabled=true;try{await api({action:'dismissTransfer',row:+b.dataset.trx});TR=TR.filter(t=>t.row!==+b.dataset.trx);drawList()}catch(e){toast(e.message);b.disabled=false}})}
 function drawHome(m){
   if(!O){m.innerHTML=loadingBox();loadOrders();return}
   const L0=O.orders.filter(o=>!isDv(o)),c=k=>L0.filter(F_[k]).length,dvO=O.orders.filter(o=>isDv(o)&&!['delivered','cancelled'].includes(ost(o.status))).length;
   const nw=L0.filter(F_.new).reverse(),rdy=c('ready'),MS=missAgg();
-  m.innerHTML=`<div class="tiles">
+  m.innerHTML=trHTML()+`<div class="tiles">
     <button class="tile unpaid" data-go="new"><b class="num">${c('new')}</b><span>جديدة بانتظار الدفع</span></button>
     <button class="tile missing" data-go="prep"><b class="num">${c('prep')}</b><span>قيد التجهيز</span></button>
     <button class="tile ready" data-go="ready"><b class="num">${rdy}</b><span>جاهزة للشحن</span></button>
@@ -526,6 +534,7 @@ function drawHome(m){
   m.querySelectorAll('[data-arr]').forEach(b=>b.onclick=()=>arrive(b.dataset.arr,b));
   m.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const g=b.dataset.go;if(g==='dv'){tab='dv'}else{tab='orders';OF=g}store.set('asas-admin-tab',tab);render()});
   $('#hsales').onclick=()=>{SM='all';drawSales()};
+  bindTr(m);
   const hl=$('#hlbl');if(hl)hl.onclick=()=>labels(L0.filter(o=>ost(o.status)==='ready'));
   bindCards(m)}
 function pendCard(o){const its=oitems(o),mc=mergeC(o).length;
