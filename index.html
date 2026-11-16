@@ -621,18 +621,27 @@ footer .kidrow img{height:130px;width:auto}
   </section>
 </main>
 
-<footer class="gut" id="contact">
+<footer class="gut ft2" id="contact">
   <div class="max">
-    <div class="cols">
-      <div><h3>متجر أساس</h3><p>مرحبًا بكم في أساس، براند عُماني يقدّم ملفات قص للكاميو للمناسبات والتوزيعات.</p></div>
-      <div><h3>روابط مهمة</h3><div class="lnk"><button data-act="all" data-k="packs">البكجات</button><button data-act="cart">سلة المشتريات</button><a href="lucky.html">عجلة الحظ 🎡</a><a href="delivery.html">توصيل داخل مسقط 🛵</a><button data-bn="myord">طلباتي 📦</button><button data-bn="favs">المفضلة ❤️</button></div></div>
-      <div><h3>تواصل معنا</h3>
-        <a class="ct wa-general" target="_blank" rel="noopener noreferrer"><span class="circ"><svg class="i" style="fill:currentColor;stroke:none"><use href="#wa"/></svg></span><span class="num" id="wanum"></span></a>
-        <div class="soc"><a class="circ" href="https://instagram.com/assas.oman" target="_blank" rel="noopener noreferrer" aria-label="انستقرام"><svg class="i"><use href="#ig"/></svg></a><button class="circ" id="copy" aria-label="نسخ الرقم" style="font-size:12px;font-weight:700">نسخ</button></div>
+    <div class="fcard">
+      <img class="fkids" data-char="pair_phone" alt="شخصيات أساس">
+      <h3 class="fbrand">أساس <i>عُمان</i></h3>
+      <p class="fdesc">براند عُماني لملفات قص الكاميو، والتوزيعات، وطباعة UV</p>
+      <div class="fcta">
+        <a class="fbtn fwa wa-general" target="_blank" rel="noopener noreferrer"><svg class="i"><use href="#wa"/></svg><span class="num" id="wanum"></span></a>
+        <a class="fbtn fig" href="https://instagram.com/assas.oman" target="_blank" rel="noopener noreferrer"><svg class="i"><use href="#ig"/></svg><span>assas.oman</span></a>
       </div>
+      <button id="copy" class="fcopy" type="button">نسخ الرقم</button>
     </div>
-    <div class="kidrow"><img data-char="pair_wave" alt=""></div>
-    <div class="made">© أساس عُمان · صُنع بحب في عُمان</div>
+    <div class="flinks">
+      <button data-act="all" data-k="packs">🎁 البكجات</button>
+      <button data-act="cart">🛍️ السلة</button>
+      <button data-bn="myord">📦 طلباتي</button>
+      <button data-bn="favs">❤️ المفضلة</button>
+      <a href="delivery.html">🛵 توصيل مسقط</a>
+      <a href="lucky.html">🎡 عجلة الحظ</a>
+    </div>
+    <div class="made">جميع الحقوق محفوظة لدى <b dir="ltr">assas.oman</b> © 2026</div>
   </div>
 </footer>
 
@@ -1278,6 +1287,24 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .apphow h3{margin:0 0 8px;font-size:18px}.apphow ol{margin:0;padding-inline-start:22px}.apphow li{margin:6px 0}
 .apphow .sh{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:#EEF4FF;color:#1A73E8;vertical-align:middle;font-size:15px}
 .apphow button{margin-top:14px;width:100%;border:0;background:#22202B;color:#fff;font:inherit;font-weight:800;border-radius:14px;padding:12px;cursor:pointer}
+
+.ft2{background:linear-gradient(180deg,var(--ground) 0,#FFEFF5 100%);border-top:0;padding-block:28px 130px}
+.ft2 .fcard{background:#fff;border-radius:28px;padding:22px 18px 18px;text-align:center;box-shadow:0 14px 34px -22px rgba(232,74,132,.45);display:flex;flex-direction:column;align-items:center;gap:6px}
+.ft2 .fkids{width:220px;height:auto;margin-top:-6px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.12))}
+.ft2 .fbrand{margin:4px 0 0;font-family:var(--font-fun);font-size:28px;font-weight:800;color:var(--pink);line-height:1.2}
+.ft2 .fbrand i{font-style:normal;color:var(--sky)}
+.ft2 .fdesc{margin:0;color:var(--muted);font-size:14px;line-height:1.6;max-width:30ch}
+.ft2 .fcta{display:flex;gap:10px;margin-top:10px;width:100%;justify-content:center;flex-wrap:wrap}
+.ft2 .fbtn{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:11px 18px;font-weight:700;font-size:15px;text-decoration:none;color:#fff}
+.ft2 .fbtn svg{width:20px;height:20px}
+.ft2 .fwa{background:#25C063}.ft2 .fwa svg{fill:currentColor;stroke:none}.ft2 .fwa span{direction:ltr;unicode-bidi:isolate}
+.ft2 .fig{background:linear-gradient(45deg,#F58529,#DD2A7B,#8134AF)}.ft2 .fig span{direction:ltr}
+.ft2 .fcopy{border:0;background:none;color:var(--muted);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer;margin-top:2px}
+.ft2 .flinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.ft2 .flinks button,.ft2 .flinks a{background:#fff;border:1px solid #F3E3EA;border-radius:16px;padding:12px 10px;font:inherit;font-weight:700;font-size:14px;color:var(--ink);text-decoration:none;text-align:center;cursor:pointer}
+.ft2 .made{text-align:center;color:var(--muted);font-size:13px;margin-top:18px;padding-top:14px;border-top:1px dashed #F0D9E3}
+.ft2 .made b{color:var(--ink)}
+@media(min-width:760px){.ft2 .flinks{grid-template-columns:repeat(3,1fr)}}
 </style>
 <script>
 (function(){
