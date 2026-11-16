@@ -1,0 +1,13 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          curl -sL -H 'Content-Type: text/plain' --data '{"type":"admin","key":"pzjsn5es","action":"orders","limit":400}' "$H" > o.json
+          wc -c o.json; head -c 300 o.json; echo
+          python3 -c "
+          import json;d=json.load(open('o.json'));o=d.get('orders',[]);print('n',len(o));print([ (x.get('ref'),x.get('row'),x.get('status')) for x in o[-4:]]);print([k for k in d])
+          print([x for x in o if x.get('ref')=='ASTWVL84'])"
