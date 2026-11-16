@@ -979,7 +979,7 @@ const splitCart=list=>({dig:list.filter(l=>isPackItem(findItem(l.id))),phy:list.
 function refCode(){return 'A'+Date.now().toString(36).toUpperCase().slice(-5)+Math.floor(Math.random()*90+10)}
 async function submitOrder(form){
   const f=Object.fromEntries(new FormData(form).entries());const msg=$('#ordmsg');const bad=m=>{msg.textContent=m;msg.hidden=false};
-  f.name=(f.name||'').trim();f.phone=(f.phone||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d+]/g,'');f.email=(f.email||'').trim();f.wilaya=(f.wilaya||'').trim();
+  f.name=(f.name||'').trim();f.phone=(f.phone||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d+]/g,'');f.email=(f.email||'').replace(/[\u200e\u200f\u202a-\u202e\s]/g,'').toLowerCase().replace(/^(https?:\/\/)?www\./,'').replace(/@(gmai|gmial|gmal|gamil|gmaill|gnail)\.com$/,'@gmail.com').replace(/@gmail\.(co|cm|con|om)$/,'@gmail.com').replace(/@(hotmial|hotmai|hotmal)\.com$/,'@hotmail.com');f.wilaya=(f.wilaya||'').trim();
   if(!f.name)return bad('اكتب اسمك');
   if(f.phone.replace(/\D/g,'').length<8)return bad('رقم الهاتف غير صحيح');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email))return bad('اكتب بريدًا إلكترونيًا صحيحًا');
