@@ -576,7 +576,7 @@ footer .kidrow img{height:130px;width:auto}
 
   <section class="max" id="addons" aria-labelledby="h-addons" style="margin-top:28px;width:100%" hidden>
     <div class="sh"><h2 id="h-addons">🧩 ملحقات البكجات</h2></div>
-    <p class="adsub">اختاري البكج وشوفي ملحقاته</p>
+    <p class="adsub">مطبوعات جاهزة بنفس ثيم البكج</p>
     <div id="addons-list"></div>
   </section>
 
@@ -879,17 +879,22 @@ function card(it){
 let query='',expanded={},schCat='الكل';
 const normAr=t=>String(t||'').toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').trim();
 const qMatch=txt=>{if(!query)return true;const t=normAr(txt);return normAr(query).split(' ').filter(Boolean).every(w=>t.includes(w)||(w.startsWith('ال')&&t.includes(w.slice(2))))};
-let adSel=null,adUser=false;
-function drawAddons(){const box=$('#addons-list');if(!box)return;
+function storeGroups(){
   const groups=PACKS.filter(p=>p.addons&&p.addons.length&&!/مدرس/.test(p.section||'')).map(p=>({id:p.id,name:String(p.name).replace(/^بكج\s*/,'').trim(),p,items:p.addons.map(id=>SHOP.find(x=>x.id===id)).filter(Boolean)})).filter(g=>g.items.length).reverse();
   const used=new Set();groups.forEach(g=>g.items.forEach(i=>used.add(i.id)));
   const other=SHOP.filter(x=>!used.has(x.id)&&!/UV/i.test(x.name));
   if(other.length)groups.push({id:'_other',name:'منتجات أخرى',items:other});
-  if(!groups.length){box.innerHTML='';box.closest('section').hidden=true;return}
-  if(!adUser||!groups.some(g=>g.id===adSel))adSel=groups[0].id;
-  const g=groups.find(x=>x.id===adSel);
-  box.innerHTML=`<div class="schips adchips">${groups.map(x=>`<button type="button" data-adsel="${esc(x.id)}" class="${x.id===adSel?'on':''}">${esc(x.name)}</button>`).join('')}</div>${g.p?`<button class="adopen" data-open="${esc(g.p.id)}">شوفي ${esc(String(g.p.name).trim())} ←</button>`:''}<div class="rail grid">${g.items.map(card).join('')}</div>`;
+  return groups}
+function drawAddons(){const box=$('#addons-list');if(!box)return;
+  const G=storeGroups();if(!G.length){box.innerHTML='';box.closest('section').hidden=true;return}
+  const g=G[0];const h=$('#h-addons');if(h)h.textContent='🧩 ملحقات '+(g.p?String(g.p.name).trim():'البكجات');
+  box.innerHTML=`<div class="rail grid">${g.items.slice(0,4).map(card).join('')}</div><button type="button" class="stmore" data-store="">تصفّح المتجر كاملًا<small>${SHOP.filter(x=>!/UV/i.test(x.name)||G.some(z=>z.items.includes(x))).length} منتجًا لجميع المناسبات</small></button>`;
   box.closest('section').hidden=!!query}
+let stSel=null;
+function openStore(sel){const G=storeGroups();if(!G.length)return;
+  if(sel)stSel=sel;if(!G.some(g=>g.id===stSel))stSel=G[0].id;const g=G.find(x=>x.id===stSel);
+  if($('#sheet').hidden)closeAll(true);
+  showSheet(`<h2>متجر أساس</h2><p class="hint">منتجات ومطبوعات جاهزة، مصنّفة حسب المناسبة</p><div class="schips adchips">${G.map(x=>`<button type="button" data-stsel="${esc(x.id)}" class="${x.id===stSel?'on':''}">${esc(x.name)}</button>`).join('')}</div>${g.p?`<button class="adopen" data-open="${esc(g.p.id)}">عرض ${esc(String(g.p.name).trim())} ←</button>`:''}<div class="rail grid" style="grid-auto-flow:row;grid-template-columns:1fr 1fr;overflow:visible">${g.items.map(card).join('')}</div>`);try{$('#sheet [data-stsel].on').scrollIntoView({inline:'center',block:'nearest'})}catch(e){}}
 function renderRails(){
   try{setTimeout(drawAddons,0)}catch(e){}
   const m=it=>qMatch(it.name+' '+(it.sub||'')+' '+(it.desc||'')+' '+(it.tag||''));
@@ -1064,7 +1069,7 @@ function uvFit(sel){const MAX={A4:[2480,3508],A3:[3508,4961]}[sel.size];
 
 /* ---------- menu ---------- */
 function renderMenu(){
-  $('#menu-list').innerHTML=[['packs','البكجات'],['addons','ملحقات البكجات'],['uv','طباعة UV'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="delivery.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">توصيل داخل مسقط 🛵<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
+  $('#menu-list').innerHTML=`<li><button data-store="">🛍️ متجر أساس<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`+[['packs','البكجات'],['uv','طباعة UV'],['courses','دورات أساس'],['contact','تواصل معنا']].map(([k,l])=>`<li><button data-go="${k}">${l}<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></button></li>`).join('')+`<li><a href="lucky.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">عجلة الحظ 🎡<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`+`<li><a href="delivery.html" style="display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit">توصيل داخل مسقط 🛵<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--muted)"><path d="m15 6-6 6 6 6"/></svg></a></li>`;
 }
 
 /* ---------- open/close ---------- */
@@ -1080,7 +1085,7 @@ document.addEventListener('click',e=>{
   if(e.target&&e.target.id==='sheet'){closeAll();return}
   if(x=g('[data-bn]')){const k=x.dataset.bn;
     if(k==='home'){closeAll();window.scrollTo({top:0,behavior:'smooth'});return}
-    if(k==='packs'){closeAll();const el=document.getElementById('packs');if(el)el.scrollIntoView({behavior:'smooth'});return}
+    if(k==='packs'){openStore();return}
     return open(k)}
   if(x=g('[data-act]')){const a=x.dataset.act;
     if(a==='menu')return open('menu');
@@ -1090,7 +1095,8 @@ document.addEventListener('click',e=>{
     if(a==='all'){expanded[x.dataset.k]=!expanded[x.dataset.k];renderRails();x.textContent=expanded[x.dataset.k]?'عرض أقل':'عرض الكل';return}
   }
   if(x=g('[data-scat]')){schCat=x.dataset.scat;renderRails();return}
-  if(x=g('[data-adsel]')){adSel=x.dataset.adsel;adUser=true;drawAddons();return}
+  if(x=g('[data-store]')){openStore(x.dataset.store||null);return}
+  if(x=g('[data-stsel]')){const sc=$('#sheet .in')?.scrollTop||0;openStore(x.dataset.stsel);return}
   if(x=g('[data-go]')){closeAll();document.getElementById(x.dataset.go).scrollIntoView({behavior:'smooth'});return}
   if(x=g('[data-copyv]')){const v=x.dataset.copyv;try{navigator.clipboard.writeText(v).then(()=>toast('تم النسخ'),()=>toast(v))}catch(err){toast(v)}return}
   if(x=g('[data-fav]')){const id=x.dataset.fav;favs=favs.includes(id)?favs.filter(f=>f!==id):[...favs,id];saveFavs();renderRails();if(!$('#favs').hidden)renderFavs();return}
@@ -1305,6 +1311,10 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .ft2 .made{text-align:center;color:var(--muted);font-size:13px;margin-top:18px;padding-top:14px;border-top:1px dashed #F0D9E3}
 .ft2 .made b{color:var(--ink)}
 @media(min-width:760px){.ft2 .flinks{grid-template-columns:repeat(3,1fr)}}
+
+.stmore{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin-top:14px;border:0;border-radius:18px;padding:14px;background:linear-gradient(135deg,var(--pink),#F27BA6);color:#fff;font:inherit;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 10px 24px -14px rgba(232,74,132,.8)}
+.stmore small{font-weight:600;font-size:12px;opacity:.9}
+#sheet .adchips{flex-shrink:0;min-height:48px;padding-top:4px}#sheet .adchips button{flex-shrink:0}#sheet .adopen{flex-shrink:0}
 </style>
 <script>
 (function(){
