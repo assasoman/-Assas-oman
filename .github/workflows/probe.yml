@@ -1,8 +1,0 @@
-name: probe
-on: workflow_dispatch
-jobs:
-  p:
-    runs-on: ubuntu-24.04
-    steps:
-      - run: |
-          curl -sL -H 'Content-Type: text/plain' -d '{"type":"bank","key":"pzjsn5es","text":"عزيزي الزبون، لقد استلمت OMR 0.001 من PROBE TEST في حسابك 0334XXXXXXXX0027 . رقم المعاملةBNZWPROBE0000001. رصيدك"}' 'https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
