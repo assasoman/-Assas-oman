@@ -852,9 +852,9 @@ async function rcSend(ref,file){
   set('<div class="rcst">⏳ جاري رفع الإيصال…</div>');
   try{const img=await rcShrink(file);set('<div class="rcst">⏳ جاري قراءة الإيصال…</div>');const text=await rcOCR(img);set('<div class="rcst">⏳ جاري إرسال الإيصال…</div>');
     let j={};try{const r=await fetch(ORDERS_HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'receipt',ref,ph,img,text})});try{j=JSON.parse(await r.text())}catch(e){j={msg:'✅ تم إرسال الإيصال، بنأكد طلبك أول ما يوصلنا التحويل 🤍'}}}catch(e){j={msg:'✅ تم إرسال الإيصال، بنأكد طلبك أول ما يوصلنا التحويل 🤍'}}
-    if(j.error){set(`<div class="rcst x">⚠️ ${esc(j.error)}</div><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 جربي مرة ثانية</button>`);return}
+    if(j.error){set(`<div class="rcst bad">⚠️ ${esc(j.error)}</div><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 جربي مرة ثانية</button>`);return}
     set(`<div class="rcst ok">${esc(j.msg||'وصلنا الإيصال 🤍')}</div>`);if(j.confirmed){ORDST[String(ref).toUpperCase()]={status:'تم تأكيد الطلب ✅'}}
-  }catch(e){set('<div class="rcst x">⚠️ ما قدرنا نرفع الإيصال، جربي مرة ثانية أو أرسليه واتساب</div>')}}
+  }catch(e){set('<div class="rcst bad">⚠️ ما قدرنا نرفع الإيصال، جربي مرة ثانية أو أرسليه واتساب</div>')}}
 function ordCard(o){const d=new Date(o.at);const dig=o.items.some(i=>i.k)&&!o.items.some(i=>!i.k);const S=ORDST[String(o.ref).toUpperCase()];
   const steps=dig?['تم استلام الطلب','تأكيد الطلب','الملف على إيميلك 📩']:['تم استلام الطلب','تأكيد الطلب','الشحن 🚚','التسليم 🎉'];
   const k=S?stepIdx(S.status,dig):0;
@@ -1364,10 +1364,10 @@ document.addEventListener('keydown',function(e){if(!lb.hidden&&e.key==='Escape')
 .tjbar button{border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:12px;cursor:pointer}
 .adg{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:700}
 
-.rcbox{display:flex;flex-direction:column;gap:4px;align-items:stretch;text-align:center}
+.rcbox{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:4px;align-items:stretch;text-align:center}
 .rcbtn{border:1.5px dashed var(--pink);background:#FFF3F8;color:var(--pink);border-radius:14px;padding:11px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer}
 .rcbox small{font-size:11.5px;color:var(--muted);line-height:1.5}
-.rcst{border-radius:12px;padding:10px;font-weight:700;font-size:13.5px;background:#F3F1F6}.rcst.ok{background:#E8F7EC;color:#1F7A3D}.rcst.x{background:#FDECEC;color:#B3263B}
+.rcst{border-radius:12px;padding:10px;font-weight:700;font-size:13.5px;background:#F3F1F6}.rcst.ok{background:#E8F7EC;color:#1F7A3D}.rcst.bad{background:#FDECEC;color:#B3263B}
 </style>
 <script>
 (function(){
