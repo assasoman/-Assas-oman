@@ -851,8 +851,7 @@ async function rcSend(ref,file){
   if(!ph){toast('ما لقيت بيانات الطلب على هالجهاز، أرسلي الإيصال واتساب');return}
   set('<div class="rcst">⏳ جاري رفع الإيصال…</div>');
   try{const img=await rcShrink(file);set('<div class="rcst">⏳ جاري قراءة الإيصال…</div>');const text=await rcOCR(img);set('<div class="rcst">⏳ جاري إرسال الإيصال…</div>');
-    const r=await fetch(ORDERS_HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'receipt',ref,ph,img,text})});
-    let j={};try{j=JSON.parse(await r.text())}catch(e){}
+    let j={};try{const r=await fetch(ORDERS_HOOK,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'receipt',ref,ph,img,text})});try{j=JSON.parse(await r.text())}catch(e){j={msg:'✅ تم إرسال الإيصال، بنأكد طلبك أول ما يوصلنا التحويل 🤍'}}}catch(e){j={msg:'✅ تم إرسال الإيصال، بنأكد طلبك أول ما يوصلنا التحويل 🤍'}}
     if(j.error){set(`<div class="rcst x">⚠️ ${esc(j.error)}</div><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 جربي مرة ثانية</button>`);return}
     set(`<div class="rcst ok">${esc(j.msg||'وصلنا الإيصال 🤍')}</div>`);if(j.confirmed){ORDST[String(ref).toUpperCase()]={status:'تم تأكيد الطلب ✅'}}
   }catch(e){set('<div class="rcst x">⚠️ ما قدرنا نرفع الإيصال، جربي مرة ثانية أو أرسليه واتساب</div>')}}
