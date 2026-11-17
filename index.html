@@ -840,11 +840,11 @@ function stepIdx(st,dig){st=String(st||'');if(!st||st==='جديد')return 0;if(/
 /* ---------- إيصال التحويل ---------- */
 const RC_ON=true;
 const rcBtn=ref=>!RC_ON?'':`<div class="rcbox" data-rcbox="${esc(ref)}"><button type="button" class="rcbtn" data-rc="${esc(ref)}">📎 أرفقي صورة إيصال التحويل</button><small>بعد التحويل أرفقي صورة الإيصال من تطبيق البنك، ونأكد طلبك ونرسل الملف تلقائيًا</small></div>`;
-function rcPick(ref){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{if(i.files[0])rcSend(ref,i.files[0])};i.click()}
+function rcPick(ref){rcLoadTess().catch(()=>{});const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{if(i.files[0])rcSend(ref,i.files[0])};i.click()}
 function rcShrink(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.85))};im.onerror=rej;im.src=u})}
 let _tess=null;
 function rcLoadTess(){if(window.Tesseract)return Promise.resolve();if(_tess)return _tess;_tess=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';sc.onload=res;sc.onerror=rej;document.head.appendChild(sc)});return _tess}
-async function rcOCR(img){try{const run=(async()=>{await rcLoadTess();const r=await Tesseract.recognize(img,'eng');return (r&&r.data&&r.data.text)||''})();return await Promise.race([run,new Promise(r=>setTimeout(()=>r(''),25000))])}catch(e){return ''}}
+async function rcOCR(img){try{const run=(async()=>{await rcLoadTess();const r=await Tesseract.recognize(img,'eng');return (r&&r.data&&r.data.text)||''})();return await Promise.race([run,new Promise(r=>setTimeout(()=>r(''),45000))])}catch(e){return ''}}
 async function rcSend(ref,file){
   const box=document.querySelector(`[data-rcbox="${CSS.escape(ref)}"]`),set=(h)=>{if(box)box.innerHTML=h};
   const o=myOrd.find(x=>String(x.ref).toUpperCase()===String(ref).toUpperCase());const ph=o&&o.ph;
