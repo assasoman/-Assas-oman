@@ -1,0 +1,6 @@
+<!doctype html><html><body><script>let _tess=null;
+function rcLoadTess(){if(window.Tesseract)return Promise.resolve();if(_tess)return _tess;_tess=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';sc.onload=res;sc.onerror=rej;document.head.appendChild(sc)});return _tess}
+async function rcOCR(img){try{const run=(async()=>{await rcLoadTess();const r=await Tesseract.recognize(img,'eng');return (r&&r.data&&r.data.text)||''})();return await Promise.race([run,new Promise(r=>setTimeout(()=>r(''),25000))])}catch(e){return ''}}
+
+window.run=async()=>{const b=await (await fetch('real.b64')).text();return await rcOCR('data:image/jpeg;base64,'+b.trim())}
+</script></body></html>
