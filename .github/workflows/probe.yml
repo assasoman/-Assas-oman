@@ -1,0 +1,13 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  p:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          H='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb8ODf5NdNOsoJB-H3uh7VYFFZ1s-ynOgeNbRe7II/exec'
+          for o in AW7PN090 AW6AM188; do
+            python3 -c "import json,sys;print(json.dumps({'type':'receipt','ref':sys.argv[1],'ph':'9057','text':'BMCT099988877766 OMR 2.000','img':'data:image/jpeg;base64,'+open('.github/tmp/r.b64').read().strip()}))" $o > body.json
+            echo "RCPT_$o $(curl -sL -H 'Content-Type: text/plain' --data-binary @body.json "$H")"
+          done
