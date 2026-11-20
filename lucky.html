@@ -369,7 +369,7 @@ details.ents summary::-webkit-details-marker{display:none}
   }
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&data&&data.current.status==='scheduled'&&!shown){var S=data.current.start;if(Date.now()+off>=S-45000){clearTimeout(schedT);fetchResult()}}});
   function poll(){getDraw(function(j){if(j&&j.draw)handle(j.draw);if(KEY&&!document.hidden&&!(shown&&shown.month===MONTH))pollT=setTimeout(poll,2000)})}
-  function armedUI(){busy=true;spinBtn.disabled=true;spinBtn.textContent='✅ السحب جاهز، بيصير تلقائيًا الساعة ٤:٠٠';var st=document.getElementById('status');st.textContent='✅ تم تجهيز السحب. بيلف تلقائيًا الساعة ٤ وكل الزبونات يشوفنه مع بعض'}
+  function armedUI(){busy=true;spinBtn.disabled=true;var hm=new Date(data.current.start).toLocaleTimeString('ar-OM',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Muscat'});spinBtn.textContent='✅ السحب جاهز، بيصير تلقائيًا الساعة '+hm;var st=document.getElementById('status');st.textContent='✅ تم تجهيز السحب. بيلف تلقائيًا الساعة '+hm+' وكل الزبونات يشوفنه مع بعض'}
   function arm(){
     var list=data.current.entries||[];
     var digits=list.map(function(e){return String(e.n).replace(/[^0-9]/g,'')}).join(',');
