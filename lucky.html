@@ -329,6 +329,7 @@ details.ents summary::-webkit-details-marker{display:none}
     timers.push(setTimeout(function(){cd.hidden=true;spinTo(d.idx,n,6500);
       timers.push(setTimeout(function(){banner(d);show(entryOf(d))},6700));},Math.max(delay,0)));
   }
+  document.getElementById('replay').addEventListener('click',function(){if(!shown)return;wb.hidden=true;play(shown,0)});
   function handle(d){
     if(!d||(shown&&shown.start===d.start))return;shown=d;
     var now=Date.now()+off;
