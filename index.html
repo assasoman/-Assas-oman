@@ -153,8 +153,8 @@ details.uvdet[open]>summary{background:var(--ink)}
 details.uvdet .uvup{margin-top:12px}
 .flinks2{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;margin:16px 0 4px}
 .flinks2 a,.flinks2 button{background:none;border:0;font:inherit;font-weight:700;font-size:14px;color:var(--pink);cursor:pointer;padding:6px 0;text-decoration:none}
-.cats .cic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center}.cats .cic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cats a,.cats button{padding:14px 6px 12px;gap:10px}
+.cats a,.cats button{min-height:76px;justify-content:center;padding:12px 6px;border:0;font-size:15px;box-shadow:0 8px 18px -14px rgba(0,0,0,.45)}
+.cats .c1{background:var(--pink);color:#fff}.cats .c2{background:var(--sky);color:#14384D}.cats .c3{background:var(--sun);color:#3D2A00}.cats .c4{background:var(--leaf);color:#1F3A0C}
 .asst-btn{display:none!important}
 .how.sec2{display:block;background:none;padding:0;box-shadow:none;overflow:visible;border-radius:0}
 .cats [hidden]{display:none}
@@ -604,13 +604,13 @@ footer .kidrow img{height:130px;width:auto}
   <section class="max sec2" id="cats" aria-labelledby="h-cats">
     <div class="sh"><h2 id="h-cats">تسوّقي حسب القسم</h2></div>
     <div class="cats">
-      <button type="button" data-go="packs"><span class="cic" style="background:#FFE3EC;color:#C42F6A"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="M8 8.5 20 17M8 15.5 20 7"/></svg></span>البكجات</button>
-      <a href="lucky.html"><span class="cic" style="background:#FFF3D6;color:#B07800"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/><circle cx="12" cy="12" r="2.2" fill="#fff"/></svg></span>عجلة الحظ</a>
-      <button type="button" data-go="uv"><span class="cic" style="background:#E6F4FC;color:#2F7FA8"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></span>طباعة UV</button>
-      <button type="button" data-go="courses"><span class="cic" style="background:#EEE8FB;color:#6B4BB8"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/><path d="M8 21h8"/></svg></span>الدورات</button>
-      <button type="button" data-go="school" id="cat-school" hidden><span class="cic" style="background:#E6F6EC;color:#2E7D5B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg></span>قسم المدرسة</button>
-      <button type="button" data-bn="myord" id="cat-ord"><span class="cic" style="background:#E6F6EC;color:#2E7D5B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/></svg></span>طلباتي</button>
-      <a href="delivery.html"><span class="cic" style="background:#FFEDE3;color:#C2531E"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8.5 17h7M15 7h3l2 6M4 13h9l2-4M6 10h4"/></svg></span>توصيل مسقط</a>
+      <button type="button" data-go="packs" class="c1">البكجات</button>
+      <a href="lucky.html" class="c3">عجلة الحظ</a>
+      <button type="button" data-go="uv" class="c2">طباعة UV</button>
+      <button type="button" data-go="courses" class="c4">الدورات</button>
+      <button type="button" data-go="school" id="cat-school" hidden class="c2">قسم المدرسة</button>
+      <button type="button" data-bn="myord" id="cat-ord" class="c2">طلباتي</button>
+      <a href="delivery.html" class="c1">توصيل مسقط</a>
     </div>
   </section>
 
