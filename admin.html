@@ -357,7 +357,7 @@ const HOOK='https://script.google.com/macros/s/AKfycbyRaK36iO3v2H8EYav7cav-3jMJb
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
-let KEY=store.get('asas-admin')||'',D=null,tab=store.get('asas-admin-tab')||'home',q='',F=null,SH=null;
+let KEY=store.get('asas-admin')||'',D=null,tab=(store.get('asas-admin-tab')==='dv'?'home':store.get('asas-admin-tab'))||'home',q='',F=null,SH=null;
 const LOGO=document.getElementById('logo').src;
 const imgU=u=>{u=String(u||'');if(!u||u==='(data)')return '';const m=u.match(/\/d\/([\w-]{20,})/)||u.match(/[?&]id=([\w-]{20,})/);return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400':u};
 const money=v=>(Math.round((+v||0)*1000)/1000).toFixed(3);
@@ -376,7 +376,7 @@ async function api(body){await checkVer();if(body.action==='ping')return {ok:tru
   if(j.error)throw new Error(j.error);return j}
 
 /* ---------- shell ---------- */
-const NAV=[['home','الرئيسية','<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'],['orders','الطلبات','<path d="M4 6h16M4 12h16M4 18h10"/>'],['dv','التوصيل','<circle cx="6" cy="17" r="2.5"/><circle cx="18" cy="17" r="2.5"/><path d="M8.5 17h7M3 13h9l3-5h3l3 5v4"/>'],['products','المنتجات','<path d="M12 3l9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'],['packs','البكجات','<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>']];
+const NAV=[['home','الرئيسية','<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>'],['orders','الطلبات','<path d="M4 6h16M4 12h16M4 18h10"/>'],['products','المنتجات','<path d="M12 3l9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>'],['packs','البكجات','<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>']];
 function render(){
   if(!KEY){$('#app').innerHTML=`<div class="top hdr" style="margin-top:12vh"><div class="stripe"></div><div class="brand"><img alt="" src="${LOGO}"><div class="bt"><h1>إدارة أساس</h1><div class="date">اكتبي كلمة السر</div></div></div>
     <div style="padding:16px 18px 0;display:flex;flex-direction:column;gap:10px"><input class="search" id="pw" type="text" placeholder="كلمة السر" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false" style="margin:0;text-align:center;direction:ltr"><button class="btn primary" id="go">دخول</button><p class="muted" id="lm" style="margin:0;color:var(--bad)"></p></div></div>`;
@@ -523,7 +523,7 @@ function drawHome(m){
     <button class="tile unpaid" data-go="new"><b class="num">${c('new')}</b><span>جديدة بانتظار الدفع</span></button>
     <button class="tile missing" data-go="prep"><b class="num">${c('prep')}</b><span>قيد التجهيز</span></button>
     <button class="tile ready" data-go="ready"><b class="num">${rdy}</b><span>جاهزة للشحن</span></button>
-    <button class="tile shipped" data-go="dv"><b class="num">${dvO}</b><span>توصيل مسقط مفتوح</span></button></div>
+    <button class="tile shipped" data-go="ship"><b class="num">${c('ship')}</b><span>تم الشحن</span></button></div>
   <button class="btn" id="hsales" style="width:100%;margin-top:10px">📊 المبيعات</button>
   ${rdy?`<button class="btn" id="hlbl" style="width:100%;margin-top:10px">🏷️ بوليصات الجاهزة (${rdy})</button>`:''}
   ${O.quota!=null&&O.quota<15?`<div class="notice" style="margin-top:10px">⚠️ باقي ${O.quota} إيميل اليوم (حد Google اليومي).</div>`:''}
